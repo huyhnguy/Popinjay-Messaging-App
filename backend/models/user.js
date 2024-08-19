@@ -7,9 +7,8 @@ const UserSchema = new Schema({
   login: { 
     username: String,
     password: String,
-    required: true
   },
-  conversations: { type: mongoose.Schema.Types.ObjectId, ref: 'Conversation', required: true },
+  conversations: { type: mongoose.Schema.Types.ObjectId, ref: 'Conversation' },
 });
 
 module.exports = mongoose.model("User", UserSchema);

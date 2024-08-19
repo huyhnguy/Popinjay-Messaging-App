@@ -1,13 +1,10 @@
-import { useState } from 'react'
-import Logo from './Logo'
-import LogIn from './LogIn'
+
 
 function App() {
 
   return (
     <>
-      <Logo />
-      <LogIn />
+      <p>homepage</p>
     </>
   )
 }

@@ -1,58 +1,42 @@
 const express = require("express");
 const router = express.Router();
 
-// Home page route.
-router.get("/", function (req, res) {
-    res.send("home page");
-});
+const userController = require("../controllers/userController");
 
-router.post("/login", function (req, res) {
-    res.send("login POST");
-});
+router.post("/login", userController.login_post);
 
-router.post("/signup", function (req, res) {
-    res.send("signup POST");
-});
+router.post("/signup", userController.signup_post);
+
+router.get("/users", userController.users_list);
+
+router.get("/users/:userId", userController.user_profile);
+
+router.put("/users/:userId", userController.user_update);
+
+router.delete("/users/:userId", userController.user_delete);
 
 router.get("/groups", function (req, res) {
     res.send("groups GET");
 });
 
-router.get("/groups/:groupid", function (req, res) {
-    res.send("groups uniqueId GET");
+router.get("/groups/:groupId", function (req, res) {
+    res.send(`group ${req.params.groupId} GET`);
 });
 
-router.put("/groups/:groupid", function (req, res) {
-    res.send("groups uniqueId PUT");
+router.put("/groups/:groupId", function (req, res) {
+    res.send(`group ${req.params.groupId} PUT`);
 });
 
 router.get("/dms", function (req, res) {
     res.send("dms GET");
   });
 
-router.get("/dms/:dmid", function (req, res) {
-    res.send("dms uniqueId GET");
+router.get("/dms/:dmId", function (req, res) {
+    res.send(`dm ${req.params.dmId} GET`);
 });
 
-router.put("/dms/:dmid", function (req, res) {
-    res.send("dms uniqueId PUT");
+router.put("/dms/:dmId", function (req, res) {
+    res.send(`dm ${req.params.dmId} GET`);
 });
-
-router.get("/users", function (req, res) {
-    res.send("users list GET");
-  });
-
-router.get("/users/:userid", function (req, res) {
-    res.send("user profile GET");
-});
-
-router.put("/users/:userid", function (req, res) {
-    res.send("user profile PUT");
-});
-
-router.delete("/users/:userid", function (req, res) {
-    res.send("user profile DELETE");
-});
-
 
 module.exports = router;
