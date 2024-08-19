@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
+const bcrypt = require('bcrypt');
 
 
 exports.login_post = asyncHandler(async (req, res, next) => {
@@ -58,11 +59,21 @@ exports.signup_post = [
                 display_name: req.body.display_name,
                 login: {
                     username: req.body.username,
-                    password: req.body.password
                 },
             })
-
-            await user.save();
+            const saltRounds = 10;
+            bcrypt.genSalt(saltRounds, function(err, salt) {
+                if (err) {
+                    throw new Error("Can't generate salt to hash password")
+                }
+                bcrypt.hash(req.body.password, salt, async function(err, hash) {
+                    if (err) {
+                        throw new Error("Can't hash password")
+                    }
+                    user.login.password = hash;
+                    await user.save();
+                })
+            })
 
             res.status(201).json({ "status": 201, message: 'Successfully signed up' })
         }
