@@ -2,11 +2,55 @@ const User = require("../models/user");
 const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+require("dotenv").config();
 
 
-exports.login_post = asyncHandler(async (req, res, next) => {
-  res.send("login POST");
-});
+
+exports.login_post = [
+    body("username")
+        .trim()
+        .isLength({ min: 1 })
+        .withMessage("Enter a username")
+        .escape(),
+    body("password")
+        .trim()
+        .isLength({ min: 1 })
+        .withMessage("Enter your password")
+        .custom(async (value, {req}) => {
+            const user = await User.findOne({ 
+                'login.username' : req.body.username
+            });
+            const isPasswordValid = await bcrypt.compare(value, user.login.password);
+            if (!isPasswordValid) {
+                throw new Error
+            }
+        })
+        .withMessage("Invalid credentials")
+        .escape(),
+        asyncHandler(async (req, res, next) => {
+            const errors = validationResult(req);
+    
+            if (!errors.isEmpty()) {
+                res.json({
+                    username: req.body.username,
+                    password: req.body.password,
+                    errors: errors.array()
+                })
+            } else {
+                const user = { name: req.body.username };
+                const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+
+                let options = {
+                    httpOnly: true,
+                    sameSite: "none",
+                }
+
+                res.cookie("token", accessToken, options);
+                res.send("Cookie has been set")
+            }
+        })
+]
 
 exports.signup_post = [
     body("display_name")
@@ -37,7 +81,7 @@ exports.signup_post = [
     body("confirm_password")
         .trim()
         .isLength({ min: 1 })
-        .withMessage("Confirm your password is correct")
+        .withMessage("Enter your password to confirm")
         .custom((value, {req}) => {
             return value === req.body.password
         })

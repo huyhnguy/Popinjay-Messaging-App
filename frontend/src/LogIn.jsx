@@ -6,11 +6,31 @@ export default function LogIn() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        fetch('http://localhost:3000/api/login', {
+            method: 'POST',
+            credentials: "include",
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password
+            })
+          })
+          .then(res => console.log(res))
+          //.then(res => console.log(res))
     }
 
     const handleGuest = (e) => {
         e.preventDefault();
     }
+
+    
 
     return(
         <>
