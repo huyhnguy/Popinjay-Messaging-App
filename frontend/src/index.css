@@ -1,5 +1,4 @@
 body {
-  margin: 1rem;
   background-color: #FAFAFA;
   font-family: "Roboto", sans-serif;
   font-weight: 400;
@@ -104,4 +103,14 @@ body {
 
 .input-containers {
   width: 100%;
+}
+
+nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
 }
