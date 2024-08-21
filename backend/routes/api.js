@@ -16,14 +16,16 @@ function authenticateToken(req, res, next) {
         req.user = user;
         next();
     })*/
+   console.log(req.headers);
    const token = req.cookies.token;
+   console.log(req.cookies);
    try {
         const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
         req.user = user;
         next();
    } catch (err) {
         res.clearCookie("token");
-        return
+        return console.log(err);
    }
 }
 

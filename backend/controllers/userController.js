@@ -45,11 +45,12 @@ exports.login_post = [
                 let options = {
                     httpOnly: true,
                     sameSite: "none",
+                    secure: true,
                 }
                 
                 try {
                     res.cookie("token", accessToken, options);
-                    res.send("Cookie has been set")
+                    res.json({ status: 200, message: "Cookie has been set" })
                 } catch (error) {
                     console.error("Error setting cookie:", error);
                     res.status(500).send("Error setting cookie");
