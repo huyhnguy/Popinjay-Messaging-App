@@ -29,6 +29,7 @@ exports.login_post = [
         .withMessage("Invalid credentials")
         .escape(),
         asyncHandler(async (req, res, next) => {
+
             const errors = validationResult(req);
     
             if (!errors.isEmpty()) {
@@ -38,16 +39,21 @@ exports.login_post = [
                     errors: errors.array()
                 })
             } else {
-                const user = { name: req.body.username };
+                const user = { username: req.body.username };
                 const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
-
+                
                 let options = {
                     httpOnly: true,
                     sameSite: "none",
                 }
-
-                res.cookie("token", accessToken, options);
-                res.send("Cookie has been set")
+                
+                try {
+                    res.cookie("token", accessToken, options);
+                    res.send("Cookie has been set")
+                } catch (error) {
+                    console.error("Error setting cookie:", error);
+                    res.status(500).send("Error setting cookie");
+                }
             }
         })
 ]
@@ -57,6 +63,16 @@ exports.signup_post = [
         .trim()
         .isLength({ min: 1 })
         .withMessage("Enter a display name")
+        .custom(async displayName => {
+            const user = await User.findOne({ 
+                display_name : displayName
+            });
+            if (user) {
+                console.log(user);
+                throw new Error
+            } 
+        })
+        .withMessage("Display name already taken")
         .escape(),
     body("username")
         .trim()
@@ -125,7 +141,13 @@ exports.signup_post = [
 ];
 
 exports.users_list = asyncHandler(async (req, res, next) => {
-    res.send("users list");
+    const users = await User.find().select('display_name');
+
+    if (!users) {
+        throw new Error("can't find users");
+    }
+
+    res.json(users);
   });
 
 exports.user_profile = asyncHandler(async (req, res, next) => {

@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken')
 require("dotenv").config();
 
 const userController = require("../controllers/userController");
+const conversationController = require("../controllers/conversationController");
 
 function authenticateToken(req, res, next) {
     /*const authHeader = req.headers['authorization'];
@@ -53,6 +54,8 @@ router.put("/groups/:groupId", function (req, res) {
 router.get("/dms", function (req, res) {
     res.send("dms GET");
   });
+
+router.post("/dms/create", authenticateToken, conversationController.dms_create_post);
 
 router.get("/dms/:dmId", function (req, res) {
     res.send(`dm ${req.params.dmId} GET`);
