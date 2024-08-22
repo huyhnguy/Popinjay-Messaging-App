@@ -12,8 +12,13 @@ exports.dms_create_post = asyncHandler(async (req, res, next) => {
             $size: 2,
             $all: [req.body.other_user_id, req.user.id]
         } 
-    
-    })
+    }).populate({
+        path: 'history',
+        populate: {
+            path: 'user',
+            select: 'display_name'
+        }
+    }).exec();
     console.log(dm);
     
     // if this conversation doesn't already exist in the database, create a new one
