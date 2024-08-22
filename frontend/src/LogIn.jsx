@@ -1,8 +1,9 @@
 import './index.css'
 import Logo from './Logo'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function LogIn() {
+    const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -22,8 +23,13 @@ export default function LogIn() {
                 password: password
             })
           })
-          .then(res => console.log(res))
-          //.then(res => console.log(res))
+          .then(res => res.json(res))
+          .then(res => {
+            if (res.status === 200) {
+                console.log(res);
+                navigate("/users")
+            }
+          })
     }
 
     const handleGuest = (e) => {

@@ -6,6 +6,7 @@ export default function NavBar() {
         <nav>
             <Link>Group</Link>
             <Link>DMs</Link>
+            <Link>Users</Link>
             <Link>Settings</Link>
         </nav>
     )

@@ -6,7 +6,7 @@ import {
 import App from "./App";
 import LogIn from "./LogIn";
 import SignUp from "./SignUp";
-import GroupTab from "./GroupTab";
+import UserTab from "./UserTab";
 
 const router = createBrowserRouter([
     {
@@ -22,8 +22,8 @@ const router = createBrowserRouter([
         element: <SignUp />,
     },
     {
-        path: "/groups",
-        element: <GroupTab />,
+        path: "/users",
+        element: <UserTab />,
     },
 ]);
 
