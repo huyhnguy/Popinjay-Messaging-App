@@ -114,3 +114,17 @@ nav {
   justify-content: space-between;
   padding: 1rem;
 }
+
+.message-form {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  gap: 1rem;
+  margin: 1rem;
+  right: 0;
+  display: flex;
+}
+
+.message-form input {
+  width: 100%;
+}

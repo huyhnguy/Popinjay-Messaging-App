@@ -5,6 +5,7 @@ require("dotenv").config();
 
 const userController = require("../controllers/userController");
 const conversationController = require("../controllers/conversationController");
+const messageController = require('../controllers/messageController');
 
 function authenticateToken(req, res, next) {
     /*const authHeader = req.headers['authorization'];
@@ -66,5 +67,8 @@ router.get("/dms/:dmId", function (req, res) {
 router.put("/dms/:dmId", function (req, res) {
     res.send(`dm ${req.params.dmId} GET`);
 });
+
+router.post("/messages/create", authenticateToken, messageController.message_create_post);
+
 
 module.exports = router;

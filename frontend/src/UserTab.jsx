@@ -1,9 +1,12 @@
 import Logo from "./Logo"
 import NavBar from "./NavBar"
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom";
 
 export default function UserTab() {
     const [users, setUsers] = useState(null);
+
+    const navigate = useNavigate();
     
     useEffect(() => {
         fetch('http://localhost:3000/api/users', {
@@ -37,7 +40,14 @@ export default function UserTab() {
             })
           })
           .then(res => res.json())
-          .then(res => console.log(res))
+          .then(res => {
+            console.log(res);
+            const route = `/dms/${res.dm._id}`;
+            navigate(route, { state: {
+                receiver: e.target.textContent,
+                history: res.dm.history
+            } });
+          })
     }
 
     return(

@@ -39,7 +39,14 @@ exports.login_post = [
                     errors: errors.array()
                 })
             } else {
-                const user = { username: req.body.username };
+                const userInfo = await User.findOne({ 
+                    'login.username' : req.body.username
+                });
+
+                const user = { 
+                    display_name: userInfo.display_name,
+                    id: userInfo._id
+                };
                 const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
                 
                 let options = {

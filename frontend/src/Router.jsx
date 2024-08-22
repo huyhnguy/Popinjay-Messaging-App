@@ -7,6 +7,7 @@ import App from "./App";
 import LogIn from "./LogIn";
 import SignUp from "./SignUp";
 import UserTab from "./UserTab";
+import Dm from "./Dm";
 
 const router = createBrowserRouter([
     {
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
     {
         path: "/users",
         element: <UserTab />,
+    },
+    {
+        path: "/dms/:dmId",
+        element: <Dm />,
     },
 ]);
 
