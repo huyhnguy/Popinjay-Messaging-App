@@ -8,18 +8,7 @@ const conversationController = require("../controllers/conversationController");
 const messageController = require('../controllers/messageController');
 
 function authenticateToken(req, res, next) {
-    /*const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    if (token === null) return res.sendStatus(401);
-
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-        if (err) return res.sendStatus(403);
-        req.user = user;
-        next();
-    })*/
-   console.log(req.headers);
    const token = req.cookies.token;
-   console.log(req.cookies);
    try {
         const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
         req.user = user;
@@ -34,7 +23,7 @@ router.post("/login", userController.login_post);
 
 router.post("/signup", userController.signup_post);
 
-router.get("/users", userController.users_list);
+router.get("/users", authenticateToken, userController.users_list);
 
 router.get("/users/:userId", userController.user_profile);
 

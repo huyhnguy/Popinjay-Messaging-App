@@ -39,7 +39,7 @@ export default function Dm() {
             <h1>{receiver}</h1>
             <main>
                 { messageHistory && 
-                    messageHistory.map(message => <Message info={message} />)
+                    messageHistory.map(message => <Message key={message._id} info={message} />)
                 }
             </main>
             <form method="POST" className="message-form">
