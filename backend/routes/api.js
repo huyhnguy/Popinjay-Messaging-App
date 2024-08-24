@@ -25,7 +25,9 @@ router.post("/signup", userController.signup_post);
 
 router.get("/users", authenticateToken, userController.users_list);
 
-router.get("/users/:userId", userController.user_profile);
+router.get("/users/settings", authenticateToken, userController.user_profile_get);
+
+router.put("/users/settings", authenticateToken, userController.user_profile_put);
 
 router.put("/users/:userId", userController.user_update);
 

@@ -158,8 +158,19 @@ exports.users_list = asyncHandler(async (req, res, next) => {
     res.json(users);
   });
 
-exports.user_profile = asyncHandler(async (req, res, next) => {
-    res.send(`user ${req.params.userId} GET`);  
+exports.user_profile_get = asyncHandler(async (req, res, next) => {
+    const user = await User.findById(req.user.id).exec();
+
+    res.json({
+        display_name: user.display_name
+    })
+});
+
+exports.user_profile_put = asyncHandler(async (req, res, next) => {
+    const user = await User.findById(req.user.id).exec();
+    user.display_name = req.body.display_name;
+    await user.save();
+    res.json({ message: "new user settings changed" })
 });
 
 exports.user_update = asyncHandler(async (req, res, next) => {
