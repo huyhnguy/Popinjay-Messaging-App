@@ -1,23 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const jwt = require('jsonwebtoken')
 require("dotenv").config();
+const { authenticateToken } = require('../middleware/authenticateToken');
+const upload = require('../middleware/upload');
 
 const userController = require("../controllers/userController");
 const conversationController = require("../controllers/conversationController");
 const messageController = require('../controllers/messageController');
-
-function authenticateToken(req, res, next) {
-   const token = req.cookies.token;
-   try {
-        const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-        req.user = user;
-        next();
-   } catch (err) {
-        res.clearCookie("token");
-        return console.log(err);
-   }
-}
 
 router.post("/login", userController.login_post);
 
@@ -27,7 +16,7 @@ router.get("/users", authenticateToken, userController.users_list);
 
 router.get("/users/settings", authenticateToken, userController.user_profile_get);
 
-router.put("/users/settings", authenticateToken, userController.user_profile_put);
+router.put("/users/settings", authenticateToken, upload.single('profile_picture'), userController.user_profile_put);
 
 router.put("/users/:userId", userController.user_update);
 
