@@ -168,9 +168,9 @@ exports.user_profile_get = asyncHandler(async (req, res, next) => {
 
 exports.user_profile_put = asyncHandler(async (req, res, next) => {
     console.log(req.body);
-    console.log(req.file);
     const user = await User.findById(req.user.id).exec();
     user.display_name = req.body.display_name;
+    user.profile_picture = req.body.profile_picture;
     await user.save();
     res.json({ message: "new user settings changed" })
 });

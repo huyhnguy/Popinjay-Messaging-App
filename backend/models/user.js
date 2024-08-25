@@ -9,6 +9,7 @@ const UserSchema = new Schema({
     password: String,
   },
   conversations: { type: mongoose.Schema.Types.ObjectId, ref: 'Conversation' },
+  profile_picture: String
 });
 
 module.exports = mongoose.model("User", UserSchema);
