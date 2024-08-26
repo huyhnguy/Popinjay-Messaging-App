@@ -41,7 +41,6 @@ export default function UserTab() {
           })
           .then(res => res.json())
           .then(res => {
-            console.log(res);
             const route = `/dms/${res.dm._id}`;
             navigate(route, { state: {
                 receiver: e.target.textContent,

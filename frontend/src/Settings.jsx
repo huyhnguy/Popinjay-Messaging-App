@@ -1,10 +1,13 @@
 import NavBar from "./NavBar"
 import { useState } from "react"
 import { useEffect } from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {faUser} from '@fortawesome/free-solid-svg-icons'
+import ProfilePic from "./ProfilePic";
 
 export default function Settings() {
     const [displayName, setDisplayName] = useState(undefined);
-    const [base64Pic, setBase64Pic] = useState("");
+    const [base64Pic, setBase64Pic] = useState(null);
 
     useEffect(() => {
         fetch('http://localhost:3000/api/users/settings', {
@@ -16,8 +19,12 @@ export default function Settings() {
             }
           })
           .then(res => res.json())
-          .then(res => setDisplayName(res.display_name))
-    })
+          .then(res => {
+            setDisplayName(res.display_name);
+            setBase64Pic(res.profile_picture);
+            console.log(res);
+          })
+    }, [])
 
     const convertToBase64 = (file) => {
         return new Promise((resolve, reject) => {
@@ -36,13 +43,14 @@ export default function Settings() {
         const file = e.target.files[0];
         const base64 = await convertToBase64(file);
         setBase64Pic(base64);
+        console.log(base64);
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const displayName = document.getElementById("display-name").value;
+        const newDisplayName = document.getElementById("display-name").value;
         console.log(base64Pic);
-        
+
         fetch('http://localhost:3000/api/users/settings', {
             method: 'PUT',
             credentials: "include",
@@ -52,7 +60,7 @@ export default function Settings() {
             },
             body: JSON.stringify({
                 profile_picture: base64Pic,
-                display_name: displayName
+                display_name: newDisplayName
             })
           })
           .then(res => res.json())
@@ -64,7 +72,12 @@ export default function Settings() {
     return(
         <>
             <form action="" method="POST">
-                <img src={base64Pic} alt="" style={{ height: "10rem" }}/>
+                { base64Pic ?
+                    <ProfilePic imageSrc={base64Pic} />
+                    :
+                    <ProfilePic />
+                }
+
                 <input type="file" id="profile-picture" accept="image/*" onChange={(e) => {handleFileUpload(e)}}/>
                 <label htmlFor="display-name">Display Name</label>
                 <input id="display-name" type="text" defaultValue={displayName}/>

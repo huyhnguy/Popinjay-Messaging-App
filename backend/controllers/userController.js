@@ -162,7 +162,8 @@ exports.user_profile_get = asyncHandler(async (req, res, next) => {
     const user = await User.findById(req.user.id).exec();
 
     res.json({
-        display_name: user.display_name
+        display_name: user.display_name,
+        profile_picture: user.profile_picture
     })
 });
 
