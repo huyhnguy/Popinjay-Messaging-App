@@ -29,7 +29,7 @@ export default function DmTab() {
     }, [])
 
     const handleDM = (dm) => {
-        const receiver = dm.users.find(user => user != sender);
+        const receiver = dm.users.find(user => user._id != sender);
 
         const route = `/dms/${dm._id}`;
         navigate(route, { 
