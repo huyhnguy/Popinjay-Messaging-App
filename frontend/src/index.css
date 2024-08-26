@@ -132,8 +132,6 @@ nav {
 .profile-pic-container {
   border: solid black 5px;
   border-radius: 50%;
-  height: 10rem;
-  width: 10rem;
   overflow: auto;
 }
 
@@ -146,4 +144,8 @@ nav {
   object-fit: cover;
   width: 100%;
   height: 100%;
+}
+
+.user-card * {
+  pointer-events: none;
 }

@@ -35,3 +35,30 @@ exports.dms_create_post = asyncHandler(async (req, res, next) => {
     }
 
 });
+
+exports.dms_list_get = asyncHandler(async (req, res, next) => {
+    console.log(req.user);
+    const dms = await Conversation.find({ 
+        users: { 
+            $size: 2,
+        } 
+    }).find({
+        users: req.user.id
+    }).find({
+        'history.0': {
+            $exists: true
+        }
+    }).populate({
+        path: 'history',
+        populate: {
+            path: 'user',
+            select: 'display_name'
+        }
+    }).populate({
+        path: 'users',
+        select: 'display_name profile_picture'
+    }).exec();
+
+    console.log(dms);
+    res.json({ sender: req.user.id, dms: dms });
+})

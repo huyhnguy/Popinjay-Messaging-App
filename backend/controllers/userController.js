@@ -149,7 +149,7 @@ exports.signup_post = [
 ];
 
 exports.users_list = asyncHandler(async (req, res, next) => {
-    const users = await User.find({ _id: {$ne: req.user.id}}).select('display_name');
+    const users = await User.find({ _id: {$ne: req.user.id}}).select('display_name profile_picture');
 
     if (!users) {
         throw new Error("can't find users");

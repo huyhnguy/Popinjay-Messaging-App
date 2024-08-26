@@ -73,9 +73,9 @@ export default function Settings() {
         <>
             <form action="" method="POST">
                 { base64Pic ?
-                    <ProfilePic imageSrc={base64Pic} />
+                    <ProfilePic imageSrc={base64Pic} size="10rem"/>
                     :
-                    <ProfilePic />
+                    <ProfilePic size="10rem"/>
                 }
 
                 <input type="file" id="profile-picture" accept="image/*" onChange={(e) => {handleFileUpload(e)}}/>

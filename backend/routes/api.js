@@ -33,9 +33,7 @@ router.put("/groups/:groupId", function (req, res) {
     res.send(`group ${req.params.groupId} PUT`);
 });
 
-router.get("/dms", function (req, res) {
-    res.send("dms GET");
-  });
+router.get("/dms", authenticateToken, conversationController.dms_list_get);
 
 router.post("/dms/create", authenticateToken, conversationController.dms_create_post);
 

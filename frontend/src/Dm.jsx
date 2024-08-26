@@ -1,6 +1,7 @@
 import { useLocation, useParams } from "react-router-dom"
 import { useState } from "react";
 import Message from "./Message";
+import ProfilePic from "./ProfilePic";
 
 export default function Dm() {
     const {state} = useLocation();
@@ -36,7 +37,8 @@ export default function Dm() {
 
     return(
         <>
-            <h1>{receiver}</h1>
+            <ProfilePic imageSrc={receiver.profile_picture} size="10rem"/>
+            <h1>{receiver.display_name}</h1>
             <main>
                 { messageHistory && 
                     messageHistory.map(message => <Message key={message._id} info={message} />)

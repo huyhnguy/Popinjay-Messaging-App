@@ -2,6 +2,7 @@ import Logo from "./Logo"
 import NavBar from "./NavBar"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
+import ProfilePic from "./ProfilePic";
 
 export default function UserTab() {
     const [users, setUsers] = useState(null);
@@ -24,9 +25,7 @@ export default function UserTab() {
           })
     }, [])
 
-    const handleDM = (e) => {
-        const otherUser = users.find(user => user.display_name === e.target.textContent);
-        console.log(otherUser._id);
+    const handleDM = (user) => {
 
         fetch('http://localhost:3000/api/dms/create', {
             method: 'POST',
@@ -36,14 +35,14 @@ export default function UserTab() {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                other_user_id: otherUser._id
+                other_user_id: user._id
             })
           })
           .then(res => res.json())
           .then(res => {
             const route = `/dms/${res.dm._id}`;
             navigate(route, { state: {
-                receiver: e.target.textContent,
+                receiver: user,
                 history: res.dm.history
             } });
           })
@@ -54,8 +53,9 @@ export default function UserTab() {
             <Logo />
                 { users &&
                     users.map(user => 
-                        <div onClick={handleDM} key={user._id}>
-                            {user.display_name}
+                        <div className="user-card" onClick={() => {handleDM(user)}} key={user._id}>
+                            <ProfilePic imageSrc={user.profile_picture} size="5rem"/>
+                            <p>{user.display_name}</p>
                         </div>
                     )
                 }
