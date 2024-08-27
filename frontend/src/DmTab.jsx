@@ -60,7 +60,7 @@ export default function DmTab() {
                         )
                     })
                 }
-            <NavBar />
+            <NavBar active='Messages'/>
         </>
     )
 }

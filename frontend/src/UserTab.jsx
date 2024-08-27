@@ -59,7 +59,7 @@ export default function UserTab() {
                         </div>
                     )
                 }
-            <NavBar />
+            <NavBar active='Users'/>
         </>
     )
 }

@@ -70,20 +70,26 @@ export default function Settings() {
     }
 
     return(
-        <>
-            <form action="" method="POST">
-                { base64Pic ?
-                    <ProfilePic imageSrc={base64Pic} size="10rem"/>
-                    :
-                    <ProfilePic size="10rem"/>
-                }
-
-                <input type="file" id="profile-picture" accept="image/*" onChange={(e) => {handleFileUpload(e)}}/>
-                <label htmlFor="display-name">Display Name</label>
-                <input id="display-name" type="text" defaultValue={displayName}/>
-                <button onClick={handleSubmit}>Submit</button>
-            </form>
-            <NavBar />
-        </>
+        <div className="settings-page">
+            <div className="settings-container">
+                <h1>User Profile</h1>
+                <form action="" method="POST">
+                    <div>
+                        { base64Pic ?
+                            <ProfilePic imageSrc={base64Pic} size="10rem"/>
+                            :
+                            <ProfilePic size="10rem"/>
+                        }
+                        <input style={{ cursor: "pointer" }} className="input" type="file" id="profile-picture" accept="image/*" onChange={(e) => {handleFileUpload(e)}}/>
+                    </div>
+                    <div style={{ alignItems: "start", gap: "0.5rem" }}>
+                        <label htmlFor="display-name">Display Name</label>
+                        <input className="input" id="display-name" type="text" defaultValue={displayName}/>
+                    </div>
+                    <button className="submit" onClick={handleSubmit}>Save</button>
+                </form>
+            </div>
+            <NavBar active='Settings' />
+        </div>
     )
 }
