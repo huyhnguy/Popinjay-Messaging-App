@@ -47,7 +47,7 @@ export default function SignUp() {
     }
 
     return(
-        <>
+        <div className="signup-page">
             <main className="login">
                 <Logo />
                 <h2>Create An Account</h2>
@@ -83,7 +83,7 @@ export default function SignUp() {
                     <input type="submit" value="Sign Up" className="submit" onClick={handleSubmit}/>
                 </form>
             </main>
-        </>
+        </div>
 
     )
 }

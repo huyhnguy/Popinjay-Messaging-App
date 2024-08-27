@@ -64,7 +64,10 @@ export default function Settings() {
             })
           })
           .then(res => res.json())
-          .then(res => console.log(res))
+          .then(res => {
+            console.log(res);
+            alert(res.message);
+          })
           .catch(console.error);
 
     }
@@ -72,24 +75,28 @@ export default function Settings() {
     return(
         <div className="settings-page">
             <div className="settings-container">
-                <h1>User Profile</h1>
-                <form action="" method="POST">
-                    <div>
-                        { base64Pic ?
-                            <ProfilePic imageSrc={base64Pic} size="10rem"/>
-                            :
-                            <ProfilePic size="10rem"/>
-                        }
-                        <input style={{ cursor: "pointer" }} className="input" type="file" id="profile-picture" accept="image/*" onChange={(e) => {handleFileUpload(e)}}/>
-                    </div>
-                    <div style={{ alignItems: "start", gap: "0.5rem" }}>
-                        <label htmlFor="display-name">Display Name</label>
-                        <input className="input" id="display-name" type="text" defaultValue={displayName}/>
-                    </div>
-                    <button className="submit" onClick={handleSubmit}>Save</button>
-                </form>
+                <div className="settings-card">
+                    <h1>Settings</h1>
+                    <form action="" method="POST">
+                        <div>
+                            { base64Pic ?
+                                <ProfilePic imageSrc={base64Pic} size="10rem"/>
+                                :
+                                <ProfilePic size="10rem"/>
+                            }
+                            <label htmlFor="profile-picture" style={{ alignSelf: "start" }}>Profile Picture</label>
+                            <input style={{ cursor: "pointer" }} className="input" type="file" id="profile-picture" accept="image/*" onChange={(e) => {handleFileUpload(e)}}/>
+                        </div>
+                        <div style={{ alignItems: "start" }}>
+                            <label htmlFor="display-name">Display Name</label>
+                            <input className="input" id="display-name" type="text" defaultValue={displayName}/>
+                        </div>
+                        <button className="submit" onClick={handleSubmit}>Save</button>
+                    </form>
+                </div>
             </div>
             <NavBar active='Settings' />
+            <NavBar invisible={true} />
         </div>
     )
 }

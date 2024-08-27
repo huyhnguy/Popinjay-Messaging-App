@@ -49,8 +49,10 @@ export default function UserTab() {
     }
 
     return(
-        <>
-            <Logo />
+        <div className="users-page">
+
+            <div className="users-container">
+                <h1>Users</h1>
                 { users &&
                     users.map(user => 
                         <div className="user-card" onClick={() => {handleDM(user)}} key={user._id}>
@@ -59,7 +61,8 @@ export default function UserTab() {
                         </div>
                     )
                 }
+            </div>
             <NavBar active='Users'/>
-        </>
+        </div>
     )
 }

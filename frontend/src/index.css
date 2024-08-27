@@ -18,11 +18,10 @@ body {
   font-size: 3rem;
 }
 
-.login, .settings-container {
+.login, .settings-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-block: auto;
   /*position: absolute;
   left: 50%;
   top: 50%;
@@ -33,6 +32,16 @@ body {
   background-color: white;
   box-shadow: 0px 0px 10px 10px rgba(0, 0, 0, 0.125);
 }
+
+.settings-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-block: 2rem;
+}
+
 
 @media (max-width: 750px) {
   .site-name {
@@ -46,7 +55,7 @@ body {
     height: 100vh;
   }
 
-  .login, .settings-container {
+  .login, .settings-card {
     width: 95%;
     box-shadow: none;
     border-radius: 0;
@@ -55,7 +64,7 @@ body {
   }
 }
 
-.login form, .settings-container form {
+.login form, .settings-card form {
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -115,15 +124,13 @@ body {
 }
 
 nav {
-  /*position: fixed;
+  position: fixed;
   bottom: 0;
-  left: 0;
-  right: 0; */
-  position: sticky;
   width: 100%;
   display: flex;
   justify-content: space-evenly;
   padding: 1rem;
+  background-color: white;
 }
 
 .message-form {
@@ -171,7 +178,7 @@ nav {
   padding: 0.5rem;
 }
 
-.nav-link:hover {
+.nav-link:hover, .user-card:hover {
   background-color: #dddddd;
 }
 
@@ -183,19 +190,45 @@ nav {
   height: 1.5rem;
 }
 
-.settings-container form div {
+.settings-card form div {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
   width: 100%;
 }
 
-.settings-page {
+.settings-page, .login-page, .signup-page, .users-page {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
   height: 100%;
+  width: 100%;
+}
+
+.users-container {
+  display: flex;
+  gap: 3rem;
+  flex-wrap: wrap;
+  margin-inline: 3rem;
+  justify-content: center;
+}
+
+.user-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 10px;
+  padding: 0.5rem;
+  gap: 0.5rem;
+}
+
+.user-card p {
+  margin: 0;
+}
+
+.users-page h1 {
   width: 100%;
 }
