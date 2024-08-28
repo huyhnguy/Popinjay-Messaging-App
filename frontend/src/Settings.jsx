@@ -4,10 +4,13 @@ import { useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faUser} from '@fortawesome/free-solid-svg-icons'
 import ProfilePic from "./ProfilePic";
+import { useNavigate } from "react-router-dom";
 
 export default function Settings() {
     const [displayName, setDisplayName] = useState(undefined);
     const [base64Pic, setBase64Pic] = useState(null);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetch('http://localhost:3000/api/users/settings', {
@@ -18,12 +21,23 @@ export default function Settings() {
               'Content-Type': 'application/json',
             }
           })
-          .then(res => res.json())
+          .then(res => {
+            if (res.ok) { return res.json() }
+            const error = new Error(res.message);
+            error.code = res.status;
+            throw error
+          })
           .then(res => {
             setDisplayName(res.display_name);
             setBase64Pic(res.profile_picture);
             console.log(res);
           })
+          .catch(err => {
+            console.log(err);
+            if (err.code === 401) {
+                navigate('/login');
+            }
+        })
     }, [])
 
     const convertToBase64 = (file) => {
@@ -68,7 +82,10 @@ export default function Settings() {
             console.log(res);
             alert(res.message);
           })
-          .catch(console.error);
+          .catch(err => {
+            console.log(err);
+            navigate('/login');
+        })
 
     }
 

@@ -178,7 +178,7 @@ nav {
   padding: 0.5rem;
 }
 
-.nav-link:hover, .user-card:hover {
+.nav-link:hover, .user-card:hover, .message-card:hover {
   background-color: #dddddd;
 }
 
@@ -198,7 +198,7 @@ nav {
   width: 100%;
 }
 
-.settings-page, .login-page, .signup-page, .users-page {
+.settings-page, .login-page, .signup-page, .users-page, .messages-page {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -207,15 +207,20 @@ nav {
   width: 100%;
 }
 
-.users-container {
+.login-page, .signup-page {
+  justify-content: center;
+}
+
+.users-container, .messages-container {
   display: flex;
   gap: 3rem;
   flex-wrap: wrap;
   margin-inline: 3rem;
   justify-content: center;
+  padding-block: 2rem;
 }
 
-.user-card {
+.user-card, .message-card {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -225,10 +230,23 @@ nav {
   gap: 0.5rem;
 }
 
+.message-card {
+  width: 100%;
+  align-items: start;
+  border: solid;
+  padding: 1rem;
+}
+
 .user-card p {
   margin: 0;
 }
 
-.users-page h1 {
+.users-container h1, .messages-container h1 {
   width: 100%;
+}
+
+.profile-container, {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

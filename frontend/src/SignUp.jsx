@@ -1,8 +1,11 @@
 import Logo from "./Logo"
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function SignUp() {
     const [errors, setErrors] = useState(null);
+
+    const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -42,6 +45,9 @@ export default function SignUp() {
                     password: passwordErrors[0],
                     confirm_password: confirmPasswordErrors[0]
                 })
+            } else {
+                alert(res.message);
+                navigate('/login');
             }
           })
     }

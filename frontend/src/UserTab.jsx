@@ -18,11 +18,22 @@ export default function UserTab() {
               'Content-Type': 'application/json',
             },
           })
-          .then(res => res.json())
+          .then(res => {
+            if (res.ok) { return res.json() }
+            const error = new Error(res.message);
+            error.code = res.status;
+            throw error
+          })
           .then(res => {
             console.log(res);
             setUsers(res);
           })
+          .catch(err => {
+            console.log(err);
+            if (err.code === 401) {
+                navigate('/login');
+            }
+        })
     }, [])
 
     const handleDM = (user) => {
@@ -46,6 +57,10 @@ export default function UserTab() {
                 history: res.dm.history
             } });
           })
+          .catch(err => {
+            console.log(err);
+            navigate('/login');
+        })
     }
 
     return(
@@ -63,6 +78,7 @@ export default function UserTab() {
                 }
             </div>
             <NavBar active='Users'/>
+            <NavBar invisible={true} />
         </div>
     )
 }

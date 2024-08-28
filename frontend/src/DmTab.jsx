@@ -19,13 +19,24 @@ export default function DmTab() {
               'Content-Type': 'application/json',
             },
           })
-          .then(res => res.json())
+          .then(res => {
+            if (res.ok) { return res.json() }
+            const error = new Error(res.message);
+            error.code = res.status;
+            throw error
+          })
           .then(res => {
             console.log(res);
             setSender(res.sender);
             setDms(res.dms);
 
           })
+          .catch(err => {
+            console.log(err);
+            if (err.code === 401) {
+                navigate('/login');
+            }
+        })
     }, [])
 
     const handleDM = (dm) => {
@@ -41,26 +52,31 @@ export default function DmTab() {
     }
 
     return(
-        <>
-            <Logo />
-                { dms &&
-                    dms.map((dm) => {
-                        const receiver = dm.users.find(user => user._id != sender);
-                        const lastMessage = dm.history[dm.history.length - 1];
-                        return (
-                            <div className="user-card" key={dm._id} onClick={() => {handleDM(dm)}}>
-                                <ProfilePic imageSrc={receiver.profile_picture} size="5rem"/>
-                                <p><strong>{receiver.display_name}</strong></p>
-                                { lastMessage.user._id === sender ?
-                                    <p style={{color: "grey"}}>You: {lastMessage.content}</p>
-                                    :
-                                    <p style={{color: "grey"}}>{receiver.display_name}: {lastMessage.content}</p>
-                                }
-                            </div>
-                        )
-                    })
-                }
+        <div className="messages-page">
+            <div className="messages-container">
+                <h1>Messages</h1>
+                    { dms &&
+                        dms.map((dm) => {
+                            const receiver = dm.users.find(user => user._id != sender);
+                            const lastMessage = dm.history[dm.history.length - 1];
+                            return (
+                                <div className="message-card" key={dm._id} onClick={() => {handleDM(dm)}}>
+                                    <div className="profile-container">
+                                        <ProfilePic imageSrc={receiver.profile_picture} size="5rem"/>
+                                        <p><strong>{receiver.display_name}</strong></p>
+                                    </div>
+                                    { lastMessage.user._id === sender ?
+                                        <p style={{color: "grey"}}>You: {lastMessage.content}</p>
+                                        :
+                                        <p style={{color: "grey"}}>{receiver.display_name}: {lastMessage.content}</p>
+                                    }
+                                </div>
+                            )
+                        })
+                    }
+            </div>
             <NavBar active='Messages'/>
-        </>
+            <NavBar invisible={true} />
+        </div>
     )
 }

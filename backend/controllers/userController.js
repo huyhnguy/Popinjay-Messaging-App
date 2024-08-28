@@ -53,6 +53,7 @@ exports.login_post = [
                     httpOnly: true,
                     sameSite: "none",
                     secure: true,
+                    maxAge: 900000,
                 }
                 
                 try {

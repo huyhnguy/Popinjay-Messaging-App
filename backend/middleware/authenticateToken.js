@@ -8,6 +8,7 @@ function authenticateToken(req, res, next) {
          next();
     } catch (err) {
          res.clearCookie("token");
+         res.status(401).json({message: "JWT not provided. Please log in."})
          return console.log(err);
     }
  }

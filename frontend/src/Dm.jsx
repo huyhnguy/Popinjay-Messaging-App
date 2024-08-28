@@ -1,4 +1,4 @@
-import { useLocation, useParams } from "react-router-dom"
+import { useLocation, useParams, useNavigate } from "react-router-dom"
 import { useState } from "react";
 import Message from "./Message";
 import ProfilePic from "./ProfilePic";
@@ -10,6 +10,7 @@ export default function Dm() {
     const [messageHistory, setMessageHistory] = useState(history);
 
     const urlParams = useParams();
+    const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -28,10 +29,21 @@ export default function Dm() {
                 conversation_id: urlParams.dmId
             })
           })
-        .then(res => res.json())
+        .then(res => {
+            if (res.ok) { return res.json() }
+            const error = new Error(res.message);
+            error.code = res.status;
+            throw error
+          })
         .then(res => {
             console.log(res);
             setMessageHistory(res.conversation.history);
+        })
+        .catch(err => {
+            console.log(err);
+            if (err.code === 401) {
+                navigate('/login');
+            }
         })
     }
 
