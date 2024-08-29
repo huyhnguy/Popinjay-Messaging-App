@@ -1,7 +1,9 @@
 import { useLocation, useParams, useNavigate } from "react-router-dom"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Message from "./Message";
 import ProfilePic from "./ProfilePic";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {faPaperPlane} from '@fortawesome/free-solid-svg-icons'
 
 export default function Dm() {
     const {state} = useLocation();
@@ -11,6 +13,11 @@ export default function Dm() {
 
     const urlParams = useParams();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const messageHistoryDiv = document.querySelector(".message-history");
+        messageHistoryDiv.lastChild.scrollIntoView();
+    }, [messageHistory])
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -25,7 +32,7 @@ export default function Dm() {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                new_message: document.getElementById("new-message").value,
+                new_message:  document.getElementById("new-message").value,
                 conversation_id: urlParams.dmId
             })
           })
@@ -38,6 +45,7 @@ export default function Dm() {
         .then(res => {
             console.log(res);
             setMessageHistory(res.conversation.history);
+            document.getElementById("new-message").value = "";
         })
         .catch(err => {
             console.log(err);
@@ -48,18 +56,31 @@ export default function Dm() {
     }
 
     return(
-        <>
-            <ProfilePic imageSrc={receiver.profile_picture} size="10rem"/>
-            <h1>{receiver.display_name}</h1>
-            <main>
+        <div className="dm-page">
+            <div className="receiver-container">
+                <ProfilePic imageSrc={receiver.profile_picture} size="2.5rem"/>
+                <h1>{receiver.display_name}</h1>
+            </div>
+            <main className="message-history">
                 { messageHistory && 
-                    messageHistory.map(message => <Message key={message._id} info={message} />)
+                    messageHistory.map(message => {
+                        if (message.user._id === receiver._id) {
+                            return(
+                                <Message key={message._id} info={message} person="receiver" />
+                            )
+                        }
+                        return(
+                            <Message key={message._id} info={message} person="sender" />
+                        )
+                    })
                 }
             </main>
             <form method="POST" className="message-form">
-                <input type="text" id="new-message" required/>
-                <button type="submit" onClick={handleSubmit}>Submit</button>
+                <input type="text" id="new-message" required className="input" placeholder="Message"/>
+                <button type="submit" onClick={handleSubmit} className="submit" style={{ width: "auto", paddingInline: "1.5rem" }}>
+                    <FontAwesomeIcon icon={faPaperPlane} />
+                </button>
             </form>
-        </>
+        </div>
     )
 }

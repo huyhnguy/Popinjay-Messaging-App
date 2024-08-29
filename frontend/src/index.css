@@ -134,13 +134,11 @@ nav {
 }
 
 .message-form {
-  position: fixed;
-  bottom: 0;
-  left: 0;
+  
   gap: 1rem;
-  margin: 1rem;
-  right: 0;
+  padding: 1rem;
   display: flex;
+  border-top: solid;
 }
 
 .message-form input {
@@ -207,6 +205,36 @@ nav {
   width: 100%;
 }
 
+.dm-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.message-history {
+  overflow: scroll;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  margin-bottom: 1rem;
+}
+
+.receiver-container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  border-bottom: solid;
+  padding: 1rem;
+  flex-wrap: wrap;
+}
+
+.receiver-container h1 {
+  margin: 0;
+}
+
 .login-page, .signup-page {
   justify-content: center;
 }
@@ -245,8 +273,19 @@ nav {
   width: 100%;
 }
 
-.profile-container, {
+.profile-container {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.message {
+  border: solid;
+  padding: 1rem;
+  color: white;
+  border-radius: 10px;
+  max-width: 75vw;
+  height: auto;
+  word-wrap: break-word;
+  margin: 1rem 1rem 0 1rem;
 }
