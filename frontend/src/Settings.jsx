@@ -30,7 +30,6 @@ export default function Settings() {
           .then(res => {
             setDisplayName(res.display_name);
             setBase64Pic(res.profile_picture);
-            console.log(res);
           })
           .catch(err => {
             console.log(err);
@@ -57,13 +56,11 @@ export default function Settings() {
         const file = e.target.files[0];
         const base64 = await convertToBase64(file);
         setBase64Pic(base64);
-        console.log(base64);
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const newDisplayName = document.getElementById("display-name").value;
-        console.log(base64Pic);
 
         fetch('http://localhost:3000/api/users/settings', {
             method: 'PUT',
@@ -79,7 +76,6 @@ export default function Settings() {
           })
           .then(res => res.json())
           .then(res => {
-            console.log(res);
             alert(res.message);
           })
           .catch(err => {
@@ -131,7 +127,7 @@ export default function Settings() {
                             <input className="input" id="display-name" type="text" defaultValue={displayName}/>
                         </div>
                         <button className="submit" onClick={handleSubmit}>Save</button>
-                        <button className="submit" onClick={handleLogOut}>Log out</button>
+                        <button className="submit" style={{backgroundColor: "red"}} onClick={handleLogOut}>Log out</button>
                     </form>
                 </div>
             </div>

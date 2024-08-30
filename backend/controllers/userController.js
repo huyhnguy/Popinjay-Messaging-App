@@ -82,7 +82,6 @@ exports.signup_post = [
                 display_name : displayName
             });
             if (user) {
-                console.log(user);
                 throw new Error
             } 
         })
@@ -97,7 +96,6 @@ exports.signup_post = [
                 'login.username' : username
             });
             if (user) {
-                console.log(user);
                 throw new Error
             } 
         })
@@ -174,7 +172,6 @@ exports.user_profile_get = asyncHandler(async (req, res, next) => {
 });
 
 exports.user_profile_put = asyncHandler(async (req, res, next) => {
-    console.log(req.body);
     const user = await User.findById(req.user.id).exec();
     user.display_name = req.body.display_name;
     user.profile_picture = req.body.profile_picture;

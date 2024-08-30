@@ -43,17 +43,14 @@ export default function Dm() {
 
     const handleFileUpload = async (e) => {
         const file = e.target.files[0];
-        console.log(file);
 
         const base64 = await convertToBase64(file);
         setBase64Pic(base64);
-        console.log(base64);
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        console.log(urlParams);
         const image = document.getElementById("image-upload");
         let dataPackage;
 
@@ -87,7 +84,6 @@ export default function Dm() {
             throw error
           })
         .then(res => {
-            console.log(res);
             setMessageHistory(res.conversation.history);
             document.getElementById("new-message").value = "";
             setBase64Pic(null);
@@ -98,6 +94,10 @@ export default function Dm() {
                 navigate('/login');
             }
         })
+    }
+
+    const handleDelete = () => {
+        setBase64Pic(null);
     }
 
     return(
@@ -127,7 +127,7 @@ export default function Dm() {
                 <input style={{ position: "absolute", visibility: "hidden", pointerEvents: "none", width: '0px', height: '0px'}} id="message-files" type="file" accept="image/*" onChange={(e) => {handleFileUpload(e)}}/>
                 <div style={{width: "100%"}}>
                 { base64Pic &&
-                    <FileMessageInput imgSrc={base64Pic} />
+                    <FileMessageInput imgSrc={base64Pic} deleteFunction={handleDelete}/>
                 }
                     <input type="text" id="new-message" required className="input" placeholder="Message"/>
 

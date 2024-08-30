@@ -32,7 +32,6 @@ export default function SignUp() {
           })
           .then(res => res.json())
           .then(res => {
-            console.log(res);
             if (res.errors) {
                 const displayNameErrors = res.errors.filter(error => error.path === "display_name");
                 const usernameErrors = res.errors.filter(error => error.path === "username");

@@ -26,8 +26,7 @@ export default function LogIn() {
           .then(res => res.json(res))
           .then(res => {
             if (res.status === 200) {
-                console.log(res);
-                navigate("/users")
+                navigate("/dms")
             }
           })
     }
@@ -53,8 +52,7 @@ export default function LogIn() {
           .then(res => res.json(res))
           .then(res => {
             if (res.status === 200) {
-                console.log(res);
-                navigate("/users")
+                navigate("/dms")
             }
           })
     }

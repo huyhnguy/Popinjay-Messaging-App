@@ -25,7 +25,6 @@ export default function UserTab() {
             throw error
           })
           .then(res => {
-            console.log(res);
             setUsers(res);
           })
           .catch(err => {

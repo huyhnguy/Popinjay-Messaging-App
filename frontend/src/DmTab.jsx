@@ -26,7 +26,6 @@ export default function DmTab() {
             throw error
           })
           .then(res => {
-            console.log(res);
             setSender(res.sender);
             setDms(res.dms);
 
@@ -51,6 +50,22 @@ export default function DmTab() {
         });
     }
 
+    const convertDate = (date) => {
+        let options = {
+            month: "short",
+            day: "numeric",
+            weekday: "short",
+            hour: "numeric",
+            minute: "numeric",
+            year: "numeric"
+        }
+        const readableDate = new Date(date)
+        const formatter = new Intl.DateTimeFormat("en-US", options)
+        const formattedDate = formatter.format(readableDate, options)
+
+        return formattedDate;
+    }
+
     return(
         <div className="messages-page">
             <h1>Messages</h1>
@@ -61,16 +76,20 @@ export default function DmTab() {
                                 const receiver = dm.users.find(user => user._id != sender);
                                 const lastMessage = dm.history[dm.history.length - 1];
                                 return (
-                                    <div className="message-card" key={dm._id} onClick={() => {handleDM(dm)}}>
-                                        <div className="profile-container">
+                                    <div>
+                                        <div className="message-card" key={dm._id} onClick={() => {handleDM(dm)}}>
                                             <ProfilePic imageSrc={receiver.profile_picture} size="5rem"/>
-                                            <p><strong>{receiver.display_name}</strong></p>
+                                            <div className="name-message">
+                                                <h2>{receiver.display_name}</h2>
+                                                { lastMessage.user._id === sender ?
+                                                    <p style={{color: "grey",  wordBreak: "break-word" }}>You: {lastMessage.image ? <i>sent an image</i> : lastMessage.content}</p>
+                                                    :
+                                                    <p style={{color: "grey", wordBreak: "break-word" }}>{receiver.display_name}: {lastMessage.content}</p>
+                                                }
+                                            </div>
+                                            <p style={{ color: "grey", margin: 0 }}>{convertDate(lastMessage.createdAt)}</p>
                                         </div>
-                                        { lastMessage.user._id === sender ?
-                                            <p style={{color: "grey"}}>You: {lastMessage.image ? <i>sent an image</i> : lastMessage.content}</p>
-                                            :
-                                            <p style={{color: "grey"}}>{receiver.display_name}: {lastMessage.content}</p>
-                                        }
+                                        <hr style={{ margin: 0 }}/>
                                     </div>
                                 )
                             })
