@@ -113,7 +113,6 @@ export default function Settings() {
                 </div>
             </div>
             <NavBar active='Settings' />
-            <NavBar invisible={true} />
         </div>
     )
 }

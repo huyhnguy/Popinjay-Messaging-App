@@ -3,21 +3,47 @@ import { useEffect, useState } from "react";
 import Message from "./Message";
 import ProfilePic from "./ProfilePic";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {faPaperPlane} from '@fortawesome/free-solid-svg-icons'
+import {faPaperPlane, faCirclePlus} from '@fortawesome/free-solid-svg-icons'
+import FileMessageInput from "./FileMessageInput";
 
 export default function Dm() {
     const {state} = useLocation();
     const { receiver, history } = state;
 
     const [messageHistory, setMessageHistory] = useState(history);
+    const [base64Pic, setBase64Pic] = useState(null);
 
     const urlParams = useParams();
     const navigate = useNavigate();
 
     useEffect(() => {
         const messageHistoryDiv = document.querySelector(".message-history");
-        messageHistoryDiv.lastChild.scrollIntoView();
-    }, [messageHistory])
+        if (messageHistoryDiv.lastChild) {
+            messageHistoryDiv.lastChild.scrollIntoView();
+        }
+    }, [messageHistory]);
+
+    const convertToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const fileReader = new FileReader();
+            fileReader.readAsDataURL(file); 
+            fileReader.onload = () => {
+                resolve(fileReader.result)
+            }
+            fileReader.onerror = (error) => {
+                reject(error)
+            }
+        })
+    }
+
+    const handleFileUpload = async (e) => {
+        const file = e.target.files[0];
+        console.log(file);
+
+        const base64 = await convertToBase64(file);
+        setBase64Pic(base64);
+        console.log(base64);
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -76,7 +102,17 @@ export default function Dm() {
                 }
             </main>
             <form method="POST" className="message-form">
-                <input type="text" id="new-message" required className="input" placeholder="Message"/>
+                <label htmlFor="message-files" >
+                    <FontAwesomeIcon icon={faCirclePlus} style={{ height: "100%", color: "#007BFF", cursor: "pointer"}}/>
+                </label>
+                <input style={{ position: "absolute", visibility: "hidden", pointerEvents: "none", width: '0px', height: '0px'}} id="message-files" type="file" accept="image/*" onChange={(e) => {handleFileUpload(e)}}/>
+                <div style={{width: "100%"}}>
+                { base64Pic &&
+                    <FileMessageInput imgSrc={base64Pic} />
+                }
+                    <input type="text" id="new-message" required className="input" placeholder="Message"/>
+
+                </div>
                 <button type="submit" onClick={handleSubmit} className="submit" style={{ width: "auto", paddingInline: "1.5rem" }}>
                     <FontAwesomeIcon icon={faPaperPlane} />
                 </button>

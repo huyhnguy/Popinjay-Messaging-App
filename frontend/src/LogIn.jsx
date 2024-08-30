@@ -34,6 +34,29 @@ export default function LogIn() {
 
     const handleGuest = (e) => {
         e.preventDefault();
+
+        const username = "guest"
+        const password = "guestguest123"
+
+        fetch('http://localhost:3000/api/login', {
+            method: 'POST',
+            credentials: "include",
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password
+            })
+          })
+          .then(res => res.json(res))
+          .then(res => {
+            if (res.status === 200) {
+                console.log(res);
+                navigate("/users")
+            }
+          })
     }
 
     

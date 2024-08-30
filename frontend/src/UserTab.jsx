@@ -65,9 +65,9 @@ export default function UserTab() {
 
     return(
         <div className="users-page">
-
-            <div className="users-container">
-                <h1>Users</h1>
+            <h1>Users</h1>
+            <div style={{width: "100%", height: "100%", overflow: "scroll"}}>
+                <div className="users-container">
                 { users &&
                     users.map(user => 
                         <div className="user-card" onClick={() => {handleDM(user)}} key={user._id}>
@@ -76,9 +76,9 @@ export default function UserTab() {
                         </div>
                     )
                 }
+                </div>
             </div>
             <NavBar active='Users'/>
-            <NavBar invisible={true} />
         </div>
     )
 }

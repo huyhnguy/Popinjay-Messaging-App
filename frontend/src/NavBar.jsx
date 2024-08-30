@@ -2,9 +2,9 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faGear, faUsers, faEarthAmericas, faMessage} from '@fortawesome/free-solid-svg-icons'
 
-export default function NavBar({ active, invisible = false }) {
+export default function NavBar({ active }) {
     return(
-        <nav style={{visibility: invisible && "hidden", pointerEvents: invisible && "none", position: invisible && "static"}}>
+        <nav >
             <Link className="nav-link" style={{ color: active === 'Groups' && '#007BFF'}}>
                 <FontAwesomeIcon icon={faUsers} className="nav-icon"/>
                 <p>Groups</p>

@@ -22,26 +22,13 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /*position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);*/
   padding: 1rem;
+  margin:2rem;
   border-radius: 15px;
   width: 50%;
   background-color: white;
   box-shadow: 0px 0px 10px 10px rgba(0, 0, 0, 0.125);
 }
-
-.settings-container {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-block: 2rem;
-}
-
 
 @media (max-width: 750px) {
   .site-name {
@@ -124,9 +111,6 @@ body {
 }
 
 nav {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
   display: flex;
   justify-content: space-evenly;
   padding: 1rem;
@@ -134,11 +118,19 @@ nav {
 }
 
 .message-form {
-  
+  position: relative;
   gap: 1rem;
   padding: 1rem;
   display: flex;
   border-top: solid;
+}
+
+.message-file-upload {
+  position: absolute;
+  height: 100px;
+  top: -115px;
+  border-radius: 10px;
+  opacity: 0.75;
 }
 
 .message-form input {
@@ -196,7 +188,7 @@ nav {
   width: 100%;
 }
 
-.settings-page, .login-page, .signup-page, .users-page, .messages-page {
+.login-page, .signup-page{
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -205,7 +197,7 @@ nav {
   width: 100%;
 }
 
-.dm-page {
+.dm-page, .settings-page, .users-page, .messages-page  {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -220,6 +212,23 @@ nav {
   flex-direction: column;
   align-items: start;
   margin-bottom: 1rem;
+}
+
+.settings-container {
+  overflow: scroll;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.users-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 1rem;
+  justify-content: center;
 }
 
 .receiver-container {
@@ -239,13 +248,12 @@ nav {
   justify-content: center;
 }
 
-.users-container, .messages-container {
+ .messages-container {
   display: flex;
   gap: 3rem;
   flex-wrap: wrap;
   margin-inline: 3rem;
-  justify-content: center;
-  padding-block: 2rem;
+  flex-direction: column;
 }
 
 .user-card, .message-card {
@@ -259,7 +267,6 @@ nav {
 }
 
 .message-card {
-  width: 100%;
   align-items: start;
   border: solid;
   padding: 1rem;
@@ -267,10 +274,6 @@ nav {
 
 .user-card p {
   margin: 0;
-}
-
-.users-container h1, .messages-container h1 {
-  width: 100%;
 }
 
 .profile-container {
@@ -288,4 +291,8 @@ nav {
   height: auto;
   word-wrap: break-word;
   margin: 1rem 1rem 0 1rem;
+}
+
+.users-page h1, .messages-page h1 {
+  margin-inline: 1rem;
 }
