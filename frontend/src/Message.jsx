@@ -9,7 +9,7 @@ export default function Message({ info, person }) {
                     <img src={info.image} alt="" style={{ height: "200px", borderRadius: "10px" }}/>
                 }
                 { info.content &&
-                    <p className="message" style={{ backgroundColor: "#007BFF" }}>{info.content}</p>
+                    <p className="message" style={{ backgroundColor: "#007BFF", alignSelf: "end" }}>{info.content}</p>
                 }
             </div>
         )
