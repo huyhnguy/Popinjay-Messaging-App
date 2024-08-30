@@ -1,15 +1,12 @@
-import { useState } from "react";
-import { useEffect } from "react";
-
 export default function Message({ info, person }) {
 
         let options = {
-            month: "long",
-            year: "numeric",
+            month: "short",
             day: "numeric",
-            weekday: "long",
+            weekday: "short",
             hour: "numeric",
-            minute: "numeric"
+            minute: "numeric",
+            year: "numeric"
         }
         const readableDate = new Date(info.createdAt)
         const formatter = new Intl.DateTimeFormat("en-US", options)

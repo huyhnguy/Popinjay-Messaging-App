@@ -289,7 +289,8 @@ nav {
   border-radius: 10px;
   word-wrap: break-word;
   margin: 0;
-  width: 100%;
+  width: fit-content;
+  max-width: 75vw;
 }
 
 .message-container {
@@ -306,6 +307,20 @@ nav {
 
 .timestamp {
   margin: 0;
-  color: grey;
+  color: #a7a7a7;
   font-size: 0.75rem;
+}
+
+.file-upload-icon {
+  height: 100%;
+  color: #007bff;
+  cursor: pointer;
+}
+
+.file-upload-icon:hover {
+  color: #006fe5;
+}
+
+.file-upload-icon:active {
+  color: #0064cf;
 }

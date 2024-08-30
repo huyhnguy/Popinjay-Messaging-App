@@ -122,7 +122,7 @@ export default function Dm() {
             </main>
             <form method="POST" className="message-form">
                 <label htmlFor="message-files" >
-                    <FontAwesomeIcon icon={faCirclePlus} style={{ height: "100%", color: "#007BFF", cursor: "pointer"}}/>
+                    <FontAwesomeIcon icon={faCirclePlus} className="file-upload-icon" style={{ }}/>
                 </label>
                 <input style={{ position: "absolute", visibility: "hidden", pointerEvents: "none", width: '0px', height: '0px'}} id="message-files" type="file" accept="image/*" onChange={(e) => {handleFileUpload(e)}}/>
                 <div style={{width: "100%"}}>

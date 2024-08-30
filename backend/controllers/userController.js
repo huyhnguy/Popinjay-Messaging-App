@@ -67,6 +67,11 @@ exports.login_post = [
         })
 ]
 
+exports.logout = (req, res, next) => {
+    res.clearCookie("token");
+    res.end();
+}
+
 exports.signup_post = [
     body("display_name")
         .trim()

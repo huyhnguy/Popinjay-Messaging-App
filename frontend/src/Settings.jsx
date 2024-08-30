@@ -89,6 +89,28 @@ export default function Settings() {
 
     }
 
+    const handleLogOut = (e) => {
+        e.preventDefault();
+
+        fetch('http://localhost:3000/api/logout', {
+            method: 'POST',
+            credentials: "include",
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+        }).then(res => {
+            if (res.ok) {
+                navigate('/login');
+            }
+            const error = new Error(res.message);
+            error.code = res.status;
+            throw error
+        }).catch(err => {
+            console.log(err);
+        })
+    }
+
     return(
         <div className="settings-page">
             <div className="settings-container">
@@ -109,6 +131,7 @@ export default function Settings() {
                             <input className="input" id="display-name" type="text" defaultValue={displayName}/>
                         </div>
                         <button className="submit" onClick={handleSubmit}>Save</button>
+                        <button className="submit" onClick={handleLogOut}>Log out</button>
                     </form>
                 </div>
             </div>

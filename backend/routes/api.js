@@ -9,6 +9,8 @@ const messageController = require('../controllers/messageController');
 
 router.post("/login", userController.login_post);
 
+router.post("/logout", userController.logout);
+
 router.post("/signup", userController.signup_post);
 
 router.get("/users", authenticateToken, userController.users_list);
