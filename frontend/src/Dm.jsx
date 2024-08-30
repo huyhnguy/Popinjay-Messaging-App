@@ -1,5 +1,5 @@
 import { useLocation, useParams, useNavigate } from "react-router-dom"
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Message from "./Message";
 import ProfilePic from "./ProfilePic";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -19,7 +19,12 @@ export default function Dm() {
     useEffect(() => {
         const messageHistoryDiv = document.querySelector(".message-history");
         if (messageHistoryDiv.lastChild) {
-            messageHistoryDiv.lastChild.scrollIntoView();
+            messageHistoryDiv.lastChild.scrollIntoView({
+                block: "start",
+                inline: "nearest",
+                behavior: "smooth",
+                alignToTop: false
+              });
         }
     }, [messageHistory]);
 
@@ -101,7 +106,7 @@ export default function Dm() {
                 <ProfilePic imageSrc={receiver.profile_picture} size="2.5rem"/>
                 <h1>{receiver.display_name}</h1>
             </div>
-            <main className="message-history">
+            <main className="message-history" >
                 { messageHistory && 
                     messageHistory.map(message => {
                         if (message.user._id === receiver._id) {
@@ -127,7 +132,7 @@ export default function Dm() {
                     <input type="text" id="new-message" required className="input" placeholder="Message"/>
 
                 </div>
-                <button type="submit" onClick={handleSubmit} className="submit" style={{ width: "auto", paddingInline: "1.5rem" }}>
+                <button type="submit" onClick={(e) => {handleSubmit(e)}} className="submit" style={{ width: "auto", paddingInline: "1.5rem" }}>
                     <FontAwesomeIcon icon={faPaperPlane} />
                 </button>
             </form>

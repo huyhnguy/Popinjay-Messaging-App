@@ -67,7 +67,7 @@ export default function DmTab() {
                                             <p><strong>{receiver.display_name}</strong></p>
                                         </div>
                                         { lastMessage.user._id === sender ?
-                                            <p style={{color: "grey"}}>You: {lastMessage.content}</p>
+                                            <p style={{color: "grey"}}>You: {lastMessage.image ? <i>sent an image</i> : lastMessage.content}</p>
                                             :
                                             <p style={{color: "grey"}}>{receiver.display_name}: {lastMessage.content}</p>
                                         }

@@ -289,7 +289,7 @@ nav {
   border-radius: 10px;
   word-wrap: break-word;
   margin: 0;
-  width: fit-content;
+  width: 100%;
 }
 
 .message-container {
@@ -302,4 +302,10 @@ nav {
 
 .users-page h1, .messages-page h1 {
   margin-inline: 1rem;
+}
+
+.timestamp {
+  margin: 0;
+  color: grey;
+  font-size: 0.75rem;
 }
