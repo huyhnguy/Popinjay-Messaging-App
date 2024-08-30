@@ -49,6 +49,8 @@ export default function Dm() {
         e.preventDefault();
 
         console.log(urlParams);
+        const image = document.getElementById("image-upload");
+        console.log(image.src);
         
         fetch('http://localhost:3000/api/messages/create', {
             method: 'POST',
@@ -59,7 +61,8 @@ export default function Dm() {
             },
             body: JSON.stringify({
                 new_message:  document.getElementById("new-message").value,
-                conversation_id: urlParams.dmId
+                conversation_id: urlParams.dmId,
+                image: image.src,
             })
           })
         .then(res => {
@@ -72,6 +75,7 @@ export default function Dm() {
             console.log(res);
             setMessageHistory(res.conversation.history);
             document.getElementById("new-message").value = "";
+            setBase64Pic(null);
         })
         .catch(err => {
             console.log(err);
