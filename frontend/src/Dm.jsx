@@ -50,7 +50,21 @@ export default function Dm() {
 
         console.log(urlParams);
         const image = document.getElementById("image-upload");
-        console.log(image.src);
+        let dataPackage;
+
+        if (image) {
+            dataPackage = {
+                new_message:  document.getElementById("new-message").value,
+                conversation_id: urlParams.dmId,
+                image: image.src,
+            }
+        } else {
+            dataPackage = {
+                new_message:  document.getElementById("new-message").value,
+                conversation_id: urlParams.dmId,
+            }
+        }
+
         
         fetch('http://localhost:3000/api/messages/create', {
             method: 'POST',
@@ -59,11 +73,7 @@ export default function Dm() {
               'Accept': 'application/json',
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                new_message:  document.getElementById("new-message").value,
-                conversation_id: urlParams.dmId,
-                image: image.src,
-            })
+            body: JSON.stringify(dataPackage)
           })
         .then(res => {
             if (res.ok) { return res.json() }
