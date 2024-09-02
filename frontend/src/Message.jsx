@@ -1,16 +1,16 @@
 export default function Message({ info, person }) {
 
-        let options = {
-            month: "short",
-            day: "numeric",
-            weekday: "short",
-            hour: "numeric",
-            minute: "numeric",
-            year: "numeric"
-        }
-        const readableDate = new Date(info.createdAt)
-        const formatter = new Intl.DateTimeFormat("en-US", options)
-        const formattedDate = formatter.format(readableDate, options)
+    let options = {
+        month: "short",
+        day: "numeric",
+        weekday: "short",
+        hour: "numeric",
+        minute: "numeric",
+        year: "numeric"
+    }
+    const readableDate = new Date(info.createdAt)
+    const formatter = new Intl.DateTimeFormat("en-US", options)
+    const formattedDate = formatter.format(readableDate, options)
 
     if (person === "sender") {
         return(

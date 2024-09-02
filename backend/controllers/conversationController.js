@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Conversation = require("../models/conversation");
+const { body, validationResult } = require("express-validator");
 const User = require("../models/user")
 
 exports.dms_create_post = asyncHandler(async (req, res, next) => {
@@ -57,3 +58,64 @@ exports.dms_list_get = asyncHandler(async (req, res, next) => {
 
     res.json({ sender: req.user.id, dms: dms });
 })
+
+exports.groups_list_get = asyncHandler(async (req, res, next) => {
+    const groups = await Conversation.find({
+        $expr: {
+            $gt: [{
+                $size: "$users"
+            }, 2]
+        }
+    }).find({
+        users: req.user.id
+    }).find({
+        'history.0': {
+            $exists: true
+        }
+    }).populate({
+        path: 'history',
+        populate: {
+            path: 'user',
+            select: 'display_name'
+        }
+    }).populate({
+        path: 'users',
+        select: 'display_name profile_picture'
+    }).exec();
+
+    console.log(groups);
+
+    res.json({ sender: req.user.id, groups: groups });
+})
+
+exports.groups_create_post = [
+    body("display_name")
+        .trim()
+        .isLength({ max: 35 })
+        .withMessage("Name cannot be more than 35 characters")
+        .escape(),
+    asyncHandler(async (req, res, next) => {
+        const errors = validationResult(req);
+        const userArray = [...req.body.users, req.user.id];
+
+        if (!errors.isEmpty()) {
+            res.json({
+                profile_picture: req.body.profile_picture,
+                display_name: req.body.display_name,
+                users: userArray,
+                errors: errors.array()
+            })
+        } else {
+            const conversation = new Conversation({
+                profile_picture: req.body.profile_picture,
+                display_name: req.body.display_name,
+                users: userArray,
+            })
+
+            console.log(conversation);
+            await conversation.save();
+
+            res.status(201).json({ "status": 201, message: 'Successfully created conversation' });
+        }
+    })
+]

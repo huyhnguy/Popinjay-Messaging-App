@@ -23,9 +23,9 @@ router.put("/users/:userId", userController.user_update);
 
 router.delete("/users/:userId", userController.user_delete);
 
-router.get("/groups", authenticateToken, function (req, res) {
-    res.send("groups GET");
-});
+router.get("/groups", authenticateToken, conversationController.groups_list_get);
+
+router.post("/groups/create", authenticateToken, conversationController.groups_create_post);
 
 router.get("/groups/:groupId", function (req, res) {
     res.send(`group ${req.params.groupId} GET`);

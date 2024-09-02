@@ -1,17 +1,20 @@
-import Logo from "./Logo"
 import NavBar from "./NavBar"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
 import ProfilePic from "./ProfilePic";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {faCirclePlus} from '@fortawesome/free-solid-svg-icons'
+import AddGroup from "./AddGroup";
 
-export default function DmTab() {
-    const [dms, setDms] = useState(null);
+export default function GroupTab() {
+    const [groups, setGroups] = useState(null);
     const [sender, setSender] = useState(null);
+    const [addGroup, setAddGroup] = useState(false);
 
     const navigate = useNavigate();
     
     useEffect(() => {
-        fetch('http://localhost:3000/api/dms', {
+        fetch('http://localhost:3000/api/groups', {
             method: 'GET',
             credentials: "include",
             headers: {
@@ -26,9 +29,9 @@ export default function DmTab() {
             throw error
           })
           .then(res => {
-            setSender(res.sender);
-            setDms(res.dms);
-
+            console.log(res);
+            setGroups(res.groups);
+            setSender(res.sender)
           })
           .catch(err => {
             console.log(err);
@@ -38,14 +41,12 @@ export default function DmTab() {
         })
     }, [])
 
-    const handleDM = (dm) => {
-        const receiver = dm.users.find(user => user._id != sender);
-
-        const route = `/dms/${dm._id}`;
+    const handleGroup = (group) => {
+        const route = `/groups/${group._id}`;
         navigate(route, { 
             state: {
                 receiver: receiver,
-                history: dm.history
+                history: group.history
             } 
         });
     }
@@ -66,25 +67,40 @@ export default function DmTab() {
         return formattedDate;
     }
 
+    const handleAddGroup = () => {
+        if (addGroup) {
+            setAddGroup(false);
+        } else {
+            setAddGroup(true);
+        }
+    }
+
     return(
-        <div className="messages-page">
-            <h1>Messages</h1>
+        <div className="messages-page" style={{ position: "relative" }}>
+            { addGroup &&
+                <AddGroup closePopUp={handleAddGroup} />
+            }
+            <div className="groups-top-bar">
+                <h1>Groups</h1>
+                <button style={{all: "unset"}} onClick={handleAddGroup}>
+                    <FontAwesomeIcon icon={faCirclePlus} className="file-upload-icon" style={{ height: "3rem" }}/>
+                </button>
+            </div>
             <div style={{width: "100%", height: "100%", overflow: "scroll"}}>
                 <div className="messages-container">
-                        { dms &&
-                            dms.map((dm) => {
-                                const receiver = dm.users.find(user => user._id != sender);
-                                const lastMessage = dm.history[dm.history.length - 1];
+                        { groups &&
+                            groups.map((group) => {
+                                const lastMessage = group.history[group.history.length - 1];
                                 return (
                                     <div>
-                                        <div className="message-card" key={dm._id} onClick={() => {handleDM(dm)}}>
-                                            <ProfilePic imageSrc={receiver.profile_picture} size="5rem"/>
+                                        <div className="message-card" key={group._id} onClick={() => {handleGroup(group)}}>
+                                            <ProfilePic imageSrc={group.profile_picture} size="5rem"/>
                                             <div className="name-message">
-                                                <h2>{receiver.display_name}</h2>
+                                                <h2>{group.display_name}</h2>
                                                 { lastMessage.user._id === sender ?
                                                     <p style={{color: "grey",  wordBreak: "break-word" }}>You: {lastMessage.image ? <i>sent an image</i> : lastMessage.content}</p>
                                                     :
-                                                    <p style={{color: "grey", wordBreak: "break-word" }}>{receiver.display_name}: {lastMessage.image ? <i>sent an image</i> : lastMessage.content}</p>
+                                                    <p style={{color: "grey", wordBreak: "break-word" }}>{lastMessage.user.display_name}: {lastMessage.image ? <i>sent an image</i> : lastMessage.content}</p>
                                                 }
                                             </div>
                                             <p style={{ color: "grey", margin: 0 }}>{convertDate(lastMessage.createdAt)}</p>
@@ -96,7 +112,7 @@ export default function DmTab() {
                         }
                 </div>
             </div>
-            <NavBar active='Messages'/>
+            <NavBar active='Groups'/>
         </div>
     )
 }

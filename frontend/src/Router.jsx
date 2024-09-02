@@ -10,6 +10,7 @@ import UserTab from "./UserTab";
 import Dm from "./Dm";
 import Settings from "./Settings";
 import DmTab from "./DmTab";
+import GroupTab from "./GroupTab";
 
 const router = createBrowserRouter([
     {
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
     {
         path: "/settings",
         element: <Settings />,
+    },
+    {
+        path: "/groups",
+        element: <GroupTab />,
     },
 ]);
 

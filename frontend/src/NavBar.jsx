@@ -4,8 +4,8 @@ import {faGear, faUsers, faEarthAmericas, faMessage} from '@fortawesome/free-sol
 
 export default function NavBar({ active }) {
     return(
-        <nav >
-            <Link className="nav-link" style={{ color: active === 'Groups' && '#007BFF'}}>
+        <nav>
+            <Link to="/groups" className="nav-link" style={{ color: active === 'Groups' && '#007BFF'}}>
                 <FontAwesomeIcon icon={faUsers} className="nav-icon"/>
                 <p>Groups</p>
             </Link>

@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import Message from "./Message";
 import ProfilePic from "./ProfilePic";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {faPaperPlane, faCirclePlus} from '@fortawesome/free-solid-svg-icons'
+import {faPaperPlane, faCircleChevronUp} from '@fortawesome/free-solid-svg-icons'
 import FileMessageInput from "./FileMessageInput";
 
 export default function Dm() {
@@ -122,7 +122,7 @@ export default function Dm() {
             </main>
             <form method="POST" className="message-form">
                 <label htmlFor="message-files" >
-                    <FontAwesomeIcon icon={faCirclePlus} className="file-upload-icon" style={{ }}/>
+                    <FontAwesomeIcon icon={faCircleChevronUp} className="file-upload-icon" style={{ }}/>
                 </label>
                 <input style={{ position: "absolute", visibility: "hidden", pointerEvents: "none", width: '0px', height: '0px'}} id="message-files" type="file" accept="image/*" onChange={(e) => {handleFileUpload(e)}}/>
                 <div style={{width: "100%"}}>
