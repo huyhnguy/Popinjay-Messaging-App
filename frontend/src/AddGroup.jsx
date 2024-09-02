@@ -151,15 +151,17 @@ export default function AddGroup({ closePopUp }) {
                                 }
                                 <div className="form-user-list">
                                     { usersList &&
-                                        usersList.map(user => 
-                                            <div key={user._id}>
-                                                <label className="user-card" htmlFor={user._id} id={user._id + "-label"}>
-                                                    <ProfilePic imageSrc={user.profile_picture} size="3rem"/>
-                                                    <p>{user.display_name}</p>
-                                                </label>
-                                                <input type="checkbox" id={user._id} name={user._id} value={user._id} style={{ position: "absolute", visibility: "hidden", pointerEvents: "none", width: '0px', height: '0px'}} onChange={(e) => {handleCheckbox(e)}}/>
-                                            </div>
-                                        )
+                                        usersList.map(user => {
+                                            return(
+                                                <div key={user._id}>
+                                                    <label className={`user-card ${checkedUsers.includes(user) && 'selected-user'}`} htmlFor={user._id} id={user._id + "-label"}>
+                                                        <ProfilePic imageSrc={user.profile_picture} size="3rem"/>
+                                                        <p>{user.display_name}</p>
+                                                    </label>
+                                                    <input type="checkbox" id={user._id} name={user._id} value={user._id} style={{ position: "absolute", visibility: "hidden", pointerEvents: "none", width: '0px', height: '0px'}} onChange={(e) => {handleCheckbox(e)}}/>
+                                                </div>
+                                            )
+                                        })
                                     }
                                 </div>
                             </section>
