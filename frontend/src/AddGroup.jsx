@@ -158,7 +158,7 @@ export default function AddGroup({ closePopUp }) {
                                                         <ProfilePic imageSrc={user.profile_picture} size="3rem"/>
                                                         <p>{user.display_name}</p>
                                                     </label>
-                                                    <input type="checkbox" id={user._id} name={user._id} value={user._id} style={{ position: "absolute", visibility: "hidden", pointerEvents: "none", width: '0px', height: '0px'}} onChange={(e) => {handleCheckbox(e)}}/>
+                                                    <input type="checkbox" id={user._id} name={user._id} value={user._id} style={{ position: "absolute", visibility: "hidden", pointerEvents: "none", width: '0px', height: '0px'}} onChange={(e) => {handleCheckbox(e)}} checked={checkedUsers.includes(user) ? true : false}/>
                                                 </div>
                                             )
                                         })
