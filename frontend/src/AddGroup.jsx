@@ -123,7 +123,7 @@ export default function AddGroup({ closePopUp }) {
 
     return(
         <>
-            <div className="shadow"></div>
+            <div className="shadow" onClick={closePopUp}></div>
             <div className="add-group-container">
                 { !next ?
                     <>

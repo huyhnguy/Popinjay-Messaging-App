@@ -66,7 +66,7 @@ export default function Dm() {
                 conversation_id: urlParams.dmId,
             }
         }
-
+        console.log(dataPackage);
         
         fetch('http://localhost:3000/api/messages/create', {
             method: 'POST',

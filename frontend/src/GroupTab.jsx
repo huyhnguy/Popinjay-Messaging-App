@@ -97,13 +97,23 @@ export default function GroupTab() {
                                             <ProfilePic imageSrc={group.profile_picture} size="5rem"/>
                                             <div className="name-message">
                                                 <h2>{group.display_name}</h2>
-                                                { lastMessage.user._id === sender ?
-                                                    <p style={{color: "grey",  wordBreak: "break-word" }}>You: {lastMessage.image ? <i>sent an image</i> : lastMessage.content}</p>
-                                                    :
-                                                    <p style={{color: "grey", wordBreak: "break-word" }}>{lastMessage.user.display_name}: {lastMessage.image ? <i>sent an image</i> : lastMessage.content}</p>
+
+                                                { group.history.length != 0 &&
+                                                    <>
+                                                        {lastMessage.user._id === sender ?
+                                                            <p style={{color: "grey",  wordBreak: "break-word" }}>You: {lastMessage.image ? <i>sent an image</i> : lastMessage.content}</p>
+                                                            :
+                                                            <p style={{color: "grey", wordBreak: "break-word" }}>{lastMessage.user.display_name}: {lastMessage.image ? <i>sent an image</i> : lastMessage.content}</p>
+                                                        }
+                                                    </>
                                                 }
+
+
                                             </div>
-                                            <p style={{ color: "grey", margin: 0 }}>{convertDate(lastMessage.createdAt)}</p>
+                                            <p style={{ color: "grey", margin: 0 }}>{
+                                                group.history.length != 0 && 
+                                                    convertDate(lastMessage.createdAt)
+                                            }</p>
                                         </div>
                                         <hr style={{ margin: 0 }}/>
                                     </div>

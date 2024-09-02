@@ -60,28 +60,19 @@ exports.dms_list_get = asyncHandler(async (req, res, next) => {
 })
 
 exports.groups_list_get = asyncHandler(async (req, res, next) => {
-    const groups = await Conversation.find({
-        $expr: {
-            $gt: [{
-                $size: "$users"
-            }, 2]
-        }
-    }).find({
-        users: req.user.id
-    }).find({
-        'history.0': {
-            $exists: true
-        }
-    }).populate({
-        path: 'history',
-        populate: {
-            path: 'user',
-            select: 'display_name'
-        }
-    }).populate({
-        path: 'users',
-        select: 'display_name profile_picture'
-    }).exec();
+    const groups = await Conversation.find({ "users.2" : { "$exists": true } })
+        .find({
+            users: req.user.id
+        }).populate({
+            path: 'history',
+            populate: {
+                path: 'user',
+                select: 'display_name'
+            }
+        }).populate({
+            path: 'users',
+            select: 'display_name profile_picture'
+        }).exec().catch(err => console.log(err))
 
     console.log(groups);
 
