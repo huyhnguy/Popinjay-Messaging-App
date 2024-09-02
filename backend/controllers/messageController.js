@@ -12,14 +12,20 @@ exports.message_create_post = asyncHandler(async (req, res, next) => {
 
     const conversation = await Conversation.findById(req.body.conversation_id);
     conversation.history.push(newMessage._id);
-    await conversation.save();
-    const populatedConversation = await Conversation.findById(req.body.conversation_id).populate({
+
+    try {
+        await conversation.save();
+    } catch (err) {
+        console.error('error saving conversation:', err);
+    }
+  
+    const populatedConversation = await Conversation.findById(conversation._id).populate({
         path: 'history',
         populate: {
             path: 'user',
             select: 'display_name'
         }
-    }).exec();
+    });
 
     res.json({ conversation: populatedConversation, message: "Message successfully created and saved into the conversation"})
 })

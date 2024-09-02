@@ -9,7 +9,7 @@ import AddGroup from "./AddGroup";
 export default function GroupTab() {
     const [groups, setGroups] = useState(null);
     const [sender, setSender] = useState(null);
-    const [addGroup, setAddGroup] = useState(false);
+    const [addGroup, setAddGroup] = useState("closed");
 
     const navigate = useNavigate();
     
@@ -45,8 +45,8 @@ export default function GroupTab() {
         const route = `/groups/${group._id}`;
         navigate(route, { 
             state: {
-                receiver: receiver,
-                history: group.history
+                sender: sender,
+                group: group,
             } 
         });
     }
@@ -67,22 +67,64 @@ export default function GroupTab() {
         return formattedDate;
     }
 
-    const handleAddGroup = () => {
-        if (addGroup) {
-            setAddGroup(false);
-        } else {
-            setAddGroup(true);
+    const handleAddGroup = (action) => {
+        console.log(action);
+        if (action === "completed") {
+            setAddGroup("closed");
+
+            fetch('http://localhost:3000/api/groups', {
+                method: 'GET',
+                credentials: "include",
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+                },
+              })
+              .then(res => {
+                if (res.ok) { return res.json() }
+                const error = new Error(res.message);
+                error.code = res.status;
+                throw error
+              })
+              .then(res => {
+                console.log(res);
+                setGroups(res.groups);
+                setSender(res.sender)
+              })
+              .catch(err => {
+                console.log(err);
+                if (err.code === 401) {
+                    navigate('/login');
+                }
+              })
+
+        } else if (action === "open") {
+            setAddGroup("open");
+        } else if (action === "close") {
+            setAddGroup("close");
         }
+    }
+
+    const displayUsersNamesInGroup = (users) => {
+        let names = "";
+        for (let i = 0; i < users.length; i++) {
+            if (i === 0) {
+                names = users[i].display_name;
+            } else {
+                names = names + ", " + users[i].display_name;
+            }
+        }
+        return names
     }
 
     return(
         <div className="messages-page" style={{ position: "relative" }}>
-            { addGroup &&
+            { addGroup === "open" &&
                 <AddGroup closePopUp={handleAddGroup} />
             }
             <div className="groups-top-bar">
                 <h1>Groups</h1>
-                <button style={{all: "unset"}} onClick={handleAddGroup}>
+                <button style={{all: "unset"}} onClick={() => {handleAddGroup("open")}}>
                     <FontAwesomeIcon icon={faCirclePlus} className="file-upload-icon" style={{ height: "3rem" }}/>
                 </button>
             </div>
@@ -94,9 +136,9 @@ export default function GroupTab() {
                                 return (
                                     <div>
                                         <div className="message-card" key={group._id} onClick={() => {handleGroup(group)}}>
-                                            <ProfilePic imageSrc={group.profile_picture} size="5rem"/>
+                                            <ProfilePic imageSrc={group.profile_picture} size="5rem" group={true} />
                                             <div className="name-message">
-                                                <h2>{group.display_name}</h2>
+                                                <h2>{group.display_name != "" ? group.display_name : displayUsersNamesInGroup(group.users)}</h2>
 
                                                 { group.history.length != 0 &&
                                                     <>

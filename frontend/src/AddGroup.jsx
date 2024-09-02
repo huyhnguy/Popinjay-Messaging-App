@@ -90,7 +90,7 @@ export default function AddGroup({ closePopUp }) {
           .then(res => res.json())
           .then(res => {
             console.log(res);
-            closePopUp();
+            closePopUp("completed");
           })
           .catch(err => {
             console.log(err);
@@ -123,7 +123,7 @@ export default function AddGroup({ closePopUp }) {
 
     return(
         <>
-            <div className="shadow" onClick={closePopUp}></div>
+            <div className="shadow" onClick={() => {closePopUp("close")}}></div>
             <div className="add-group-container">
                 { !next ?
                     <>
