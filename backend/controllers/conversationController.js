@@ -35,12 +35,12 @@ exports.dms_create_post = asyncHandler(async (req, res, next) => {
 });
 
 exports.dms_list_get = asyncHandler(async (req, res, next) => {
-    const dms = await Conversation.find({ 
+    const dms = await Conversation.find({
+        users: req.user.id
+    }).find({ 
         users: { 
             $size: 2,
         } 
-    }).find({
-        users: req.user.id
     }).find({
         'history.0': {
             $exists: true
@@ -55,6 +55,7 @@ exports.dms_list_get = asyncHandler(async (req, res, next) => {
         path: 'users',
         select: 'display_name profile_picture'
     }).exec();
+
 
     res.json({ sender: req.user.id, dms: dms });
 })

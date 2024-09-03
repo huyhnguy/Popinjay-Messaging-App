@@ -100,11 +100,23 @@ export default function GroupDm() {
         setBase64Pic(null);
     }
 
+    const displayUsersNamesInGroup = (users) => {
+        let names = "";
+        for (let i = 0; i < users.length; i++) {
+            if (i === 0) {
+                names = users[i].display_name;
+            } else {
+                names = names + ", " + users[i].display_name;
+            }
+        }
+        return names
+    }
+
     return(
         <div className="dm-page">
             <div className="receiver-container">
                 <ProfilePic imageSrc={group.profile_picture} size="2.5rem"/>
-                <h1>{group.display_name}</h1>
+                <h1>{group.display_name != "" ? group.display_name : displayUsersNamesInGroup(group.users)}</h1>
             </div>
             <main className="message-history" >
                 { messageHistory && 

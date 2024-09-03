@@ -28,7 +28,7 @@ export default function DmTab() {
           .then(res => {
             setSender(res.sender);
             setDms(res.dms);
-
+            console.log(res.dms);
           })
           .catch(err => {
             console.log(err);
