@@ -29,10 +29,8 @@ export default function GroupTab() {
             throw error
           })
           .then(res => {
-            console.log(res.groups);
             const groupsArray = res.groups;
             sortByMostRecent(groupsArray);
-            console.log(groupsArray);
             setGroups(groupsArray);
             setSender(res.sender)
           })
@@ -117,8 +115,9 @@ export default function GroupTab() {
                 throw error
               })
               .then(res => {
-                console.log(res);
-                setGroups(res.groups);
+                const groupsArray = res.groups;
+                sortByMostRecent(groupsArray);
+                setGroups(groupsArray);
                 setSender(res.sender)
               })
               .catch(err => {
