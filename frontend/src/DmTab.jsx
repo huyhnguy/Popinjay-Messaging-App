@@ -52,6 +52,18 @@ export default function DmTab() {
         });
     }
 
+    function sameDay(d1, d2) {
+        return d1.getFullYear() === d2.getFullYear() &&
+          d1.getMonth() === d2.getMonth() &&
+          d1.getDate() === d2.getDate();
+      }
+
+    function isYesterday(d1, d2) {
+        return d1.getFullYear() === d2.getFullYear() &&
+          d1.getMonth() === d2.getMonth() &&
+          d1.getDate() === d2.getDate() - 1;
+    }
+
     const convertDate = (date) => {
         let options = {
             month: "short",
@@ -64,13 +76,7 @@ export default function DmTab() {
         const readableDate = new Date(date);
         const currentDate = new Date();
 
-        const dateDifferenceMillisecs = Math.abs(currentDate - readableDate);
-        const dateDifferenceSecs = dateDifferenceMillisecs / 1000;
-        const dateDifferenceMins = dateDifferenceSecs / 60;
-        const dateDifferenceHours = dateDifferenceMins / 60;
-        const dateDifferenceDays = dateDifferenceHours / 24;
-
-        if (dateDifferenceDays < 1) {
+        if (sameDay(readableDate, currentDate) === true) {
             options = {
                 hour: "numeric",
                 minute: "numeric",
@@ -79,7 +85,9 @@ export default function DmTab() {
             const formattedDate = formatter.format(readableDate, options);
 
             return formattedDate
-        } else if (dateDifferenceDays >= 1) {
+        } else if (isYesterday(readableDate, currentDate) === true) {
+            return "Yesterday"
+        } else if (sameDay(readableDate, currentDate) === false) {
             let options = {
                 month: "numeric",
                 day: "numeric",

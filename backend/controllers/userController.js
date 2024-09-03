@@ -164,11 +164,23 @@ exports.users_list = asyncHandler(async (req, res, next) => {
 
 exports.user_profile_get = asyncHandler(async (req, res, next) => {
     const user = await User.findById(req.user.id).exec();
+    console.log(req.user.id);
 
-    res.json({
-        display_name: user.display_name,
-        profile_picture: user.profile_picture
-    })
+    if (req.user.id === "66d0f850353bc0d50dfd3f1c") {
+        res.json({
+            display_name: user.display_name,
+            profile_picture: user.profile_picture,
+            guest: true
+        })
+    } else {
+        res.json({
+            display_name: user.display_name,
+            profile_picture: user.profile_picture,
+            guest: false
+        })
+    }
+
+
 });
 
 exports.user_profile_put = asyncHandler(async (req, res, next) => {
