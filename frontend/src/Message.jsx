@@ -6,7 +6,6 @@ export default function Message({ info, person }) {
         weekday: "short",
         hour: "numeric",
         minute: "numeric",
-        year: "numeric"
     }
     const readableDate = new Date(info.createdAt)
     const formatter = new Intl.DateTimeFormat("en-US", options)

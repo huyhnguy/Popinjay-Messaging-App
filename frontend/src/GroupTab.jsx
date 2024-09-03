@@ -29,8 +29,11 @@ export default function GroupTab() {
             throw error
           })
           .then(res => {
-            console.log(res);
-            setGroups(res.groups);
+            console.log(res.groups);
+            const groupsArray = res.groups;
+            sortByMostRecent(groupsArray);
+            console.log(groupsArray);
+            setGroups(groupsArray);
             setSender(res.sender)
           })
           .catch(err => {
@@ -60,11 +63,38 @@ export default function GroupTab() {
             minute: "numeric",
             year: "numeric"
         }
-        const readableDate = new Date(date)
-        const formatter = new Intl.DateTimeFormat("en-US", options)
-        const formattedDate = formatter.format(readableDate, options)
+        const readableDate = new Date(date);
+        const currentDate = new Date();
 
-        return formattedDate;
+        const dateDifferenceMillisecs = Math.abs(currentDate - readableDate);
+        const dateDifferenceSecs = dateDifferenceMillisecs / 1000;
+        const dateDifferenceMins = dateDifferenceSecs / 60;
+        const dateDifferenceHours = dateDifferenceMins / 60;
+        const dateDifferenceDays = dateDifferenceHours / 24;
+
+        if (dateDifferenceDays < 1) {
+            options = {
+                hour: "numeric",
+                minute: "numeric",
+            }
+            const formatter = new Intl.DateTimeFormat("en-US", options);
+            const formattedDate = formatter.format(readableDate, options);
+
+            return formattedDate
+        } else if (dateDifferenceDays >= 1 && dateDifferenceDays <= 2) {
+
+            return "Yesterday"
+        } else if (dateDifferenceDays > 2) {
+            let options = {
+                month: "numeric",
+                day: "numeric",
+                year: "numeric"
+            }
+            const formatter = new Intl.DateTimeFormat("en-US", options);
+            const formattedDate = formatter.format(readableDate, options);
+
+            return formattedDate
+        }
     }
 
     const handleAddGroup = (action) => {
@@ -115,6 +145,27 @@ export default function GroupTab() {
             }
         }
         return names
+    }
+
+    function sortByMostRecent(dms) {
+        dms.sort((a,b) => {
+            if (!a.history[a.history.length - 1] && !b.history[b.history.length - 1]) {
+                return 0
+            } else if (!a.history[a.history.length - 1]) {
+                return -1
+            } else if (!b.history[b.history.length - 1]) {
+                return 1
+            }
+
+            const aLastMessageDate = a.history[a.history.length - 1].createdAt;
+            const bLastMessageDate = b.history[b.history.length - 1].createdAt;
+            const convertedADate = new Date(aLastMessageDate);
+            const convertedBDate = new Date(bLastMessageDate);
+
+            return convertedBDate - convertedADate;
+        })
+        
+        return dms
     }
 
     return(

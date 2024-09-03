@@ -100,6 +100,47 @@ export default function Dm() {
         setBase64Pic(null);
     }
 
+    const convertDate = (date) => {
+        let options = {
+            month: "short",
+            day: "numeric",
+            weekday: "short",
+            hour: "numeric",
+            minute: "numeric",
+            year: "numeric"
+        }
+        
+        const readableDate = new Date(date);
+        const currentDate = new Date();
+
+        const dateDifferenceMillisecs = Math.abs(currentDate - readableDate);
+        const dateDifferenceSecs = dateDifferenceMillisecs / 1000;
+        const dateDifferenceMins = dateDifferenceSecs / 60;
+        const dateDifferenceHours = dateDifferenceMins / 60;
+        const dateDifferenceDays = dateDifferenceHours / 24;
+
+        if (dateDifferenceDays < 1) {
+            options = {
+                hour: "numeric",
+                minute: "numeric",
+            }
+            const formatter = new Intl.DateTimeFormat("en-US", options);
+            const formattedDate = formatter.format(readableDate, options);
+
+            return formattedDate
+        } else if (dateDifferenceDays >= 1) {
+            let options = {
+                month: "numeric",
+                day: "numeric",
+                year: "numeric"
+            }
+            const formatter = new Intl.DateTimeFormat("en-US", options);
+            const formattedDate = formatter.format(readableDate, options);
+
+            return formattedDate
+        }
+    }
+
     return(
         <div className="dm-page">
             <div className="receiver-container">
