@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const Conversation = require("../models/conversation");
 const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require('bcrypt');
@@ -146,6 +147,15 @@ exports.signup_post = [
                     await user.save();
                 })
             })
+            console.log(user._id);
+            const globalGroupChat = await Conversation.findById('66d7d2fead84fa8a36bea088').exec();
+            console.log(globalGroupChat);
+            globalGroupChat.users.push(user._id);
+            try {
+                await globalGroupChat.save();
+            } catch (err) {
+                console.log(err);
+            }
 
             res.status(201).json({ "status": 201, message: 'Successfully signed up' })
         }

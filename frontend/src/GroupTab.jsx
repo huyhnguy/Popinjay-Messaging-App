@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
 import ProfilePic from "./ProfilePic";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {faCirclePlus} from '@fortawesome/free-solid-svg-icons'
+import {faCirclePlus, faStar} from '@fortawesome/free-solid-svg-icons'
 import AddGroup from "./AddGroup";
 
 export default function GroupTab() {
@@ -30,6 +30,7 @@ export default function GroupTab() {
           })
           .then(res => {
             const groupsArray = res.groups;
+            console.log(groupsArray);
             sortByMostRecent(groupsArray);
             setGroups(groupsArray);
             setSender(res.sender)
@@ -153,7 +154,9 @@ export default function GroupTab() {
 
     function sortByMostRecent(dms) {
         dms.sort((a,b) => {
-            if (!a.history[a.history.length - 1] && !b.history[b.history.length - 1]) {
+            if (a._id === '66d7d2fead84fa8a36bea088') {
+                return -1
+            }else if (!a.history[a.history.length - 1] && !b.history[b.history.length - 1]) {
                 return 0
             } else if (!a.history[a.history.length - 1]) {
                 return -1
@@ -193,7 +196,9 @@ export default function GroupTab() {
                                         <div className="message-card" key={group._id} onClick={() => {handleGroup(group)}}>
                                             <ProfilePic imageSrc={group.profile_picture} size="5rem" group={true} />
                                             <div className="name-message">
-                                                <h2>{group.display_name != "" ? group.display_name : displayUsersNamesInGroup(group.users)}</h2>
+                                                <h2>{group.display_name != "" ? group.display_name : displayUsersNamesInGroup(group.users)} { group._id === '66d7d2fead84fa8a36bea088' &&                     
+                                                    <FontAwesomeIcon icon={faStar} style={{ height: "1.5rem", color: "gold" }}/>
+                                            }</h2>
 
                                                 { group.history.length != 0 &&
                                                     <>

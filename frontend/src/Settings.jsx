@@ -2,7 +2,7 @@ import NavBar from "./NavBar"
 import { useState } from "react"
 import { useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCircleXmark } from '@fortawesome/free-solid-svg-icons'
+import { faCircleXmark, faLock } from '@fortawesome/free-solid-svg-icons'
 import ProfilePic from "./ProfilePic";
 import { useNavigate } from "react-router-dom";
 
@@ -127,30 +127,43 @@ export default function Settings() {
                         <div className="form-section">
                             <div style={{position: "relative"}} className="pic-container-x">
                                 { base64Pic ?
-                                    <label htmlFor="profile-picture" style={{ cursor: "pointer" }}>
-                                        <ProfilePic imageSrc={base64Pic} size="10rem"/>
-                                    </label>
+                                    <>
+                                        <label htmlFor="profile-picture" style={{ cursor: "pointer" }}>
+                                            <ProfilePic imageSrc={base64Pic} size="10rem"/>
+                                        </label>
+                                        <button className="x-button-pfp" onClick={(e) => {
+                                            e.preventDefault();
+                                            setBase64Pic(null);
+                                        }}>
+                                            <FontAwesomeIcon icon={faCircleXmark} className="x-icon" style={{height: "3rem"}}/>
+                                        </button>
+                                    </>
                                     :
-                                    <label htmlFor="profile-picture" style={{ cursor: "pointer" }}>
+                                    <label htmlFor="profile-picture" style={{ cursor: !guest && "pointer" }}>
                                         <ProfilePic size="10rem"/>
                                     </label>
                                 }
-                                <button className="x-button-pfp" onClick={(e) => {
-                                    e.preventDefault();
-                                    setBase64Pic(null);
-                                }}>
-                                    <FontAwesomeIcon icon={faCircleXmark} className="x-icon" style={{height: "3rem"}}/>
-                                </button>
+
                             </div>
 
-                            <label htmlFor="profile-picture" style={{ alignSelf: "start" }}>Profile Picture</label>
-                            <input style={{ cursor: "pointer" }} className="input" type="file" id="profile-picture" accept="image/*" defaultValue={ base64Pic && base64Pic }onChange={(e) => {handleFileUpload(e)}} disabled={guest ? true : false}/>
+                            <label htmlFor="profile-picture" style={{ alignSelf: "start" }}>
+                                {guest && 
+                                    <FontAwesomeIcon icon={faLock} style={{ height: "1rem", marginRight: "0.5rem" }}/>
+                                }
+                                Profile Picture 
+                            </label>
+                            <input style={{ cursor: !guest && "pointer", color: guest && "grey" }} className="input" type="file" id="profile-picture" accept="image/*" defaultValue={ base64Pic && base64Pic } onChange={(e) => {handleFileUpload(e)}} disabled={guest ? true : false}/>
                         </div>
                         <div className="form-section" style={{ alignItems: "start" }}>
-                            <label htmlFor="display-name">Display Name</label>
-                            <input className="input" id="display-name" type="text" defaultValue={displayName} disabled={guest ? true : false}/>
+                            <label htmlFor="display-name">
+                                {guest && 
+                                    <FontAwesomeIcon icon={faLock} style={{ height: "1rem", marginRight: "0.5rem" }}/>
+                                }
+                                Display Name
+                            </label>
+                            <input className="input" id="display-name" type="text" defaultValue={displayName} disabled={guest ? true : false} style={{ color: guest && "grey" }}/>
                         </div>
-                        <button className="submit" onClick={handleSubmit} disabled={guest ? true : false}>Save</button>
+                        <button className="submit" style={{ backgroundColor: guest && "grey", pointerEvents: guest && "none" }}onClick={handleSubmit}>Save</button>
                         <button className="submit" style={{backgroundColor: "red"}} onClick={handleLogOut}>Log out</button>
                     </form>
                 </div>
