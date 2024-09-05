@@ -10,6 +10,7 @@ export default function Settings() {
     const [displayName, setDisplayName] = useState(undefined);
     const [base64Pic, setBase64Pic] = useState(null);
     const [guest, setGuest] = useState(false);
+    const [aboutMeRemainingCharacters, setAboutMeRemainingCharacters] = useState(150);
 
     const navigate = useNavigate();
 
@@ -115,6 +116,21 @@ export default function Settings() {
         })
     }
 
+    const countRemainingCharacters = (e) => {
+        const text = e.target.value;
+        const characters = text.length;
+        const remainingCharacters = 150 - characters;
+        const remainingCharactersText = document.querySelector('.about-me-remaining-characters');
+        if (remainingCharacters >= 0) {
+            remainingCharactersText.classList.add("green")
+            remainingCharactersText.classList.remove("red")
+        } else {
+            remainingCharactersText.classList.add("red")
+            remainingCharactersText.classList.remove("green")
+        }
+        setAboutMeRemainingCharacters(remainingCharacters);
+    }
+
     return(
         <div className="settings-page">
             <div className="settings-container">
@@ -170,7 +186,11 @@ export default function Settings() {
                                 }
                                 About Me
                             </label>
-                            <textarea className="about-me-input" name="about-me" id="about-me" rows="4" disabled={guest ? true : false} style={{ color: guest && "grey" }}></textarea>
+                            <div style={{position: "relative", width: "100%"}}>
+                                <textarea className="about-me-input" name="about-me" id="about-me" rows="4" disabled={guest ? true : false} style={{ color: guest && "grey" }} onChange={(e) => {countRemainingCharacters(e)}}></textarea>
+                                <p className='about-me-remaining-characters'>{aboutMeRemainingCharacters}</p>
+                            </div>
+
                         </div>
                         <button className="submit" style={{ backgroundColor: guest && "grey", pointerEvents: guest && "none" }}onClick={handleSubmit}>Save</button>
                         <button className="submit" style={{backgroundColor: "red"}} onClick={handleLogOut}>Log out</button>

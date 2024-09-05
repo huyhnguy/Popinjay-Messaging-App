@@ -525,3 +525,18 @@ nav {
   gap: 0.5rem;
   align-items: center;
 }
+
+.red {
+  color: red;
+}
+
+.green {
+  color: green;
+}
+
+.about-me-remaining-characters {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin: 0.5rem;
+}
