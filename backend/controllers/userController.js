@@ -12,7 +12,17 @@ exports.login_post = [
     body("username")
         .trim()
         .isLength({ min: 1 })
-        .withMessage("Enter a username")
+        .withMessage("Enter your username")
+        .custom(async (value) => {
+            const user = await User.findOne({ 
+                'login.username' : value
+            });
+
+            if (!user) {
+                throw new Error
+            } 
+        })
+        .withMessage("Invalid username")
         .escape(),
     body("password")
         .trim()
@@ -27,7 +37,7 @@ exports.login_post = [
                 throw new Error
             }
         })
-        .withMessage("Invalid credentials")
+        .withMessage("Invalid password")
         .escape(),
         asyncHandler(async (req, res, next) => {
 
@@ -76,7 +86,7 @@ exports.logout = (req, res, next) => {
 exports.signup_post = [
     body("display_name")
         .trim()
-        .isLength({ min: 1 })
+        .isLength({ min: 1, max: 30 })
         .withMessage("Enter a display name")
         .custom(async displayName => {
             const user = await User.findOne({ 
@@ -180,25 +190,67 @@ exports.user_profile_get = asyncHandler(async (req, res, next) => {
         res.json({
             display_name: user.display_name,
             profile_picture: user.profile_picture,
+            about_me: user.about_me,
             guest: true
         })
     } else {
         res.json({
             display_name: user.display_name,
             profile_picture: user.profile_picture,
+            about_me: user.about_me,
             guest: false
         })
     }
 });
 
-exports.user_profile_put = asyncHandler(async (req, res, next) => {
-    const user = await User.findById(req.user.id).exec();
-    user.display_name = req.body.display_name;
-    user.profile_picture = req.body.profile_picture;
-    await user.save();
-    res.json({ message: "new user settings changed" })
-});
+exports.user_profile_put = [
+    body("display_name")
+        .trim()
+        .isLength({ min: 1 })
+        .withMessage("Enter a display name")
+        .isLength({ max: 30 })
+        .withMessage("Display name cannot be longer than 30 characters")
+        .custom(async (displayName, {req}) => {
+            if (displayName === req.user.display_name) {
+                return true
+            }
 
+            const user = await User.findOne({ 
+                display_name : displayName
+            });
+
+            if (user) {
+                throw new Error
+            } 
+        })
+        .withMessage("Display name already taken")
+        .escape(),
+    body("about_me")
+        .trim()
+        .isLength({ max: 150 })
+        .withMessage("'About Me' cannot be longer than 150 characters")
+        .escape(),
+    asyncHandler(async (req, res, next) => {
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            res.json({
+                display_name: req.body.display_name,
+                profile_picture: req.body.profile_picture,
+                about_me: req.body.about_me,
+                errors: errors.array()
+            })
+        } else {
+            const user = await User.findById(req.user.id).exec();
+            user.display_name = req.body.display_name;
+            user.profile_picture = req.body.profile_picture;
+            user.about_me = req.body.about_me;
+            await user.save();
+
+            res.json({ message: "new user settings changed" })
+        }
+    })
+]
 exports.user_update = asyncHandler(async (req, res, next) => {
     res.send(`user ${req.params.userId} PUT`);  
 });

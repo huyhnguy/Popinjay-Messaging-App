@@ -1,8 +1,11 @@
 import './index.css'
 import Logo from './Logo'
 import { Link, useNavigate } from "react-router-dom";
+import { useState } from 'react';
 
 export default function LogIn() {
+    const [errors, setErrors] = useState(null);
+
     const navigate = useNavigate();
 
     const handleSubmit = (e) => {
@@ -25,7 +28,15 @@ export default function LogIn() {
           })
           .then(res => res.json(res))
           .then(res => {
-            if (res.status === 200) {
+            if (res.errors) {
+                console.log(res.errors);
+                const usernameErrors = res.errors.filter(error => error.path === "username");
+                const passwordErrors = res.errors.filter(error => error.path === "password");
+                setErrors({
+                    username: usernameErrors[0],
+                    password: passwordErrors[0]
+                })
+            } else if(res.status === 200) {
                 navigate("/dms")
             }
           })
@@ -33,7 +44,7 @@ export default function LogIn() {
 
     const handleGuest = (e) => {
         e.preventDefault();
-
+        console.log(e.key);
         const username = "guest"
         const password = "guestguest123"
 
@@ -66,10 +77,20 @@ export default function LogIn() {
                     <Logo />
                     <h2>Welcome back!</h2>
                     <form action="" method="POST" >
-                        <input className="input" type="text" name="username" id="username" placeholder='Username'/>
-                        <input className="input" type="password" name="password" id="password" placeholder='Password'/>
+                        <div className="input-containers">
+                            <input className="input" type="text" name="username" id="username" placeholder='Username'style={{ borderColor: errors && errors.username && "red" }} />
+                            { errors && errors.username &&
+                                <p className="error-message">{errors.username.msg}</p>
+                            }
+                        </div>
+                        <div className="input-containers">
+                            <input className="input" type="password" name="password" id="password" placeholder='Password' style={{ borderColor: errors && errors.password && "red" }} />
+                            { errors && errors.password &&
+                                <p className="error-message">{errors.password.msg}</p>
+                            }
+                        </div>
                         <div className="login-buttons">
-                            <input type="submit" value="Log in as guest" className="submit" onClick={handleGuest}/>
+                            <input type="button" value="Log in as guest" className="submit" onClick={handleGuest}/>
                             <input type="submit" value="Log in" className="submit" onClick={handleSubmit}/>
                         </div>
 

@@ -88,14 +88,14 @@ export default function UserProfile({ userId }) {
                     <>
                         <ProfilePic imageSrc={user.profile_picture} size="10rem" style={{ flexShrink: "0" }}/>
                         <div>
-                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem" }}>
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "5rem" }}>
                                 <h1 style={{ margin: 0 }}>{user.display_name}</h1>
                                 <button className={'submit message-button'} onClick={() => {handleDM(user)}}>
                                     <FontAwesomeIcon icon={faMessage} style={{ height: "1rem" }}/>
                                     <p style={{ margin: 0 }}>Message</p>
                                 </button>
                             </div>
-                            <p>{user.about_me} user aboue me user aboue me user aboue me user aboue me user aboue me</p>
+                            <p>{user.about_me}</p>
                             <p>Member since: {convertDate(user.createdAt)}</p>
                         </div>
 

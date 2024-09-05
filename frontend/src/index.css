@@ -235,6 +235,7 @@ nav {
   display: flex;
   flex-direction: column;
   align-items: center;
+  position:relative;
 }
 
 .users-container {
@@ -498,7 +499,6 @@ nav {
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 100;
-  align-items: center;
   padding: 1rem;
   border-radius: 15px;
   background-color: white;
@@ -539,4 +539,9 @@ nav {
   bottom: 0;
   right: 0;
   margin: 0.5rem;
+}
+
+textarea {
+  font-family: "Roboto", sans-serif;
+  font-size: 1rem;
 }

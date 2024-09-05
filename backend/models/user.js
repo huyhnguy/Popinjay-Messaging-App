@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
-  display_name: { type: String, required: true, maxLength: 100 },
+  display_name: { type: String, required: true, maxLength: 30 },
   login: { 
     username: String,
     password: String,

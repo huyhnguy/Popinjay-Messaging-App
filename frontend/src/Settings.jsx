@@ -9,8 +9,10 @@ import { useNavigate } from "react-router-dom";
 export default function Settings() {
     const [displayName, setDisplayName] = useState(undefined);
     const [base64Pic, setBase64Pic] = useState(null);
+    const [aboutMe, setAboutMe] = useState(null);
     const [guest, setGuest] = useState(false);
     const [aboutMeRemainingCharacters, setAboutMeRemainingCharacters] = useState(150);
+    const [errors, setErrors] = useState(null);
 
     const navigate = useNavigate();
 
@@ -32,6 +34,7 @@ export default function Settings() {
           .then(res => {
             setDisplayName(res.display_name);
             setBase64Pic(res.profile_picture);
+            setAboutMe(res.about_me);
             if(res.guest) {
                 setGuest(true);
             }
@@ -70,6 +73,8 @@ export default function Settings() {
     const handleSubmit = (e) => {
         e.preventDefault();
         const newDisplayName = document.getElementById("display-name").value;
+        const aboutMe = document.querySelector(".about-me-input").value;
+        console.log(aboutMe);
 
         fetch('http://localhost:3000/api/users/settings', {
             method: 'PUT',
@@ -80,12 +85,23 @@ export default function Settings() {
             },
             body: JSON.stringify({
                 profile_picture: base64Pic,
-                display_name: newDisplayName
+                display_name: newDisplayName,
+                about_me: aboutMe,
             })
           })
           .then(res => res.json())
           .then(res => {
-            alert(res.message);
+            if (res.errors) {
+                const displayNameErrors = res.errors.filter(error => error.path === "display_name");
+                const aboutMeErrors = res.errors.filter(error => error.path === "about_me");
+                setErrors({
+                    display_name: displayNameErrors[0],
+                    about_me: aboutMeErrors[0]
+                })
+            } else {
+                alert(res.message);
+                setErrors(null);
+            }
           })
           .catch(err => {
             console.log(err);
@@ -129,6 +145,7 @@ export default function Settings() {
             remainingCharactersText.classList.remove("green")
         }
         setAboutMeRemainingCharacters(remainingCharacters);
+        return
     }
 
     return(
@@ -177,7 +194,13 @@ export default function Settings() {
                                 }
                                 Display Name
                             </label>
-                            <input className="input" id="display-name" type="text" defaultValue={displayName} disabled={guest ? true : false} style={{ color: guest && "grey" }}/>
+                            <div className="input-containers">
+                                <input className="input" id="display-name" type="text" defaultValue={displayName} disabled={guest ? true : false} style={{ color: guest && "grey", borderColor: errors && errors.display_name && "red" }}/>
+                                { errors && errors.display_name &&
+                                    <p className="error-message">{errors.display_name.msg}</p>
+                                }
+                            </div>
+
                         </div>
                         <div className="form-section" style={{ alignItems: "start" }}>
                             <label htmlFor="about-me">
@@ -187,8 +210,13 @@ export default function Settings() {
                                 About Me
                             </label>
                             <div style={{position: "relative", width: "100%"}}>
-                                <textarea className="about-me-input" name="about-me" id="about-me" rows="4" disabled={guest ? true : false} style={{ color: guest && "grey" }} onChange={(e) => {countRemainingCharacters(e)}}></textarea>
-                                <p className='about-me-remaining-characters'>{aboutMeRemainingCharacters}</p>
+                                <textarea className="about-me-input" name="about-me" id="about-me" rows="4" disabled={guest ? true : false} style={{ color: guest && "grey", borderColor: errors && errors.about_me && "red" }} onChange={(e) => {countRemainingCharacters(e)}} defaultValue={aboutMe}></textarea>
+                                { aboutMe && 
+                                    <p className='about-me-remaining-characters green'>{150 - aboutMe.length}</p>
+                                }
+                                { errors && errors.about_me &&
+                                    <p className="error-message">{errors.about_me.msg}</p>
+                                }   
                             </div>
 
                         </div>
