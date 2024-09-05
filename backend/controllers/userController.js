@@ -189,8 +189,6 @@ exports.user_profile_get = asyncHandler(async (req, res, next) => {
             guest: false
         })
     }
-
-
 });
 
 exports.user_profile_put = asyncHandler(async (req, res, next) => {
@@ -208,3 +206,24 @@ exports.user_update = asyncHandler(async (req, res, next) => {
 exports.user_delete = asyncHandler(async (req, res, next) => {
     res.send(`user ${req.params.userId} DELETE`);  
 });
+
+exports.user_get = asyncHandler(async (req, res, next) => {
+    const user = await User.findById(req.params.userId).select('display_name profile_picture about_me createdAt').exec();
+    res.json(user)
+
+    /*if (req.user.id === "66d0f850353bc0d50dfd3f1c") {
+        res.json({
+            display_name: user.display_name,
+            profile_picture: user.profile_picture,
+            about_me: user.about_me,
+            guest: true
+        })
+    } else {
+        res.json({
+            display_name: user.display_name,
+            profile_picture: user.profile_picture,
+            about_me: user.about_me,
+            guest: false
+        })
+    }*/
+})

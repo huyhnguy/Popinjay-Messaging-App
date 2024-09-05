@@ -74,8 +74,12 @@ body {
   border-radius: 10px;
 }
 
-.input:focus {
+.input:focus, .about-me-input:focus {
   border-color:#007BFF;
+}
+
+.about-me-input:focus-visible {
+  outline: none;
 }
 
 .submit {
@@ -145,6 +149,7 @@ nav {
   border: solid black 5px;
   border-radius: 50%;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .profile-pic-container svg {
@@ -403,10 +408,11 @@ nav {
 
 .add-group-container {
   position: absolute;
-  top: 40%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index:100;
+  margin: 0;
 }
 
 .add-group-container h1 {
@@ -482,4 +488,40 @@ nav {
 
 .pic-container-x:hover .x-button-pfp {
   visibility:visible;
+}
+
+.user-profile-container {
+  display: flex;
+  gap: 1rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 15px;
+  background-color: white;
+  box-shadow: 0px 0px 10px 10px rgba(0, 0, 0, 0.125);
+}
+
+.about-me-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1rem;
+  border: solid #00000033;
+  border-radius: 10px;
+  resize: none;
+}
+
+.input:disabled {
+  background-color: light-dark(rgba(239, 239, 239, 0.3), rgba(59, 59, 59, 0.3));
+}
+
+.message-button {
+  width: auto;
+  padding: 0.75rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 }

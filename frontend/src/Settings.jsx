@@ -121,7 +121,7 @@ export default function Settings() {
                 <div className="settings-card">
                     <h1 style={{marginBottom: 0}}>Settings</h1>
                     {guest &&
-                        <p style={{color: "red", marginTop: 0}}>**Create an account to change settings!**</p>
+                        <p style={{color: "red", marginTop: 0}}>**Log out and create an account to change settings!**</p>
                     }
                     <form action="" method="POST">
                         <div className="form-section">
@@ -162,6 +162,15 @@ export default function Settings() {
                                 Display Name
                             </label>
                             <input className="input" id="display-name" type="text" defaultValue={displayName} disabled={guest ? true : false} style={{ color: guest && "grey" }}/>
+                        </div>
+                        <div className="form-section" style={{ alignItems: "start" }}>
+                            <label htmlFor="about-me">
+                                {guest && 
+                                    <FontAwesomeIcon icon={faLock} style={{ height: "1rem", marginRight: "0.5rem" }}/>
+                                }
+                                About Me
+                            </label>
+                            <textarea className="about-me-input" name="about-me" id="about-me" rows="4" disabled={guest ? true : false} style={{ color: guest && "grey" }}></textarea>
                         </div>
                         <button className="submit" style={{ backgroundColor: guest && "grey", pointerEvents: guest && "none" }}onClick={handleSubmit}>Save</button>
                         <button className="submit" style={{backgroundColor: "red"}} onClick={handleLogOut}>Log out</button>

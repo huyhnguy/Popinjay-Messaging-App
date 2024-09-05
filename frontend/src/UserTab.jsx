@@ -3,9 +3,11 @@ import NavBar from "./NavBar"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
 import ProfilePic from "./ProfilePic";
+import UserProfile from "./UserProfile";
 
 export default function UserTab() {
     const [users, setUsers] = useState(null);
+    const [profilePopUp, setProfilePopUp] = useState(null);
 
     const navigate = useNavigate();
     
@@ -25,6 +27,7 @@ export default function UserTab() {
             throw error
           })
           .then(res => {
+            console.log(res)
             setUsers(res);
           })
           .catch(err => {
@@ -35,31 +38,10 @@ export default function UserTab() {
         })
     }, [])
 
-    const handleDM = (user) => {
 
-        fetch('http://localhost:3000/api/dms/create', {
-            method: 'POST',
-            credentials: "include",
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                other_user_id: user._id
-            })
-          })
-          .then(res => res.json())
-          .then(res => {
-            const route = `/dms/${res.dm._id}`;
-            navigate(route, { state: {
-                receiver: user,
-                history: res.dm.history
-            } });
-          })
-          .catch(err => {
-            console.log(err);
-            navigate('/login');
-        })
+   
+    const handleUser = (user) => {
+      setProfilePopUp(user._id);
     }
 
     return(
@@ -69,7 +51,7 @@ export default function UserTab() {
                 <div className="users-container">
                 { users &&
                     users.map(user => 
-                        <div className="user-card" onClick={() => {handleDM(user)}} key={user._id}>
+                        <div className="user-card" onClick={() => {handleUser(user)}} key={user._id}>
                             <ProfilePic imageSrc={user.profile_picture} size="5rem"/>
                             <p>{user.display_name}</p>
                         </div>
@@ -77,6 +59,12 @@ export default function UserTab() {
                 }
                 </div>
             </div>
+            { profilePopUp &&
+              <>
+                <UserProfile userId={profilePopUp} />
+                <div className="shadow" onClick={() => {setProfilePopUp(false)}}></div>
+              </>
+            }
             <NavBar active='Users'/>
         </div>
     )

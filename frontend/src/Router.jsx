@@ -12,6 +12,7 @@ import Settings from "./Settings";
 import DmTab from "./DmTab";
 import GroupTab from "./GroupTab";
 import GroupDm from "./GroupDm";
+import UserProfile from "./UserProfile";
 
 const router = createBrowserRouter([
     {

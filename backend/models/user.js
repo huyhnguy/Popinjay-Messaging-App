@@ -9,7 +9,8 @@ const UserSchema = new Schema({
     password: String,
   },
   conversations: { type: mongoose.Schema.Types.ObjectId, ref: 'Conversation' },
-  profile_picture: String
-});
+  profile_picture: String,
+  about_me: { type: String, maxLength: 150 }
+}, { timestamps: true });
 
 module.exports = mongoose.model("User", UserSchema);

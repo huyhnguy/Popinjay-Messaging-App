@@ -156,6 +156,8 @@ export default function GroupTab() {
         dms.sort((a,b) => {
             if (a._id === '66d7d2fead84fa8a36bea088') {
                 return -1
+            } else if (b._id === '66d7d2fead84fa8a36bea088') {
+                return 1
             }else if (!a.history[a.history.length - 1] && !b.history[b.history.length - 1]) {
                 return 0
             } else if (!a.history[a.history.length - 1]) {
@@ -194,11 +196,16 @@ export default function GroupTab() {
                                 return (
                                     <div>
                                         <div className="message-card" key={group._id} onClick={() => {handleGroup(group)}}>
-                                            <ProfilePic imageSrc={group.profile_picture} size="5rem" group={true} />
+                                            { group._id === '66d7d2fead84fa8a36bea088' ?               
+                                                <div style={{position: "relative"}}>
+                                                    <ProfilePic imageSrc={group.profile_picture} size="5rem" group={true} />
+                                                    <FontAwesomeIcon icon={faStar} style={{ height: "2rem", color: "gold", position: "absolute", top: "-5px", right: "-5px" }}/>
+                                                </div>
+                                                :
+                                                <ProfilePic imageSrc={group.profile_picture} size="5rem" group={true} />
+                                            }
                                             <div className="name-message">
-                                                <h2>{group.display_name != "" ? group.display_name : displayUsersNamesInGroup(group.users)} { group._id === '66d7d2fead84fa8a36bea088' &&                     
-                                                    <FontAwesomeIcon icon={faStar} style={{ height: "1.5rem", color: "gold" }}/>
-                                            }</h2>
+                                                <h2>{group.display_name != "" ? group.display_name : displayUsersNamesInGroup(group.users)}</h2>
 
                                                 { group.history.length != 0 &&
                                                     <>
