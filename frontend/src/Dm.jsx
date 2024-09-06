@@ -11,6 +11,7 @@ export default function Dm() {
     const [base64Pic, setBase64Pic] = useState(null);
     const [sender, setSender] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [newMessage, setNewMessage] = useState(false);
 
     const urlParams = useParams();
     const navigate = useNavigate();
@@ -35,6 +36,7 @@ export default function Dm() {
             setDm(res.dm);
             setSender(res.sender);
             setLoading(false);
+            scrollToBottom();
           })
           .catch(err => {
             console.log(err);
@@ -45,16 +47,21 @@ export default function Dm() {
     }, [])
 
     useEffect(() => {
-        if (dm) {
-            const messageHistoryDiv = document.querySelector(".message-history");
-            messageHistoryDiv.lastChild.scrollIntoView({
-                block: "start",
-                inline: "nearest",
-                behavior: "smooth",
-                alignToTop: false
-            });
+        if (newMessage) {
+            scrollToBottom();
         }
-    }, [dm]);
+    }, [newMessage]);
+
+    function scrollToBottom () {
+        const messageHistoryDiv = document.querySelector(".message-history");
+        messageHistoryDiv.lastChild.scrollIntoView({
+            block: "start",
+            inline: "nearest",
+            behavior: "smooth",
+            alignToTop: false
+        });
+        setNewMessage(false);
+    }
 
     const convertToBase64 = (file) => {
         return new Promise((resolve, reject) => {
@@ -113,6 +120,7 @@ export default function Dm() {
             setDm(res.conversation);
             document.getElementById("new-message").value = "";
             setBase64Pic(null);
+            setNewMessage(true);
         })
         .catch(err => {
             console.log(err);
