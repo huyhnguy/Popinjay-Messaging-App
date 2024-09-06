@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const Conversation = require("../models/conversation");
 const { body, validationResult } = require("express-validator");
 const User = require("../models/user")
+const mongoose = require("mongoose");
 
 exports.dms_create_post = asyncHandler(async (req, res, next) => {
 
@@ -35,29 +36,30 @@ exports.dms_create_post = asyncHandler(async (req, res, next) => {
 });
 
 exports.dms_list_get = asyncHandler(async (req, res, next) => {
-    const dms = await Conversation.find({
-        users: req.user.id
-    }).find({ 
-        users: { 
-            $size: 2,
-        } 
-    }).find({
-        'history.0': {
-            $exists: true
-        }
-    }).populate({
-        path: 'history',
-        populate: {
-            path: 'user',
-            select: 'display_name'
-        }
-    }).populate({
-        path: 'users',
-        select: 'display_name profile_picture'
-    }).exec();
-
-
-    res.json({ sender: req.user.id, dms: dms });
+    try {
+        const dms = await Conversation.find({
+            users: {
+                $elemMatch: { $eq: req.user.id },
+                $size: 2
+            },
+            history: {
+                $ne: []
+            }
+        }).select({
+            history: { $slice: -1 }
+        }).populate({
+            path: 'history',
+            select: 'user content createdAt'
+        }).populate({
+            path: 'users',
+            match: { _id: { $ne: req.user.id }},
+            select: 'display_name profile_picture'
+        }).exec();
+        
+        res.json({ sender: req.user.id, dms: dms });
+    } catch (err) {
+        console.error('query error', err);
+    }
 })
 
 exports.groups_list_get = asyncHandler(async (req, res, next) => {

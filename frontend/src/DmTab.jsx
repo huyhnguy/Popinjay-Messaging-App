@@ -26,6 +26,9 @@ export default function DmTab() {
             throw error
           })
           .then(res => {
+            console.log(res.dms);
+            console.log(res.sender);
+            
             setSender(res.sender);
             const dmArray = res.dms;
             sortByMostRecent(dmArray);

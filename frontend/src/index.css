@@ -563,3 +563,19 @@ textarea {
 .message-container:hover .trash-button {
   visibility:visible;
 }
+
+.group-settings-button {
+  all: unset;
+  cursor: pointer;
+  padding: 1rem;
+}
+
+.group-header {
+  display: flex;
+  border-bottom: solid;
+  justify-content: space-between;
+}
+
+.group-header .receiver-container {
+  border-bottom: 0;
+}

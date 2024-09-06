@@ -21,7 +21,7 @@ router.put("/users/settings", authenticateToken, userController.user_profile_put
 
 router.get("/users/:userId", authenticateToken, userController.user_get);
 
-router.put("/users/:userId", userController.user_update);
+router.put("/users/:userId", authenticateToken, userController.user_update);
 
 router.delete("/users/:userId", userController.user_delete);
 

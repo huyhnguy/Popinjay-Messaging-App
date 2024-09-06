@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import Message from "./Message";
 import ProfilePic from "./ProfilePic";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {faPaperPlane, faCircleChevronUp} from '@fortawesome/free-solid-svg-icons'
+import {faPaperPlane, faCircleChevronUp, faGear} from '@fortawesome/free-solid-svg-icons'
 import FileMessageInput from "./FileMessageInput";
 
 export default function GroupDm() {
@@ -150,10 +150,16 @@ export default function GroupDm() {
 
     return(
         <div className="dm-page">
-            <div className="receiver-container">
-                <ProfilePic imageSrc={group.profile_picture} size="2.5rem"/>
-                <h1>{group.display_name != "" ? group.display_name : displayUsersNamesInGroup(group.users)}</h1>
+            <div className="group-header">
+                <div className="receiver-container">
+                    <ProfilePic imageSrc={group.profile_picture} size="2.5rem"/>
+                    <h1>{group.display_name != "" ? group.display_name : displayUsersNamesInGroup(group.users)}</h1>
+                </div>
+                <button className="group-settings-button">
+                    <FontAwesomeIcon icon={faGear} style={{height: "2rem"}}/>
+                </button>
             </div>
+
             <main className="message-history" >
                 { messageHistory && 
                     messageHistory.map(message => {
