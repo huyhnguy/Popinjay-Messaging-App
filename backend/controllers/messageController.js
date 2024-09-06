@@ -19,15 +19,25 @@ exports.message_create_post = asyncHandler(async (req, res, next) => {
         console.error('error saving conversation:', err);
     }
   
-    const populatedConversation = await Conversation.findById(conversation._id).populate({
+    /*const populatedConversation = await Conversation.findById(conversation._id).populate({
         path: 'history',
         populate: {
             path: 'user',
             select: 'display_name'
         }
-    });
+    });*/
 
-    res.json({ conversation: populatedConversation, message: "Message successfully created and saved into the conversation"})
+    const updatedConversation = await Conversation.findById(conversation._id).populate({
+        path: 'history',
+    }).populate({
+        path: 'users',
+        match: { _id: { $ne: req.user.id }},
+        select: 'display_name profile_picture'
+    }).exec();
+
+    res.json({ conversation: updatedConversation, sender: req.user.id, message: "Message successfully created and saved into the conversation" })
+
+    //res.json({ conversation: populatedConversation, message: "Message successfully created and saved into the conversation"})
 })
 
 exports.message_delete = asyncHandler(async (req, res, next) => {
@@ -35,19 +45,18 @@ exports.message_delete = asyncHandler(async (req, res, next) => {
     console.log(req.body);
     try {
         await Message.findByIdAndDelete(req.params.messageId);
-        await Conversation.updateOne({ _id: req.body.conversation_id}, {
+        const conversation = await Conversation.findOneAndUpdate({ _id: req.body.conversation_id}, {
             $pull: {
                 history: req.params.messageId
             }
+        }).populate({
+            path: 'history',
+        }).populate({
+            path: 'users',
+            match: { _id: { $ne: req.user.id }},
+            select: 'display_name profile_picture'
         }).exec();
 
-        const conversation = await Conversation.findById(req.body.conversation_id).populate({
-            path: 'history',
-            populate: {
-                path: 'user',
-                select: 'display_name'
-            }
-        }).exec()
         console.log(conversation);
 
         res.json({ conversation: conversation, message: "message successfully deleted" })

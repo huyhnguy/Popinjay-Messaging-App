@@ -62,6 +62,19 @@ exports.dms_list_get = asyncHandler(async (req, res, next) => {
     }
 })
 
+exports.dm_get = asyncHandler(async (req, res, next) => {
+    const dm = await Conversation.findById(req.params.dmId).populate({
+        path: 'history',
+    }).populate({
+        path: 'users',
+        match: { _id: { $ne: req.user.id }},
+        select: 'display_name profile_picture'
+    }).exec();
+
+    res.json({ dm: dm, sender: req.user.id })
+    console.log(dm);
+})
+
 exports.groups_list_get = asyncHandler(async (req, res, next) => {
     const groups = await Conversation.find({ "users.2" : { "$exists": true } })
         .find({
