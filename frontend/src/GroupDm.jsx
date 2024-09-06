@@ -112,6 +112,42 @@ export default function GroupDm() {
         return names
     }
 
+    const handleDeleteMessage = (info) => {
+        console.log(info);
+        console.log(urlParams.groupId);
+            fetch('http://localhost:3000/api/messages/' + info, {
+                method: 'DELETE',
+                credentials: "include",
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    conversation_id: urlParams.groupId
+                })
+              })
+              .then(res => {
+                console.log(res);
+                if (res.ok) { 
+                    return res.json() 
+                }
+
+                const error = new Error(res.message);
+                error.code = res.status;
+                throw error
+              })
+              .then(res => {
+                console.log(res);
+                setMessageHistory(res.conversation.history);
+              })
+              .catch(err => {
+                console.log(err);
+                if (err.code === 401) {
+                    navigate('/login');
+                }
+            })
+    }
+
     return(
         <div className="dm-page">
             <div className="receiver-container">
@@ -123,7 +159,7 @@ export default function GroupDm() {
                     messageHistory.map(message => {
                         if (message.user._id === sender) {
                             return(
-                                <Message key={message._id} info={message} person="sender" />
+                                <Message key={message._id} info={message} person="sender" deleteMessage={() => {handleDeleteMessage(message._id)}}/>
                             )
                         }
                         return(
