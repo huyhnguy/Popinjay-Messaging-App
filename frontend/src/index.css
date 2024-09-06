@@ -327,6 +327,7 @@ nav {
   height: auto;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .users-page h1, .messages-page h1 {
@@ -544,4 +545,21 @@ nav {
 textarea {
   font-family: "Roboto", sans-serif;
   font-size: 1rem;
+}
+
+.trash-button {
+  all: unset;
+  cursor: pointer;
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  padding: 0.25rem;
+  border-radius: 5px;
+  color: black;
+  background-color: #dddddd;
+  visibility: hidden;
+}
+
+.message-container:hover .trash-button {
+  visibility:visible;
 }

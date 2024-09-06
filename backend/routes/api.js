@@ -51,5 +51,7 @@ router.put("/dms/:dmId", function (req, res) {
 
 router.post("/messages/create", authenticateToken, messageController.message_create_post);
 
+router.delete("/messages/:messageId", authenticateToken, messageController.message_delete);
+
 
 module.exports = router;

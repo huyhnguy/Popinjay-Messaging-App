@@ -1,4 +1,8 @@
-export default function Message({ info, person }) {
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
+import { useEffect } from 'react'
+
+export default function Message({ info, person, deleteMessage }) {
 
     let options = {
         month: "short",
@@ -23,6 +27,9 @@ export default function Message({ info, person }) {
                 { formattedDate &&
                     <p className="timestamp">{formattedDate}</p>
                 }
+                <button className="trash-button" onClick={deleteMessage}>
+                    <FontAwesomeIcon icon={faTrash} />
+                </button>
             </div>
         )
     } else if (person === "receiver") {

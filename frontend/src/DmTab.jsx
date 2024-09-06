@@ -123,8 +123,8 @@ export default function DmTab() {
                                 const receiver = dm.users.find(user => user._id != sender);
                                 const lastMessage = dm.history[dm.history.length - 1];
                                 return (
-                                    <div>
-                                        <div className="message-card" key={dm._id} onClick={() => {handleDM(dm)}}>
+                                    <div key={dm._id}>
+                                        <div className="message-card"  onClick={() => {handleDM(dm)}}>
                                             <ProfilePic imageSrc={receiver.profile_picture} size="5rem"/>
                                             <div className="name-message">
                                                 <h2>{receiver.display_name}</h2>
