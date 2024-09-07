@@ -117,7 +117,9 @@ export default function Dm() {
             throw error
           })
         .then(res => {
-            setDm(res.conversation);
+            const newDm = dm;
+            newDm.history.push(res.new_message);
+            setDm(newDm);
             document.getElementById("new-message").value = "";
             setBase64Pic(null);
             setNewMessage(true);
@@ -134,8 +136,8 @@ export default function Dm() {
         setBase64Pic(null);
     }
 
-    const handleDeleteMessage = (info) => {
-        fetch('http://localhost:3000/api/messages/' + info, {
+    const handleDeleteMessage = (message) => {
+        fetch('http://localhost:3000/api/messages/' + message._id, {
             method: 'DELETE',
             credentials: "include",
             headers: {
@@ -145,27 +147,33 @@ export default function Dm() {
             body: JSON.stringify({
                 conversation_id: urlParams.dmId
             })
-            })
+        })
             .then(res => {
-            console.log(res);
-            if (res.ok) { 
-                return res.json() 
-            }
+                console.log(res);
+                if (res.ok) { 
+                    return res.json() 
+                }
 
-            const error = new Error(res.message);
-            error.code = res.status;
-            throw error
-            })
+                const error = new Error(res.message);
+                error.code = res.status;
+                throw error
+                })
             .then(res => {
-            console.log(res);
-            setDm(res.conversation);
+                if (res.message === "message successfully deleted") {
+                    const newDmHistory= dm.history.filter(element => element != message);
+                    const cloneDm = { ...dm }
+                    cloneDm.history = newDmHistory
+                    setDm(cloneDm);
+                } else {
+                    console.log(res);
+                }
             })
             .catch(err => {
-            console.log(err);
-            if (err.code === 401) {
-                navigate('/login');
-            }
-        })
+                console.log(err);
+                if (err.code === 401) {
+                    navigate('/login');
+                }
+            })
     }
 
     return(
@@ -185,7 +193,7 @@ export default function Dm() {
                                     )
                                 } else if (message.user === sender) {
                                     return(
-                                        <Message key={message._id} info={message} person="sender" deleteMessage={() => {handleDeleteMessage(message._id)}}/>
+                                        <Message key={message._id} info={message} person="sender" deleteMessage={() => {handleDeleteMessage(message)}}/>
                                     )
                                 } else {
                                     return(
