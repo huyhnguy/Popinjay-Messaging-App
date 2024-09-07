@@ -212,8 +212,6 @@ export default function GroupTab() {
                                                         }
                                                     </>
                                                 }
-
-
                                             </div>
                                             <p style={{ color: "grey", margin: 0 }}>{
                                                 group.history.length != 0 && 

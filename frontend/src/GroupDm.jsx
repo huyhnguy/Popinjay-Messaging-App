@@ -17,7 +17,7 @@ export default function GroupDm() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch('http://localhost:3000/api/dms/' + urlParams.groupId , {
+        fetch('http://localhost:3000/api/groups/' + urlParams.groupId , {
             method: 'GET',
             credentials: "include",
             headers: {
@@ -32,8 +32,8 @@ export default function GroupDm() {
             throw error
           })
           .then(res => {
-            console.log(res.dm);
-            setDm(res.dm);
+            console.log(res.group);
+            setDm(res.group);
             setSender(res.sender);
             setLoading(false);
             scrollToBottom();

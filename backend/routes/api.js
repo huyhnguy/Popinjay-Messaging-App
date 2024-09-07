@@ -29,9 +29,8 @@ router.get("/groups", authenticateToken, conversationController.groups_list_get)
 
 router.post("/groups/create", authenticateToken, conversationController.groups_create_post);
 
-router.get("/groups/:groupId", function (req, res) {
-    res.send(`group ${req.params.groupId} GET`);
-});
+router.get("/groups/:groupId", authenticateToken, conversationController.group_get);
+
 
 router.put("/groups/:groupId", function (req, res) {
     res.send(`group ${req.params.groupId} PUT`);

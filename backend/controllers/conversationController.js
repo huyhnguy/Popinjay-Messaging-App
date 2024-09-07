@@ -49,7 +49,7 @@ exports.dms_list_get = asyncHandler(async (req, res, next) => {
             history: { $slice: -1 }
         }).populate({
             path: 'history',
-            select: 'user content createdAt'
+            select: 'user content createdAt image'
         }).populate({
             path: 'users',
             match: { _id: { $ne: req.user.id }},
@@ -75,6 +75,16 @@ exports.dm_get = asyncHandler(async (req, res, next) => {
     console.log(dm);
 })
 
+exports.group_get = asyncHandler(async (req, res, next) => {
+    const group = await Conversation.findById( req.params.groupId , { users: 0 }).populate({
+        path: 'history',
+        select: 'content createdAt user image'
+    }).exec();
+
+    res.json({ group: group, sender: req.user.id })
+    console.log(group);
+})
+
 exports.groups_list_get = asyncHandler(async (req, res, next) => {
     /*const groups = await Conversation.find({ "users.2" : { "$exists": true } })
         .find({
@@ -98,7 +108,7 @@ exports.groups_list_get = asyncHandler(async (req, res, next) => {
             history: { $slice: -1 }
         }).populate({
             path: 'history',
-            select: 'user content createdAt',
+            select: 'user content createdAt image',
             populate: {
                 path: 'user',
                 select: 'display_name'
