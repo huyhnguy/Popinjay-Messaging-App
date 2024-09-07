@@ -25,7 +25,9 @@ exports.message_update = asyncHandler(async (req, res, next) => {
     try {
         const updatedMessage = await Message.findOneAndUpdate({ _id: req.params.messageId }, { content: req.body.new_message, image: req.body.image }, { new: true });
 
-        res.json({ updated_message: updatedMessage, message: "message successfully updated"})
+        const populatedMessage = await updatedMessage.populate('user', 'display_name');
+
+        res.json({ updated_message: populatedMessage, message: "message successfully updated"})
     } catch (err) {
         console.error(err);
 

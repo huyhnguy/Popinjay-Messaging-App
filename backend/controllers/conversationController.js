@@ -62,6 +62,10 @@ exports.dms_list_get = asyncHandler(async (req, res, next) => {
 exports.dm_get = asyncHandler(async (req, res, next) => {
     const dm = await Conversation.findById(req.params.dmId).populate({
         path: 'history',
+        populate: {
+            path: 'user',
+            select: 'display_name'
+        }
     }).populate({
         path: 'users',
         match: { _id: { $ne: req.user.id }},

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Message from "./Message";
 import ProfilePic from "./ProfilePic";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {faPaperPlane, faCircleChevronUp} from '@fortawesome/free-solid-svg-icons'
+import {faPaperPlane, faCircleChevronUp, faCircleXmark} from '@fortawesome/free-solid-svg-icons'
 import FileMessageInput from "./FileMessageInput";
 
 export default function Dm() {
@@ -16,10 +16,6 @@ export default function Dm() {
 
     const urlParams = useParams();
     const navigate = useNavigate();
-    
-    useEffect(() => {
-        console.log("dm state changed:", dm);
-    }, [dm]);
 
     useEffect(() => {
         fetch('http://localhost:3000/api/dms/' + urlParams.dmId , {
@@ -102,6 +98,7 @@ export default function Dm() {
             dataPackage = {
                 new_message:  document.getElementById("new-message").value,
                 conversation_id: urlParams.dmId,
+                image: null
             }
         }
 
@@ -188,13 +185,12 @@ export default function Dm() {
     }
 
     const startEditMessage = (message) => {
+        setEdit(message);
         const messageInput = document.getElementById("new-message");
 
         if (message.content) messageInput.value = message.content;
         if (message.image) setBase64Pic(message.image);
-        setEdit(message);
     }
-
 
     const submitEditMessage = (oldMessage, newMessageInputs) => {
 
@@ -252,11 +248,11 @@ export default function Dm() {
                     <main className="message-history">
                         {   
                             dm.history.map(message => {
-                                if (message.user === dm.users[0]._id) {
+                                if (message.user._id === dm.users[0]._id) {
                                     return(
                                         <Message key={message._id} info={message} person="receiver" />
                                     )
-                                } else if (message.user === sender) {
+                                } else if (message.user._id === sender) {
                                     return(
                                         <Message key={message._id} info={message} person="sender" deleteMessage={() => {handleDeleteMessage(message)}} editMessage={() => {startEditMessage(message)}}/>
                                     )
@@ -268,6 +264,18 @@ export default function Dm() {
                             })
                         }
                     </main>
+                    { edit &&
+                        <div className="edit-div">
+                            <button className="x-button" style={{ position: "static" }} onClick={() => {
+                                document.getElementById("new-message").value = "";
+                                setBase64Pic(null);
+                                setEdit(null)
+                                }}>
+                                <FontAwesomeIcon icon={faCircleXmark} className="x-icon"/>
+                            </button>
+                            <p style={{ margin: 0 }}>Editing Message</p>
+                        </div>
+                    }
                     <form method="POST" className="message-form">
                         <label htmlFor="message-files" >
                             <FontAwesomeIcon icon={faCircleChevronUp} className="file-upload-icon" style={{ }}/>
@@ -275,7 +283,7 @@ export default function Dm() {
                         <input style={{ position: "absolute", visibility: "hidden", pointerEvents: "none", width: '0px', height: '0px'}} id="message-files" type="file" accept="image/*" onChange={(e) => {handleFileUpload(e)}}/>
                         <div style={{width: "100%"}}>
                         { base64Pic &&
-                            <FileMessageInput imgSrc={base64Pic} deleteFunction={handleDelete}/>
+                            <FileMessageInput imgSrc={base64Pic} deleteFunction={handleDelete} style={{top: "160px"}} />
                         }
                             <input type="text" id="new-message" required className="input" placeholder="Message"/>
 

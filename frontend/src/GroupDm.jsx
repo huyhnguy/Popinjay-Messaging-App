@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Message from "./Message";
 import ProfilePic from "./ProfilePic";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {faPaperPlane, faCircleChevronUp, faGear} from '@fortawesome/free-solid-svg-icons'
+import {faPaperPlane, faCircleChevronUp, faGear, faCircleXmark} from '@fortawesome/free-solid-svg-icons'
 import FileMessageInput from "./FileMessageInput";
 
 export default function GroupDm() {
@@ -12,6 +12,7 @@ export default function GroupDm() {
     const [sender, setSender] = useState(null);
     const [loading, setLoading] = useState(true);
     const [newMessage, setNewMessage] = useState(false);
+    const [edit, setEdit] = useState(null);
 
     const urlParams = useParams();
     const navigate = useNavigate();
@@ -98,7 +99,14 @@ export default function GroupDm() {
             dataPackage = {
                 new_message:  document.getElementById("new-message").value,
                 conversation_id: urlParams.groupId,
+                image: null
             }
+        }
+
+        if (edit) {
+            submitEditMessage(edit, dataPackage);
+
+            return
         }
         
         fetch('http://localhost:3000/api/messages/create', {
@@ -188,6 +196,59 @@ export default function GroupDm() {
             })
     }
 
+    const startEditMessage = (message) => {
+        setEdit(message);
+        const messageInput = document.getElementById("new-message");
+
+        if (message.content) messageInput.value = message.content;
+        if (message.image) setBase64Pic(message.image);
+    }
+
+    const submitEditMessage = (oldMessage, newMessageInputs) => {
+
+        fetch('http://localhost:3000/api/messages/' + oldMessage._id, {
+            method: 'PUT',
+            credentials: "include",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newMessageInputs)
+        })
+            .then(res => {
+                if (res.ok) { 
+                    return res.json() 
+                }
+
+                const error = new Error(res.message);
+                error.code = res.status;
+                throw error
+                })
+            .then(res => {
+                if (res.message === "message successfully updated") {
+                    const indexOfOldMessage = dm.history.findIndex((element) => element === oldMessage);
+                    console.log(oldMessage);
+                    console.log(res.updated_message);
+                    setDm(prevDm => {
+                        const cloneDm = structuredClone(prevDm);
+                        cloneDm.history.splice(indexOfOldMessage, 1, res.updated_message);
+                        return cloneDm;
+                    });
+                    document.getElementById("new-message").value = "";
+                    setBase64Pic(null);
+                    setEdit(null);
+                } else {
+                    console.log(res);
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                if (err.code === 401) {
+                    navigate('/login');
+                }
+            })
+    }
+
     return(
         <>
             { dm &&   
@@ -207,7 +268,7 @@ export default function GroupDm() {
                             dm.history.map(message => {
                                 if (message.user._id === sender) {
                                     return(
-                                        <Message key={message._id} info={message} person="sender" deleteMessage={() => {handleDeleteMessage(message)}}/>
+                                        <Message key={message._id} info={message} person="sender" deleteMessage={() => {handleDeleteMessage(message)}} editMessage={() => {startEditMessage(message)}}/>
                                     )
                                 }
                                 return(
@@ -216,6 +277,18 @@ export default function GroupDm() {
                             })
                         }
                     </main>
+                    { edit &&
+                        <div className="edit-div">
+                            <button className="x-button" style={{ position: "static" }} onClick={() => {
+                                document.getElementById("new-message").value = "";
+                                setBase64Pic(null);
+                                setEdit(null)
+                                }}>
+                                <FontAwesomeIcon icon={faCircleXmark} className="x-icon"/>
+                            </button>
+                            <p style={{ margin: 0 }}>Editing Message</p>
+                        </div>
+                    }
                     <form method="POST" className="message-form">
                         <label htmlFor="message-files" >
                             <FontAwesomeIcon icon={faCircleChevronUp} className="file-upload-icon" style={{ }}/>
