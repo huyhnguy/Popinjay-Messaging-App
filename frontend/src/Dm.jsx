@@ -1,5 +1,5 @@
-import { useLocation, useParams, useNavigate } from "react-router-dom"
-import { useEffect, useState, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom"
+import { useEffect, useState } from "react";
 import Message from "./Message";
 import ProfilePic from "./ProfilePic";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'

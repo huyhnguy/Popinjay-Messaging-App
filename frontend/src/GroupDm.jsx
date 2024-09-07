@@ -7,26 +7,61 @@ import {faPaperPlane, faCircleChevronUp, faGear} from '@fortawesome/free-solid-s
 import FileMessageInput from "./FileMessageInput";
 
 export default function GroupDm() {
-    const {state} = useLocation();
-    const { sender, group } = state;
-
-    const [messageHistory, setMessageHistory] = useState(group.history);
+    const [dm, setDm] = useState(null);
     const [base64Pic, setBase64Pic] = useState(null);
+    const [sender, setSender] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [newMessage, setNewMessage] = useState(false);
 
     const urlParams = useParams();
     const navigate = useNavigate();
 
     useEffect(() => {
-        const messageHistoryDiv = document.querySelector(".message-history");
-        if (messageHistoryDiv.lastChild) {
-            messageHistoryDiv.lastChild.scrollIntoView({
-                block: "start",
-                inline: "nearest",
-                behavior: "smooth",
-                alignToTop: false
-              });
+        fetch('http://localhost:3000/api/dms/' + urlParams.groupId , {
+            method: 'GET',
+            credentials: "include",
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+          })
+          .then(res => {
+            if (res.ok) { return res.json() }
+            const error = new Error(res.message);
+            error.code = res.status;
+            throw error
+          })
+          .then(res => {
+            console.log(res.dm);
+            setDm(res.dm);
+            setSender(res.sender);
+            setLoading(false);
+            scrollToBottom();
+          })
+          .catch(err => {
+            console.log(err);
+            if (err.code === 401) {
+                navigate('/login');
+            }
+        })
+    }, [])
+
+    useEffect(() => {
+        if (newMessage) {
+            scrollToBottom();
         }
-    }, [messageHistory]);
+    }, [newMessage]);
+
+    function scrollToBottom () {
+        const messageHistoryDiv = document.querySelector(".message-history");
+        messageHistoryDiv.lastChild.scrollIntoView({
+            block: "start",
+            inline: "nearest",
+            behavior: "smooth",
+            alignToTop: false
+        });
+        setNewMessage(false);
+    }
 
     const convertToBase64 = (file) => {
         return new Promise((resolve, reject) => {
@@ -43,7 +78,6 @@ export default function GroupDm() {
 
     const handleFileUpload = async (e) => {
         const file = e.target.files[0];
-
         const base64 = await convertToBase64(file);
         setBase64Pic(base64);
     }
@@ -66,7 +100,6 @@ export default function GroupDm() {
                 conversation_id: urlParams.groupId,
             }
         }
-        console.log(dataPackage);
         
         fetch('http://localhost:3000/api/messages/create', {
             method: 'POST',
@@ -84,9 +117,12 @@ export default function GroupDm() {
             throw error
           })
         .then(res => {
-            setMessageHistory(res.conversation.history);
+            const newDm = dm;
+            newDm.history.push(res.new_message);
+            setDm(newDm);
             document.getElementById("new-message").value = "";
             setBase64Pic(null);
+            setNewMessage(true);
         })
         .catch(err => {
             console.log(err);
@@ -112,21 +148,19 @@ export default function GroupDm() {
         return names
     }
 
-    const handleDeleteMessage = (info) => {
-        console.log(info);
-        console.log(urlParams.groupId);
-            fetch('http://localhost:3000/api/messages/' + info, {
-                method: 'DELETE',
-                credentials: "include",
-                headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    conversation_id: urlParams.groupId
-                })
-              })
-              .then(res => {
+    const handleDeleteMessage = (message) => {
+        fetch('http://localhost:3000/api/messages/' + message._id, {
+            method: 'DELETE',
+            credentials: "include",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                conversation_id: urlParams.groupId
+            })
+        })
+            .then(res => {
                 console.log(res);
                 if (res.ok) { 
                     return res.json() 
@@ -135,12 +169,18 @@ export default function GroupDm() {
                 const error = new Error(res.message);
                 error.code = res.status;
                 throw error
-              })
-              .then(res => {
-                console.log(res);
-                setMessageHistory(res.conversation.history);
-              })
-              .catch(err => {
+                })
+            .then(res => {
+                if (res.message === "message successfully deleted") {
+                    const newDmHistory= dm.history.filter(element => element != message);
+                    const cloneDm = { ...dm }
+                    cloneDm.history = newDmHistory
+                    setDm(cloneDm);
+                } else {
+                    console.log(res);
+                }
+            })
+            .catch(err => {
                 console.log(err);
                 if (err.code === 401) {
                     navigate('/login');
@@ -149,47 +189,54 @@ export default function GroupDm() {
     }
 
     return(
-        <div className="dm-page">
-            <div className="group-header">
-                <div className="receiver-container">
-                    <ProfilePic imageSrc={group.profile_picture} size="2.5rem"/>
-                    <h1>{group.display_name != "" ? group.display_name : displayUsersNamesInGroup(group.users)}</h1>
-                </div>
-                <button className="group-settings-button">
-                    <FontAwesomeIcon icon={faGear} style={{height: "2rem"}}/>
-                </button>
-            </div>
+        <>
+            { dm &&   
+                <div className="dm-page">
+                    <div className="group-header">
+                        <div className="receiver-container">
+                            <ProfilePic imageSrc={dm.profile_picture} size="2.5rem"/>
+                            <h1>{dm.display_name != "" ? dm.display_name : displayUsersNamesInGroup(dm.users)}</h1>
+                        </div>
+                        <button className="group-settings-button">
+                            <FontAwesomeIcon icon={faGear} style={{height: "2rem"}}/>
+                        </button>
+                    </div>
 
-            <main className="message-history" >
-                { messageHistory && 
-                    messageHistory.map(message => {
-                        if (message.user._id === sender) {
-                            return(
-                                <Message key={message._id} info={message} person="sender" deleteMessage={() => {handleDeleteMessage(message._id)}}/>
-                            )
+                    <main className="message-history" >
+                        { 
+                            dm.history.map(message => {
+                                if (message.user === sender) {
+                                    return(
+                                        <Message key={message._id} info={message} person="sender" deleteMessage={() => {handleDeleteMessage(message)}}/>
+                                    )
+                                }
+                                return(
+                                    <Message key={message._id} info={message} person="receiver" />
+                                )
+                            })
                         }
-                        return(
-                            <Message key={message._id} info={message} person="receiver" />
-                        )
-                    })
-                }
-            </main>
-            <form method="POST" className="message-form">
-                <label htmlFor="message-files" >
-                    <FontAwesomeIcon icon={faCircleChevronUp} className="file-upload-icon" style={{ }}/>
-                </label>
-                <input style={{ position: "absolute", visibility: "hidden", pointerEvents: "none", width: '0px', height: '0px'}} id="message-files" type="file" accept="image/*" onChange={(e) => {handleFileUpload(e)}}/>
-                <div style={{width: "100%"}}>
-                { base64Pic &&
-                    <FileMessageInput imgSrc={base64Pic} deleteFunction={handleDelete}/>
-                }
-                    <input type="text" id="new-message" required className="input" placeholder="Message"/>
+                    </main>
+                    <form method="POST" className="message-form">
+                        <label htmlFor="message-files" >
+                            <FontAwesomeIcon icon={faCircleChevronUp} className="file-upload-icon" style={{ }}/>
+                        </label>
+                        <input style={{ position: "absolute", visibility: "hidden", pointerEvents: "none", width: '0px', height: '0px'}} id="message-files" type="file" accept="image/*" onChange={(e) => {handleFileUpload(e)}}/>
+                        <div style={{width: "100%"}}>
+                        { base64Pic &&
+                            <FileMessageInput imgSrc={base64Pic} deleteFunction={handleDelete}/>
+                        }
+                            <input type="text" id="new-message" required className="input" placeholder="Message"/>
 
+                        </div>
+                        <button type="submit" onClick={(e) => {handleSubmit(e)}} className="submit" style={{ width: "auto", paddingInline: "1.5rem" }}>
+                            <FontAwesomeIcon icon={faPaperPlane} />
+                        </button>
+                    </form>
                 </div>
-                <button type="submit" onClick={(e) => {handleSubmit(e)}} className="submit" style={{ width: "auto", paddingInline: "1.5rem" }}>
-                    <FontAwesomeIcon icon={faPaperPlane} />
-                </button>
-            </form>
-        </div>
+            }
+            { loading &&
+                <h1>Loading...</h1>
+            }
+        </>
     )
 }

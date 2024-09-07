@@ -1,4 +1,3 @@
-import Logo from "./Logo"
 import NavBar from "./NavBar"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
@@ -27,7 +26,6 @@ export default function DmTab() {
           })
           .then(res => {
             console.log(res.dms);
-            console.log(res.sender);
             
             setSender(res.sender);
             const dmArray = res.dms;
@@ -131,7 +129,7 @@ export default function DmTab() {
                                             <ProfilePic imageSrc={receiver.profile_picture} size="5rem"/>
                                             <div className="name-message">
                                                 <h2>{receiver.display_name}</h2>
-                                                { lastMessage.user._id === sender ?
+                                                { lastMessage.user === sender ?
                                                     <p style={{color: "grey",  wordBreak: "break-word" }}>You: {lastMessage.image ? <i>sent an image</i> : lastMessage.content}</p>
                                                     :
                                                     <p style={{color: "grey", wordBreak: "break-word" }}>{receiver.display_name}: {lastMessage.image ? <i>sent an image</i> : lastMessage.content}</p>

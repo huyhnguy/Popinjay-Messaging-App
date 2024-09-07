@@ -26,12 +26,13 @@ exports.message_delete = asyncHandler(async (req, res, next) => {
     console.log(req.params);
     console.log(req.body);
     try {
-        await Message.findByIdAndDelete(req.params.messageId);
         await Conversation.findOneAndUpdate({ _id: req.body.conversation_id}, {
             $pull: {
                 history: req.params.messageId
             }
         }).exec();
+
+        await Message.findByIdAndDelete(req.params.messageId);
 
         res.json({ message: "message successfully deleted" })
     } catch (err) {

@@ -29,8 +29,9 @@ export default function GroupTab() {
             throw error
           })
           .then(res => {
+            console.log(res);
+
             const groupsArray = res.groups;
-            console.log(groupsArray);
             sortByMostRecent(groupsArray);
             setGroups(groupsArray);
             setSender(res.sender)
@@ -45,12 +46,7 @@ export default function GroupTab() {
 
     const handleGroup = (group) => {
         const route = `/groups/${group._id}`;
-        navigate(route, { 
-            state: {
-                sender: sender,
-                group: group,
-            } 
-        });
+        navigate(route);
     }
 
     function sameDay(d1, d2) {
@@ -194,8 +190,8 @@ export default function GroupTab() {
                             groups.map((group) => {
                                 const lastMessage = group.history[group.history.length - 1];
                                 return (
-                                    <div>
-                                        <div className="message-card" key={group._id} onClick={() => {handleGroup(group)}}>
+                                    <div key={group._id}>
+                                        <div className="message-card"  onClick={() => {handleGroup(group)}}>
                                             { group._id === '66d7d2fead84fa8a36bea088' ?               
                                                 <div style={{position: "relative"}}>
                                                     <ProfilePic imageSrc={group.profile_picture} size="5rem" group={true} />

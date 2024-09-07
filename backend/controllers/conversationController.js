@@ -76,7 +76,7 @@ exports.dm_get = asyncHandler(async (req, res, next) => {
 })
 
 exports.groups_list_get = asyncHandler(async (req, res, next) => {
-    const groups = await Conversation.find({ "users.2" : { "$exists": true } })
+    /*const groups = await Conversation.find({ "users.2" : { "$exists": true } })
         .find({
             users: req.user.id
         }).populate({
@@ -88,11 +88,35 @@ exports.groups_list_get = asyncHandler(async (req, res, next) => {
         }).populate({
             path: 'users',
             select: 'display_name profile_picture'
-        }).exec().catch(err => console.log(err))
+        }).exec().catch(err => console.log(err))*/
 
-    console.log(groups);
+    try {
+        const groups = await Conversation.find({
+            users: req.user.id,
+            $expr: { $gte: [ {$size: "$users" }, 3]}
+        }).select({
+            history: { $slice: -1 }
+        }).populate({
+            path: 'history',
+            select: 'user content createdAt',
+            populate: {
+                path: 'user',
+                select: 'display_name'
+            }
+        }).populate({
+            path: 'users',
+            match: { 
+                _id: { $ne: req.user.id },
+            },
+            select: 'display_name',
+            options: { limit: 5 }
+        }).exec();
 
-    res.json({ sender: req.user.id, groups: groups });
+        res.json({ sender: req.user.id, groups: groups });
+
+    } catch (err) {
+        console.error(err);
+    }
 })
 
 exports.groups_create_post = [
