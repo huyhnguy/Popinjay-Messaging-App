@@ -75,7 +75,11 @@ exports.dm_get = asyncHandler(async (req, res, next) => {
 exports.group_get = asyncHandler(async (req, res, next) => {
     const group = await Conversation.findById( req.params.groupId , { users: 0 }).lean().populate({
         path: 'history',
-        select: 'content createdAt user image'
+        select: 'content createdAt user image',
+        populate: {
+            path: 'user',
+            select: 'display_name'
+        }
     }).exec();
 
     res.json({ group: group, sender: req.user.id })

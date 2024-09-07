@@ -12,9 +12,14 @@ export default function Dm() {
     const [sender, setSender] = useState(null);
     const [loading, setLoading] = useState(true);
     const [newMessage, setNewMessage] = useState(false);
+    const [edit, setEdit] = useState(null);
 
     const urlParams = useParams();
     const navigate = useNavigate();
+    
+    useEffect(() => {
+        console.log("dm state changed:", dm);
+    }, [dm]);
 
     useEffect(() => {
         fetch('http://localhost:3000/api/dms/' + urlParams.dmId , {
@@ -32,7 +37,6 @@ export default function Dm() {
             throw error
           })
           .then(res => {
-            console.log(res.dm);
             setDm(res.dm);
             setSender(res.sender);
             setLoading(false);
@@ -100,6 +104,12 @@ export default function Dm() {
                 conversation_id: urlParams.dmId,
             }
         }
+
+        if (edit) {
+            submitEditMessage(edit, dataPackage);
+
+            return
+        }
         
         fetch('http://localhost:3000/api/messages/create', {
             method: 'POST',
@@ -137,6 +147,7 @@ export default function Dm() {
     }
 
     const handleDeleteMessage = (message) => {
+
         fetch('http://localhost:3000/api/messages/' + message._id, {
             method: 'DELETE',
             credentials: "include",
@@ -161,9 +172,63 @@ export default function Dm() {
             .then(res => {
                 if (res.message === "message successfully deleted") {
                     const newDmHistory= dm.history.filter(element => element != message);
-                    const cloneDm = { ...dm }
+                    const cloneDm = structuredClone(dm)
                     cloneDm.history = newDmHistory
                     setDm(cloneDm);
+                } else {
+                    console.log(res);
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                if (err.code === 401) {
+                    navigate('/login');
+                }
+            })
+    }
+
+    const startEditMessage = (message) => {
+        const messageInput = document.getElementById("new-message");
+
+        if (message.content) messageInput.value = message.content;
+        if (message.image) setBase64Pic(message.image);
+        setEdit(message);
+    }
+
+
+    const submitEditMessage = (oldMessage, newMessageInputs) => {
+
+        fetch('http://localhost:3000/api/messages/' + oldMessage._id, {
+            method: 'PUT',
+            credentials: "include",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newMessageInputs)
+        })
+            .then(res => {
+                if (res.ok) { 
+                    return res.json() 
+                }
+
+                const error = new Error(res.message);
+                error.code = res.status;
+                throw error
+                })
+            .then(res => {
+                if (res.message === "message successfully updated") {
+                    const indexOfOldMessage = dm.history.findIndex((element) => element === oldMessage);
+                    console.log(`old: ${oldMessage.content}`);
+                    console.log(`new: ${res.updated_message.content}`);
+                    setDm(prevDm => {
+                        const cloneDm = structuredClone(prevDm);
+                        cloneDm.history.splice(indexOfOldMessage, 1, res.updated_message);
+                        return cloneDm;
+                    });
+                    document.getElementById("new-message").value = "";
+                    setBase64Pic(null);
+                    setEdit(null);
                 } else {
                     console.log(res);
                 }
@@ -185,7 +250,7 @@ export default function Dm() {
                             <h1>{dm.users[0].display_name}</h1>
                         </div>
                     <main className="message-history">
-                        {
+                        {   
                             dm.history.map(message => {
                                 if (message.user === dm.users[0]._id) {
                                     return(
@@ -193,7 +258,7 @@ export default function Dm() {
                                     )
                                 } else if (message.user === sender) {
                                     return(
-                                        <Message key={message._id} info={message} person="sender" deleteMessage={() => {handleDeleteMessage(message)}}/>
+                                        <Message key={message._id} info={message} person="sender" deleteMessage={() => {handleDeleteMessage(message)}} editMessage={() => {startEditMessage(message)}}/>
                                     )
                                 } else {
                                     return(

@@ -21,6 +21,18 @@ exports.message_create_post = asyncHandler(async (req, res, next) => {
     }
 })
 
+exports.message_update = asyncHandler(async (req, res, next) => {
+    try {
+        const updatedMessage = await Message.findOneAndUpdate({ _id: req.params.messageId }, { content: req.body.new_message, image: req.body.image }, { new: true });
+
+        res.json({ updated_message: updatedMessage, message: "message successfully updated"})
+    } catch (err) {
+        console.error(err);
+
+        res.json({ message: "message could not be updated", error: err})
+    }
+})
+
 exports.message_delete = asyncHandler(async (req, res, next) => {
     try {
         await Promise.all([
@@ -31,7 +43,7 @@ exports.message_delete = asyncHandler(async (req, res, next) => {
         res.json({ message: "message successfully deleted" })
     } catch (err) {
         console.log(err);
-        
+
         res.json({ message: "message could not be deleted", error: err})
     }
 })

@@ -547,20 +547,29 @@ textarea {
   font-size: 1rem;
 }
 
-.trash-button {
+.message-button {
   all: unset;
-  cursor: pointer;
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  padding: 0.25rem;
-  border-radius: 5px;
   color: black;
-  background-color: #dddddd;
-  visibility: hidden;
+  cursor: pointer;
 }
 
-.message-container:hover .trash-button {
+.message-button:hover > * {
+  height:1.05rem;
+}
+
+.message-buttons {
+  visibility: hidden;
+  position: absolute;
+  top: -15px;
+  right: -10px;
+  border-radius: 3px;
+  background-color: #dddddd;
+  display: flex;
+  gap: 0.35rem;
+  padding: 0.35rem;
+}
+
+.message-container:hover .message-buttons {
   visibility:visible;
 }
 

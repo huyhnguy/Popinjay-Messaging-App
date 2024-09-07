@@ -174,7 +174,7 @@ export default function GroupDm() {
                 if (res.message === "message successfully deleted") {
                     const newDmHistory= dm.history.filter(element => element != message);
                     const cloneDm = { ...dm }
-                    cloneDm.history = newDmHistory
+                    cloneDm.history = newDmHistory;
                     setDm(cloneDm);
                 } else {
                     console.log(res);
@@ -205,13 +205,13 @@ export default function GroupDm() {
                     <main className="message-history" >
                         { 
                             dm.history.map(message => {
-                                if (message.user === sender) {
+                                if (message.user._id === sender) {
                                     return(
                                         <Message key={message._id} info={message} person="sender" deleteMessage={() => {handleDeleteMessage(message)}}/>
                                     )
                                 }
                                 return(
-                                    <Message key={message._id} info={message} person="receiver" />
+                                    <Message key={message._id} info={message} person="group-receiver" />
                                 )
                             })
                         }

@@ -1,8 +1,8 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faTrash, faPen } from '@fortawesome/free-solid-svg-icons'
 import { useEffect } from 'react'
 
-export default function Message({ info, person, deleteMessage }) {
+export default function Message({ info, person, deleteMessage, editMessage }) {
 
     let options = {
         month: "short",
@@ -27,9 +27,15 @@ export default function Message({ info, person, deleteMessage }) {
                 { formattedDate &&
                     <p className="timestamp">{formattedDate}</p>
                 }
-                <button className="trash-button" onClick={deleteMessage}>
-                    <FontAwesomeIcon icon={faTrash} />
-                </button>
+                <section className="message-buttons">
+                    <button className="message-button" onClick={editMessage}>
+                        <FontAwesomeIcon icon={faPen} />
+                    </button>
+                    <button className="message-button" onClick={deleteMessage}>
+                        <FontAwesomeIcon icon={faTrash} />
+                    </button>
+                </section>
+
             </div>
         )
     } else if (person === "receiver") {
@@ -46,7 +52,22 @@ export default function Message({ info, person, deleteMessage }) {
                 }
             </div>
         )
-    } else {
+    } else if (person === "group-receiver") {
+        return(
+            <div className="message-container">
+                <p style={{ margin: 0, fontSize: "0.75rem" }}>{info.user.display_name}</p>
+                { info.image &&
+                    <img src={info.image} alt="" style={{ height: "200px", borderRadius: "10px" }}/>
+                }
+                { info.content &&
+                    <p  className="message" style={{ backgroundColor: "#6b6b6b"}}>{info.content}</p>
+                }
+                { formattedDate &&
+                    <p className="timestamp">{formattedDate}</p>
+                }
+            </div>
+        )
+    }else {
         return (
             <p className="message" style={{backgroundColor: "red"}}>ERROR</p>
         )

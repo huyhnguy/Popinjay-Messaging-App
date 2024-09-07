@@ -71,10 +71,7 @@ export default function UserProfile({ userId }) {
           .then(res => res.json())
           .then(res => {
             const route = `/dms/${res.dm._id}`;
-            navigate(route, { state: {
-                receiver: user,
-                history: res.dm.history
-            } });
+            navigate(route);
           })
           .catch(err => {
             console.log(err);

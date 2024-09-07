@@ -48,6 +48,8 @@ router.put("/dms/:dmId", function (req, res) {
 
 router.post("/messages/create", authenticateToken, messageController.message_create_post);
 
+router.put("/messages/:messageId", authenticateToken, messageController.message_update);
+
 router.delete("/messages/:messageId", authenticateToken, messageController.message_delete);
 
 
