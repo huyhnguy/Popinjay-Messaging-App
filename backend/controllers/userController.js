@@ -6,8 +6,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require("dotenv").config();
 
-
-
 exports.login_post = [
     body("username")
         .trim()
@@ -157,15 +155,9 @@ exports.signup_post = [
                     await user.save();
                 })
             })
-            console.log(user._id);
             const globalGroupChat = await Conversation.findById('66d7d2fead84fa8a36bea088').exec();
-            console.log(globalGroupChat);
             globalGroupChat.users.push(user._id);
-            try {
-                await globalGroupChat.save();
-            } catch (err) {
-                console.log(err);
-            }
+            await globalGroupChat.save();
 
             res.status(201).json({ "status": 201, message: 'Successfully signed up' })
         }
@@ -173,7 +165,7 @@ exports.signup_post = [
 ];
 
 exports.users_list = asyncHandler(async (req, res, next) => {
-    const users = await User.find({ _id: {$ne: req.user.id}}).select('display_name profile_picture');
+    const users = await User.find({ _id: {$ne: req.user.id}}).lean().select('display_name profile_picture');
 
     if (!users) {
         throw new Error("can't find users");
@@ -183,8 +175,7 @@ exports.users_list = asyncHandler(async (req, res, next) => {
   });
 
 exports.user_profile_get = asyncHandler(async (req, res, next) => {
-    const user = await User.findById(req.user.id).exec();
-    console.log(req.user.id);
+    const user = await User.findById(req.user.id).lean().exec();
 
     if (req.user.id === "66d0f850353bc0d50dfd3f1c") {
         res.json({
@@ -260,7 +251,7 @@ exports.user_delete = asyncHandler(async (req, res, next) => {
 });
 
 exports.user_get = asyncHandler(async (req, res, next) => {
-    const user = await User.findById(req.params.userId).select('display_name profile_picture about_me createdAt').exec();
+    const user = await User.findById(req.params.userId).lean().select('display_name profile_picture about_me createdAt').exec();
     res.json(user)
 
     /*if (req.user.id === "66d0f850353bc0d50dfd3f1c") {

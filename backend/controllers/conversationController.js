@@ -5,7 +5,6 @@ const User = require("../models/user")
 const mongoose = require("mongoose");
 
 exports.dms_create_post = asyncHandler(async (req, res, next) => {
-
     // look for a possible pre-existing conversation between these two users in the database
     const dm = await Conversation.findOne({ 
         users: { 
@@ -25,14 +24,12 @@ exports.dms_create_post = asyncHandler(async (req, res, next) => {
         const newDm = new Conversation({
             users: [req.body.other_user_id, req.user.id]
         })
-
         await newDm.save();
 
         res.json({ sender: req.user.id, dm: newDm, message: "new conversation created"});
     } else {
         res.json({ sender: req.user.id, dm: dm, message: "pre-existing conversation sent"});
     }
-
 });
 
 exports.dms_list_get = asyncHandler(async (req, res, next) => {
@@ -45,7 +42,7 @@ exports.dms_list_get = asyncHandler(async (req, res, next) => {
             history: {
                 $ne: []
             }
-        }).select({
+        }).lean().select({
             history: { $slice: -1 }
         }).populate({
             path: 'history',
@@ -69,14 +66,14 @@ exports.dm_get = asyncHandler(async (req, res, next) => {
         path: 'users',
         match: { _id: { $ne: req.user.id }},
         select: 'display_name profile_picture'
-    }).exec();
+    }).lean().exec();
 
     res.json({ dm: dm, sender: req.user.id })
     console.log(dm);
 })
 
 exports.group_get = asyncHandler(async (req, res, next) => {
-    const group = await Conversation.findById( req.params.groupId , { users: 0 }).populate({
+    const group = await Conversation.findById( req.params.groupId , { users: 0 }).lean().populate({
         path: 'history',
         select: 'content createdAt user image'
     }).exec();
@@ -86,25 +83,11 @@ exports.group_get = asyncHandler(async (req, res, next) => {
 })
 
 exports.groups_list_get = asyncHandler(async (req, res, next) => {
-    /*const groups = await Conversation.find({ "users.2" : { "$exists": true } })
-        .find({
-            users: req.user.id
-        }).populate({
-            path: 'history',
-            populate: {
-                path: 'user',
-                select: 'display_name'
-            }
-        }).populate({
-            path: 'users',
-            select: 'display_name profile_picture'
-        }).exec().catch(err => console.log(err))*/
-
     try {
         const groups = await Conversation.find({
             users: req.user.id,
             $expr: { $gte: [ {$size: "$users" }, 3]}
-        }).select({
+        }).lean().select({
             history: { $slice: -1 }
         }).populate({
             path: 'history',
@@ -123,7 +106,6 @@ exports.groups_list_get = asyncHandler(async (req, res, next) => {
         }).exec();
 
         res.json({ sender: req.user.id, groups: groups });
-
     } catch (err) {
         console.error(err);
     }
@@ -152,8 +134,6 @@ exports.groups_create_post = [
                 display_name: req.body.display_name,
                 users: userArray,
             })
-
-            console.log(conversation);
             await conversation.save();
 
             res.status(201).json({ "status": 201, message: 'Successfully created conversation' });
