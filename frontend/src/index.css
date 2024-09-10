@@ -552,7 +552,7 @@ textarea {
   cursor: pointer;
 }
 
-.message-button:hover > * {
+.single-message-button:hover > * {
   height:1.05rem;
 }
 

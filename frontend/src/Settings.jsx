@@ -212,9 +212,8 @@ export default function Settings() {
                             </label>
                             <div style={{position: "relative", width: "100%"}}>
                                 <textarea className="about-me-input" name="about-me" id="about-me" rows="4" disabled={guest ? true : false} style={{ color: guest && "grey", borderColor: errors && errors.about_me && "red" }} onChange={(e) => {countRemainingCharacters(e)}} defaultValue={aboutMe}></textarea>
-                                { aboutMe && 
-                                    <p className='about-me-remaining-characters green'>{150 - aboutMe.length}</p>
-                                }
+                                <p className='about-me-remaining-characters green'>{aboutMeRemainingCharacters}</p>
+                            
                                 { errors && errors.about_me &&
                                     <p className="error-message">{errors.about_me.msg}</p>
                                 }   

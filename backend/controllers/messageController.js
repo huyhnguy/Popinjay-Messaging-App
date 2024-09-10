@@ -1,14 +1,24 @@
 const asyncHandler = require("express-async-handler");
 const Message = require("../models/message");
-const Conversation = require("../models/conversation")
+const Conversation = require("../models/conversation");
+const cloudinary = require('cloudinary').v2;
 
 exports.message_create_post = asyncHandler(async (req, res, next) => {
     try {
         const newMessage = new Message({
             user: req.user.id,
             content: req.body.new_message,
-            image: req.body.image
         })
+
+        if (req.file) {
+            const options = {
+                public_id: newMessage._id,
+                overwrite: true,
+              };              
+            const image = await cloudinary.uploader.upload(req.file.path , options);
+            newMessage.image = image.secure_url;
+        }
+
         newMessage.save();
 
         const [newMessagePopulated, conversation] = await Promise.all([ newMessage.populate('user', 'id'), Conversation.findById(req.body.conversation_id).exec()])
@@ -25,9 +35,22 @@ exports.message_create_post = asyncHandler(async (req, res, next) => {
 
 exports.message_update = asyncHandler(async (req, res, next) => {
     try {
-        const updatedMessage = await Message.findOneAndUpdate({ _id: req.params.messageId }, { content: req.body.new_message, image: req.body.image }, { new: true });
+        const message = await Message.findById(req.params.messageId).exec();
+        message.content = req.body.new_message;
 
-        const populatedMessage = await updatedMessage.populate('user', 'display_name');
+        if (req.file) {
+            const options = {
+                public_id: message._id,
+                overwrite: true,
+              };              
+            const image = await cloudinary.uploader.upload(req.file.path , options);
+            message.image = image.secure_url;
+        } else {
+            message.image = null;
+        }
+        await message.save();
+
+        const populatedMessage = await message.populate('user', 'display_name');
 
         res.json({ updated_message: populatedMessage, message: "message successfully updated"})
     } catch (err) {
@@ -40,6 +63,7 @@ exports.message_update = asyncHandler(async (req, res, next) => {
 exports.message_delete = asyncHandler(async (req, res, next) => {
     try {
         await Promise.all([
+            cloudinary.uploader.destroy(req.params.messageId, function(result) { console.log(result) }),
             Conversation.findOneAndUpdate({ _id: req.body.conversation_id}, { $pull: { history: req.params.messageId } }).exec(),
             Message.findByIdAndDelete(req.params.messageId).exec()
         ])

@@ -85,25 +85,23 @@ export default function Dm() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        const image = document.getElementById("image-upload");
-        let dataPackage;
-
+        const image = document.getElementById("message-files").files[0];
+        const newMessage = document.getElementById("new-message").value;
+        const conversationId = urlParams.dmId;
+        const formData = new FormData();
         if (image) {
-            dataPackage = {
-                new_message:  document.getElementById("new-message").value,
-                conversation_id: urlParams.dmId,
-                image: image.src,
-            }
+            formData.append("image", image)
         } else {
-            dataPackage = {
-                new_message:  document.getElementById("new-message").value,
-                conversation_id: urlParams.dmId,
-                image: null
-            }
+            formData.append("image", null)
         }
+        if (newMessage) {
+            formData.append("new_message", newMessage)
+        } 
+
+        formData.append("conversation_id", conversationId);
 
         if (edit) {
-            submitEditMessage(edit, dataPackage);
+            submitEditMessage(edit, formData);
 
             return
         }
@@ -113,9 +111,8 @@ export default function Dm() {
             credentials: "include",
             headers: {
               'Accept': 'application/json',
-              'Content-Type': 'application/json',
             },
-            body: JSON.stringify(dataPackage)
+            body: formData
           })
         .then(res => {
             if (res.ok) { return res.json() }
@@ -125,10 +122,11 @@ export default function Dm() {
           })
         .then(res => {
             const newDm = dm;
-            console.log(res.new_message);
             newDm.history.push(res.new_message);
             setDm(newDm);
             document.getElementById("new-message").value = "";
+            document.getElementById("message-files").value = null;
+            console.log(document.getElementById("message-files").value);
             setBase64Pic(null);
             setNewMessage(true);
         })
@@ -194,15 +192,13 @@ export default function Dm() {
     }
 
     const submitEditMessage = (oldMessage, newMessageInputs) => {
-
         fetch('http://localhost:3000/api/messages/' + oldMessage._id, {
             method: 'PUT',
             credentials: "include",
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json',
             },
-            body: JSON.stringify(newMessageInputs)
+            body: newMessageInputs
         })
             .then(res => {
                 if (res.ok) { 
@@ -216,8 +212,7 @@ export default function Dm() {
             .then(res => {
                 if (res.message === "message successfully updated") {
                     const indexOfOldMessage = dm.history.findIndex((element) => element === oldMessage);
-                    console.log(`old: ${oldMessage.content}`);
-                    console.log(`new: ${res.updated_message.content}`);
+
                     setDm(prevDm => {
                         const cloneDm = structuredClone(prevDm);
                         cloneDm.history.splice(indexOfOldMessage, 1, res.updated_message);
@@ -249,7 +244,6 @@ export default function Dm() {
                     <main className="message-history">
                         {   
                             dm.history.map(message => {
-                                console.log(`${message.user._id} === ${sender}`)
                                 if (message.user._id === dm.users[0]._id) {
                                     return(
                                         <Message key={message._id} info={message} person="receiver" />

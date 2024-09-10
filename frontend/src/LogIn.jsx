@@ -37,7 +37,7 @@ export default function LogIn() {
                     password: passwordErrors[0]
                 })
             } else if(res.status === 200) {
-                navigate("/dms")
+                navigate("/groups")
             }
           })
     }

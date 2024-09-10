@@ -46,9 +46,9 @@ router.put("/dms/:dmId", function (req, res) {
     res.send(`dm ${req.params.dmId} GET`);
 });
 
-router.post("/messages/create", authenticateToken, messageController.message_create_post);
+router.post("/messages/create", authenticateToken, upload.single('image'), messageController.message_create_post);
 
-router.put("/messages/:messageId", authenticateToken, messageController.message_update);
+router.put("/messages/:messageId", authenticateToken, upload.single('image'), messageController.message_update);
 
 router.delete("/messages/:messageId", authenticateToken, messageController.message_delete);
 
