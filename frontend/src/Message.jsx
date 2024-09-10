@@ -28,10 +28,10 @@ export default function Message({ info, person, deleteMessage, editMessage }) {
                     <p className="timestamp">{formattedDate}</p>
                 }
                 <section className="message-buttons">
-                    <button className="message-button" onClick={editMessage}>
+                    <button className="single-message-button" onClick={editMessage}>
                         <FontAwesomeIcon icon={faPen} />
                     </button>
-                    <button className="message-button" onClick={deleteMessage}>
+                    <button className="single-message-button" onClick={deleteMessage}>
                         <FontAwesomeIcon icon={faTrash} />
                     </button>
                 </section>

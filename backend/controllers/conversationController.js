@@ -3,6 +3,7 @@ const Conversation = require("../models/conversation");
 const { body, validationResult } = require("express-validator");
 const User = require("../models/user")
 const mongoose = require("mongoose");
+const cloudinary = require('cloudinary').v2;
 
 exports.dms_create_post = asyncHandler(async (req, res, next) => {
     // look for a possible pre-existing conversation between these two users in the database
@@ -131,20 +132,34 @@ exports.groups_create_post = [
 
         if (!errors.isEmpty()) {
             res.json({
-                profile_picture: req.body.profile_picture,
+                profile_picture: req.file,
                 display_name: req.body.display_name,
                 users: userArray,
                 errors: errors.array()
             })
         } else {
-            const conversation = new Conversation({
-                profile_picture: req.body.profile_picture,
-                display_name: req.body.display_name,
-                users: userArray,
-            })
-            await conversation.save();
+                const conversation = new Conversation({
+                    display_name: req.body.display_name,
+                    users: userArray,
+                })
+    
+                const options = {
+                    public_id: conversation._id,
+                    overwrite: true,
+                  };              
+                  try {
+                    const image = await cloudinary.uploader.upload(req.file.path , options);
+                    conversation.profile_picture = image.secure_url;
+                    await conversation.save();
 
-            res.status(201).json({ "status": 201, message: 'Successfully created conversation' });
+                  } catch (err) {
+                    console.error(err);
+                  }
+
+
+                  console.log(conversation);
+
+                res.status(201).json({ "status": 201, message: 'Successfully created conversation', conversation: conversation });
         }
     })
 ]

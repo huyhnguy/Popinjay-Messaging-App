@@ -29,12 +29,6 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-cloudinary.api.resources({
-  type: 'upload',
-  prefix: '' // add your folder
-},
-  function(error, result) { console.log(result, error) });
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');

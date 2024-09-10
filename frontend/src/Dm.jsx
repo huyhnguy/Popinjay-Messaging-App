@@ -125,6 +125,7 @@ export default function Dm() {
           })
         .then(res => {
             const newDm = dm;
+            console.log(res.new_message);
             newDm.history.push(res.new_message);
             setDm(newDm);
             document.getElementById("new-message").value = "";
@@ -248,6 +249,7 @@ export default function Dm() {
                     <main className="message-history">
                         {   
                             dm.history.map(message => {
+                                console.log(`${message.user._id} === ${sender}`)
                                 if (message.user._id === dm.users[0]._id) {
                                     return(
                                         <Message key={message._id} info={message} person="receiver" />

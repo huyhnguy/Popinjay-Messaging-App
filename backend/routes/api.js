@@ -27,7 +27,7 @@ router.delete("/users/:userId", userController.user_delete);
 
 router.get("/groups", authenticateToken, conversationController.groups_list_get);
 
-router.post("/groups/create", authenticateToken, conversationController.groups_create_post);
+router.post("/groups/create", authenticateToken, upload.single('group_picture'), conversationController.groups_create_post);
 
 router.get("/groups/:groupId", authenticateToken, conversationController.group_get);
 

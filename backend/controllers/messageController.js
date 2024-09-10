@@ -9,11 +9,13 @@ exports.message_create_post = asyncHandler(async (req, res, next) => {
             content: req.body.new_message,
             image: req.body.image
         })
-        const [newMessageSave, conversation] = await Promise.all([ newMessage.save(), Conversation.findById(req.body.conversation_id).exec()])
+        newMessage.save();
+
+        const [newMessagePopulated, conversation] = await Promise.all([ newMessage.populate('user', 'id'), Conversation.findById(req.body.conversation_id).exec()])
         conversation.history.push(newMessage._id);
         await conversation.save();
 
-        res.json({ new_message: newMessage, message: "Message successfully created and saved into the conversation" })
+        res.json({ new_message: newMessagePopulated , message: "Message successfully created and saved into the conversation" })
     } catch (err) {
         console.error('error saving conversation:', err);
 

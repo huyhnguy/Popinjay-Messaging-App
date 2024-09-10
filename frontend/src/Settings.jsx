@@ -81,9 +81,7 @@ export default function Settings() {
         formData.append("display_name", newDisplayName);
         formData.append("about_me", aboutMe);
         formData.append("profile_picture", profilePic);
-        for (var key of formData.entries()) {
-            console.log(key[0] + ', ' + key[1]);
-        }
+
         fetch('http://localhost:3000/api/users/settings', {
             method: 'PUT',
             credentials: "include",

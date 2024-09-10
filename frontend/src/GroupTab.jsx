@@ -29,8 +29,6 @@ export default function GroupTab() {
             throw error
           })
           .then(res => {
-            console.log(res);
-
             const groupsArray = res.groups;
             sortByMostRecent(groupsArray);
             setGroups(groupsArray);
@@ -98,7 +96,6 @@ export default function GroupTab() {
     }
 
     const handleAddGroup = (action) => {
-        console.log(action);
         if (action === "completed") {
             setAddGroup("closed");
 

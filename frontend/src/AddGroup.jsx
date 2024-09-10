@@ -25,7 +25,6 @@ export default function AddGroup({ closePopUp }) {
             throw error
           })
           .then(res => {
-            console.log(res);
             setUsersList(res);
           })
           .catch(err => {
@@ -70,26 +69,31 @@ export default function AddGroup({ closePopUp }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         const groupName = document.getElementById("group-name").value;
-        console.log(`picture: ${base64Pic}`);
-        console.log(groupName);
+        const groupPic = document.getElementById("group-picture").files[0]
         console.log(checkedUsers);
+        const checkedUsersIds = Array.from(checkedUsers, user => user._id)
+        console.log(checkedUsersIds);
+
+        const formData = new FormData();
+        formData.append("display_name", groupName);
+        formData.append("group_picture", groupPic);
+        
+        for (var i = 0; i < checkedUsersIds.length; i++) {
+            formData.append(`users[${i}]`, checkedUsersIds[i]);
+          }
+          
         
         fetch('http://localhost:3000/api/groups/create', {
             method: 'POST',
             credentials: "include",
             headers: {
               'Accept': 'application/json',
-              'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                profile_picture: base64Pic,
-                display_name: groupName,
-                users: checkedUsers
-            })
+            body: formData
           })
           .then(res => res.json())
           .then(res => {
-            console.log(res);
+            console.log(res.conversation);
             closePopUp("completed");
           })
           .catch(err => {
@@ -108,7 +112,6 @@ export default function AddGroup({ closePopUp }) {
         } else {
             label.classList.remove("selected-user");
             const newArray = checkedUsers.filter(user => user._id != e.target.id);
-            console.log(newArray);
             setCheckedUsers(newArray);
         }
     }
@@ -117,7 +120,6 @@ export default function AddGroup({ closePopUp }) {
         const label = document.getElementById(userId + "-label");
         label.classList.remove("selected-user");
         const newArray = checkedUsers.filter(user => user._id != userId);
-        console.log(newArray);
         setCheckedUsers(newArray);
     }
 

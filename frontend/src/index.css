@@ -546,7 +546,7 @@ textarea {
   font-size: 1rem;
 }
 
-.message-button {
+.single-message-button {
   all: unset;
   color: black;
   cursor: pointer;
