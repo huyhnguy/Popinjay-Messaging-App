@@ -9,6 +9,7 @@ const usersRouter = require('./routes/users');
 const apiRouter = require('./routes/api');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const cloudinary = require('cloudinary').v2;
 
 const app = express();
 
@@ -21,6 +22,18 @@ async function main() {
   await mongoose.connect(mongoDB);
   console.log('database connected');
 }
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+cloudinary.api.resources({
+  type: 'upload',
+  prefix: '' // add your folder
+},
+  function(error, result) { console.log(result, error) });
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

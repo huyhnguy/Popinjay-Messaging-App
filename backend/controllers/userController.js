@@ -5,6 +5,7 @@ const { body, validationResult } = require("express-validator");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require("dotenv").config();
+const cloudinary = require('cloudinary').v2;
 
 exports.login_post = [
     body("username")
@@ -227,18 +228,30 @@ exports.user_profile_put = [
         if (!errors.isEmpty()) {
             res.json({
                 display_name: req.body.display_name,
-                profile_picture: req.body.profile_picture,
+                profile_picture: req.file,
                 about_me: req.body.about_me,
                 errors: errors.array()
             })
         } else {
-            const user = await User.findById(req.user.id).exec();
-            user.display_name = req.body.display_name;
-            user.profile_picture = req.body.profile_picture;
-            user.about_me = req.body.about_me;
-            await user.save();
+            try {
+                const options = {
+                    public_id: req.user.id,
+                    overwrite: true,
+                  };              
+                  console.log(req.file);
+                const image = await cloudinary.uploader.upload(req.file.path , options);
 
-            res.json({ message: "new user settings changed" })
+                const user = await User.findById(req.user.id).exec();
+                user.display_name = req.body.display_name;
+                user.profile_picture = image.secure_url;
+                user.about_me = req.body.about_me;
+                await user.save();
+            
+                res.json({ imageUrl: image.secure_url, message: "new user settings changed" });
+              } catch (error) {
+                console.error(error);
+                res.status(500).json({ error: 'Error updating user profile' });
+              }
         }
     })
 ]
@@ -252,7 +265,7 @@ exports.user_delete = asyncHandler(async (req, res, next) => {
 
 exports.user_get = asyncHandler(async (req, res, next) => {
     const user = await User.findById(req.params.userId).lean().select('display_name profile_picture about_me createdAt').exec();
-    res.json(user)
+    res.json(user);
 
     /*if (req.user.id === "66d0f850353bc0d50dfd3f1c") {
         res.json({

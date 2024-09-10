@@ -74,20 +74,23 @@ export default function Settings() {
         e.preventDefault();
         const newDisplayName = document.getElementById("display-name").value;
         const aboutMe = document.querySelector(".about-me-input").value;
-        console.log(aboutMe);
+        const profilePic = document.getElementById("profile-picture").files[0]
+        console.log(profilePic);
 
+        const formData = new FormData();
+        formData.append("display_name", newDisplayName);
+        formData.append("about_me", aboutMe);
+        formData.append("profile_picture", profilePic);
+        for (var key of formData.entries()) {
+            console.log(key[0] + ', ' + key[1]);
+        }
         fetch('http://localhost:3000/api/users/settings', {
             method: 'PUT',
             credentials: "include",
             headers: {
               'Accept': 'application/json',
-              'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                profile_picture: base64Pic,
-                display_name: newDisplayName,
-                about_me: aboutMe,
-            })
+            body: formData
           })
           .then(res => res.json())
           .then(res => {
@@ -99,13 +102,13 @@ export default function Settings() {
                     about_me: aboutMeErrors[0]
                 })
             } else {
+                console.log(res);
                 alert(res.message);
                 setErrors(null);
             }
           })
           .catch(err => {
             console.log(err);
-            navigate('/login');
         })
 
     }
@@ -185,7 +188,7 @@ export default function Settings() {
                                 }
                                 Profile Picture 
                             </label>
-                            <input style={{ cursor: !guest && "pointer", color: guest && "grey" }} className="input" type="file" id="profile-picture" accept="image/*" defaultValue={ base64Pic && base64Pic } onChange={(e) => {handleFileUpload(e)}} disabled={guest ? true : false}/>
+                            <input style={{ cursor: !guest && "pointer", color: guest && "grey" }} className="input" type="file" id="profile-picture" name="profile-picture" accept="image/*" defaultValue={ base64Pic && base64Pic } onChange={(e) => {handleFileUpload(e)}} disabled={guest ? true : false}/>
                         </div>
                         <div className="form-section" style={{ alignItems: "start" }}>
                             <label htmlFor="display-name">

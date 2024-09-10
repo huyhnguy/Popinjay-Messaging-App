@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 require("dotenv").config();
 const { authenticateToken } = require('../middleware/authenticateToken');
-
+const upload = require('../middleware/multer-config');
 const userController = require("../controllers/userController");
 const conversationController = require("../controllers/conversationController");
 const messageController = require('../controllers/messageController');
@@ -17,7 +17,7 @@ router.get("/users", authenticateToken, userController.users_list);
 
 router.get("/users/settings", authenticateToken, userController.user_profile_get);
 
-router.put("/users/settings", authenticateToken, userController.user_profile_put);
+router.put("/users/settings", authenticateToken, upload.single('profile_picture'), userController.user_profile_put);
 
 router.get("/users/:userId", authenticateToken, userController.user_get);
 
