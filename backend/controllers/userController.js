@@ -234,20 +234,26 @@ exports.user_profile_put = [
             })
         } else {
             try {
-                const options = {
-                    public_id: req.user.id,
-                    overwrite: true,
-                  };              
-                  console.log(req.file);
-                const image = await cloudinary.uploader.upload(req.file.path , options);
-
+                console.log(req.file);
                 const user = await User.findById(req.user.id).exec();
                 user.display_name = req.body.display_name;
-                user.profile_picture = image.secure_url;
                 user.about_me = req.body.about_me;
+
+                if (req.file) {
+                    const options = {
+                        public_id: req.user.id,
+                        overwrite: true,
+                      };              
+                    const image = await cloudinary.uploader.upload(req.file.path , options);
+                    user.profile_picture = image.secure_url;
+                } else if (req.file === null) {
+                    console.llg("profile picture null")
+                    user.profile_picture = null;
+                } 
+
                 await user.save();
             
-                res.json({ imageUrl: image.secure_url, message: "new user settings changed" });
+                res.json({ user: user, message: "new user settings changed" });
               } catch (error) {
                 console.error(error);
                 res.status(500).json({ error: 'Error updating user profile' });

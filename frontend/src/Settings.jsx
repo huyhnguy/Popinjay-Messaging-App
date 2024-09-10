@@ -32,6 +32,7 @@ export default function Settings() {
             throw error
           })
           .then(res => {
+            console.log(res.profile_picture);
             setDisplayName(res.display_name);
             setBase64Pic(res.profile_picture);
             setAboutMe(res.about_me);
@@ -74,13 +75,23 @@ export default function Settings() {
         e.preventDefault();
         const newDisplayName = document.getElementById("display-name").value;
         const aboutMe = document.querySelector(".about-me-input").value;
-        const profilePic = document.getElementById("profile-picture").files[0]
-        console.log(profilePic);
 
         const formData = new FormData();
         formData.append("display_name", newDisplayName);
         formData.append("about_me", aboutMe);
-        formData.append("profile_picture", profilePic);
+
+        if (!base64Pic && !document.getElementById("profile-picture").files[0]) {
+            formData.append("profile_picture", null);
+        } else if (base64Pic && document.getElementById("profile-picture").files[0]) { 
+            //if the user doesn't have a picture yet and they upload a picture
+            const profilePic = document.getElementById("profile-picture").files[0];
+            formData.append("profile_picture", profilePic);
+        } else if (base64Pic && !document.getElementById("profile-picture").files[0]) {
+            //if the user does have a picture and they dont upload any picture, dont do anything
+            formData.append("profile_picture", undefined)
+        }
+
+        console.log([...formData]);
 
         fetch('http://localhost:3000/api/users/settings', {
             method: 'PUT',
