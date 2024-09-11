@@ -78,7 +78,7 @@ export default function AddGroup({ closePopUp }) {
         formData.append("display_name", groupName);
         formData.append("group_picture", groupPic);
         
-        for (var i = 0; i < checkedUsersIds.length; i++) {
+        for (let i = 0; i < checkedUsersIds.length; i++) {
             formData.append(`users[${i}]`, checkedUsersIds[i]);
           }
           

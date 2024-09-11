@@ -9,10 +9,9 @@ const ConversationSchema = new Schema({
   profile_picture: String,
   admins: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   admin_permissions: {
-    delete_messages: { type: Boolean },
-    change_settings: { type: Boolean },
-    invite_users: { type: Boolean },
-    kick_users: { type: Boolean }
+    delete_messages: { type: Boolean, default: false },
+    invite_users: { type: Boolean, default: true },
+    kick_users: { type: Boolean, default: false }
   },
   master: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });

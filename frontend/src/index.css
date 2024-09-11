@@ -640,6 +640,9 @@ textarea {
   padding: 0.25rem;
   cursor: pointer;
   border-radius: 2.5px;
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: 1fr 5fr;
 }
 
 .member-button:hover {

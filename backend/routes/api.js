@@ -33,6 +33,8 @@ router.get("/groups/:groupId", authenticateToken, conversationController.group_g
 
 router.get("/groups/:groupId/settings", authenticateToken, conversationController.group_settings_get);
 
+router.put("/groups/:groupId/settings", authenticateToken, upload.single('profile_picture'), conversationController.group_settings_put);
+
 router.put("/groups/:groupId", function (req, res) {
     res.send(`group ${req.params.groupId} PUT`);
 });

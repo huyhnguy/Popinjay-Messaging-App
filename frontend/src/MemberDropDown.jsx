@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faUserGear, faMessage, faUserXmark, faEye } from '@fortawesome/free-solid-svg-icons'
 
 export default function MemberDropDown({ user, profileFunction }) {
     const navigate = useNavigate();
@@ -31,10 +33,22 @@ export default function MemberDropDown({ user, profileFunction }) {
     return (
         <>
             <div id={`${user._id}-dropdown`} className="member-button-container invisible">
-                <button onClick={(e) => {handleMessage(e)}} className="member-button">Message</button>
-                <button onClick={(e) => {profileFunction(e, user._id)}} className="member-button">View Profile</button>
-                <button className="member-button">Make admin</button>
-                <button className="member-button-red">Kick from group</button>
+                <button onClick={(e) => {handleMessage(e)}} className="member-button">
+                    <FontAwesomeIcon icon={faMessage}/>
+                    <p style={{margin: 0}}>Message</p>
+                </button>
+                <button onClick={(e) => {profileFunction(e, user._id)}} className="member-button">
+                    <FontAwesomeIcon icon={faEye}/>
+                    <p style={{margin: 0}}>View profile</p>
+                </button>
+                <button className="member-button">
+                    <FontAwesomeIcon icon={faUserGear}/>
+                    <p style={{margin: 0}}>Make admin</p>
+                </button>
+                <button className="member-button-red">
+                    <FontAwesomeIcon icon={faUserXmark}/>
+                    <p style={{margin: 0}}>Kick from group</p>
+                </button>
             </div>
         </>
 

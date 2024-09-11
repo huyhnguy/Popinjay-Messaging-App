@@ -94,13 +94,82 @@ exports.group_get = asyncHandler(async (req, res, next) => {
 exports.group_settings_get = asyncHandler(async (req, res, next) => {
     const group = await Conversation.findById( req.params.groupId , { history: 0 }).lean().populate({
         path: 'users',
-        select: 'display_name profile_picture '
+        select: 'display_name profile_picture'
     }).exec();
 
     console.log(group);
 
     res.json({ group: group, sender: req.user.id })
 })
+
+exports.group_settings_put = [
+    body("display_name")
+        .trim()
+        .isLength({ min: 1 })
+        .withMessage("Enter a display name")
+        .isLength({ max: 30 })
+        .withMessage("Display name cannot be longer than 30 characters")
+        .escape(),
+    asyncHandler(async (req, res, next) => {
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            res.json({
+                display_name: req.body.display_name,
+                profile_picture: req.file,
+                about_me: req.body.about_me,
+                errors: errors.array()
+            })
+        } else {
+            try {
+                console.log(req.file);
+                console.log(req.body);
+                
+                const conversation = await Conversation.findById(req.params.groupId).exec();
+                conversation.display_name = req.body.display_name;
+
+                if (req.body.admin_permissions.includes('delete-messages')) {
+                    conversation.admin_permissions.delete_messages = true
+                } else {
+                    conversation.admin_permissions.delete_messages = false
+                }
+
+                if (req.body.admin_permissions.includes('invite-users')) {
+                    conversation.admin_permissions.invite_users = true
+                } else {
+                    conversation.admin_permissions.invite_users = false
+                }
+
+                if (req.body.admin_permissions.includes('kick-users')) {
+                    conversation.admin_permissions.kick_users = true
+                } else {
+                    conversation.admin_permissions.kick_users = false
+                }
+
+                if (req.file) {
+                    const options = {
+                        public_id: req.params.groupId,
+                        overwrite: true,
+                      };              
+                    const image = await cloudinary.uploader.upload(req.file.path , options);
+                    conversation.profile_picture = image.secure_url;
+                } else {
+                    if (req.body.picture_status === "delete") {
+                        conversation.profile_picture = null;
+                        await cloudinary.uploader.destroy(req.user.id, function(result) { console.log(result) })
+                    }
+                } 
+
+                await conversation.save();
+            
+                res.json({ group: conversation, message: "new group settings changed" });
+              } catch (error) {
+                console.error(error);
+                res.status(500).json({ error: 'Error updating group settings' });
+              }
+        }
+    })
+]
 
 exports.groups_list_get = asyncHandler(async (req, res, next) => {
     try {

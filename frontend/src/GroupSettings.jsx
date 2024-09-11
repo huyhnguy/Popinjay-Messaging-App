@@ -11,6 +11,7 @@ import UserProfile from "./UserProfile";
 export default function GroupSettings() {
     const [displayName, setDisplayName] = useState(undefined);
     const [pic, setPic] = useState(null);
+    const [adminPermissions, setAdminPermissions] = useState(null);
     const [users, setUsers] = useState(null);
     const [dropDown, setDropDown] = useState(null);
     const [userProfile, setUserProfile] = useState(null);
@@ -39,6 +40,7 @@ export default function GroupSettings() {
             setDisplayName(res.group.display_name);
             setPic(res.group.profile_picture);
             setUsers(res.group.users);
+            setAdminPermissions(res.group.admin_permissions);
 
           })
           .catch(err => {
@@ -74,10 +76,27 @@ export default function GroupSettings() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        const checkedBoxesNodeList = document.querySelectorAll('input[name=admin-permissions]:checked');
+        const checkedBoxesArray = Array.from(checkedBoxesNodeList);
+        const checkedBoxes = checkedBoxesArray.map((element) => element.value);
+
+        console.log(checkedBoxes);
+        
         const newDisplayName = document.getElementById("display-name").value;
 
         const formData = new FormData();
         formData.append("display_name", newDisplayName);
+
+        //formData.append('admin_permissions', checkedBoxes);
+        if (checkedBoxes.length > 0) {
+            for (let i = 0; i < checkedBoxes.length; i++) {
+                formData.append(`admin_permissions[${i}]`, checkedBoxes[i]);
+              }
+        } else {
+                formData.append(`admin_permissions`, checkedBoxes);
+        }
+
 
         if (!pic && !document.getElementById("profile-picture").files[0]) {
             // no previous picture and no picturer uploaded
@@ -92,6 +111,7 @@ export default function GroupSettings() {
             formData.append("profile_picture", null);
         }
 
+        console.log([...formData])
         fetch(`http://localhost:3000/api/groups/${urlParams.groupId}/settings`, {
             method: 'PUT',
             credentials: "include",
@@ -201,20 +221,23 @@ export default function GroupSettings() {
                         </div>
                         <div className="form-section" style={{ alignItems: "start" }}>
                             <p style={{ margin: 0 }}>Admin Permissions</p>
-                            <div className="form-section-container">
-                                <div className="checkbox-container">
-                                    <label htmlFor="delete-messages">Can delete messages</label>
-                                    <input  id="delete-messages" name="admin-permissionss" value="delete-messages" type="checkbox" />
+                            { adminPermissions &&
+                                <div className="form-section-container">
+                                    <div className="checkbox-container">
+                                        <label htmlFor="delete-messages">Can delete messages</label>
+                                        <input  id="delete-messages" name="admin-permissions" value="delete-messages" type="checkbox" defaultChecked= {adminPermissions.delete_messages ? true : false}/>
+                                    </div>
+                                    <div className="checkbox-container">
+                                        <label htmlFor="invite-users">Can invite users</label>
+                                        <input  id="invite-users" name="admin-permissions" value="invite-users" type="checkbox" defaultChecked= {adminPermissions.invite_users ? true : false}/>
+                                    </div>
+                                    <div className="checkbox-container">
+                                        <label htmlFor="kick-users">Can kick users</label>
+                                        <input  id="kick-users" name="admin-permissions" value="kick-users" type="checkbox" defaultChecked= {adminPermissions.kick_users ? true : false}/>
+                                    </div>
                                 </div>
-                                <div className="checkbox-container">
-                                    <label htmlFor="invite-users">Can invite users</label>
-                                    <input  id="invite-users" name="admin-permissions" value="invite-users" type="checkbox" defaultChecked/>
-                                </div>
-                                <div className="checkbox-container">
-                                    <label htmlFor="kick-users">Can kick users</label>
-                                    <input  id="kick-users" name="admin-permissions" value="kick-users" type="checkbox" />
-                                </div>
-                            </div>
+                            }
+
                         </div>
                         <button className="submit" onClick={handleSubmit}>Save</button>
                         <div className="form-section" style={{ alignItems: "start" }}>
