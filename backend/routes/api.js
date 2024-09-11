@@ -31,6 +31,7 @@ router.post("/groups/create", authenticateToken, upload.single('group_picture'),
 
 router.get("/groups/:groupId", authenticateToken, conversationController.group_get);
 
+router.get("/groups/:groupId/settings", authenticateToken, conversationController.group_settings_get);
 
 router.put("/groups/:groupId", function (req, res) {
     res.send(`group ${req.params.groupId} PUT`);

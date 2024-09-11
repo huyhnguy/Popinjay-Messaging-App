@@ -246,9 +246,11 @@ exports.user_profile_put = [
                       };              
                     const image = await cloudinary.uploader.upload(req.file.path , options);
                     user.profile_picture = image.secure_url;
-                } else if (req.file === null) {
-                    console.llg("profile picture null")
-                    user.profile_picture = null;
+                } else {
+                    if (req.body.picture_status === "delete") {
+                        user.profile_picture = null;
+                        await cloudinary.uploader.destroy(req.user.id, function(result) { console.log(result) })
+                    }
                 } 
 
                 await user.save();

@@ -91,6 +91,17 @@ exports.group_get = asyncHandler(async (req, res, next) => {
     console.log(group);
 })
 
+exports.group_settings_get = asyncHandler(async (req, res, next) => {
+    const group = await Conversation.findById( req.params.groupId , { history: 0 }).lean().populate({
+        path: 'users',
+        select: 'display_name profile_picture '
+    }).exec();
+
+    console.log(group);
+
+    res.json({ group: group, sender: req.user.id })
+})
+
 exports.groups_list_get = asyncHandler(async (req, res, next) => {
     try {
         const groups = await Conversation.find({

@@ -13,6 +13,7 @@ import DmTab from "./DmTab";
 import GroupTab from "./GroupTab";
 import GroupDm from "./GroupDm";
 import UserProfile from "./UserProfile";
+import GroupSettings from "./GroupSettings";
 
 const router = createBrowserRouter([
     {
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
     {
         path: "/groups/:groupId",
         element: <GroupDm />,
+    },
+    {
+        path: "/groups/:groupId/settings",
+        element: <GroupSettings />,
     },
 ]);
 

@@ -4,20 +4,20 @@ import { useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleXmark, faLock } from '@fortawesome/free-solid-svg-icons'
 import ProfilePic from "./ProfilePic";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-export default function Settings() {
+export default function GroupSettings() {
     const [displayName, setDisplayName] = useState(undefined);
     const [base64Pic, setBase64Pic] = useState(null);
     const [aboutMe, setAboutMe] = useState(null);
-    const [guest, setGuest] = useState(false);
     const [aboutMeRemainingCharacters, setAboutMeRemainingCharacters] = useState(150);
     const [errors, setErrors] = useState(null);
 
+    const urlParams = useParams();
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch('http://localhost:3000/api/users/settings', {
+        fetch(`http://localhost:3000/api/groups/${urlParams.groupId}/settings`, {
             method: 'GET',
             credentials: "include",
             headers: {
@@ -35,10 +35,8 @@ export default function Settings() {
             console.log(res.profile_picture);
             setDisplayName(res.display_name);
             setBase64Pic(res.profile_picture);
-            setAboutMe(res.about_me);
-            if(res.guest) {
-                setGuest(true);
-            }
+            setUsers(res.users);
+
           })
           .catch(err => {
             console.log(err);
@@ -164,10 +162,8 @@ export default function Settings() {
         <div className="settings-page">
             <div className="settings-container">
                 <div className="settings-card">
-                    <h1 style={{margin: "0 0 1rem 0"}}>Settings</h1>
-                    {guest &&
-                        <p style={{color: "red", marginTop: 0}}>**Log out and create an account to change settings!**</p>
-                    }
+                    <h1 style={{margin: "0 0 1rem 0"}}>Group Settings</h1>
+
                     <form action="" method="POST">
                         <div className="form-section">
                             <div style={{position: "relative"}} className="pic-container-x">

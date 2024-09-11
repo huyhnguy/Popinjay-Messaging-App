@@ -249,6 +249,10 @@ export default function GroupDm() {
             })
     }
 
+    const handleSettings = () => {
+        navigate('settings')
+    }
+
     return(
         <>
             { dm &&   
@@ -258,7 +262,7 @@ export default function GroupDm() {
                             <ProfilePic imageSrc={dm.profile_picture} size="2.5rem"/>
                             <h1>{dm.display_name != "" ? dm.display_name : displayUsersNamesInGroup(dm.users)}</h1>
                         </div>
-                        <button className="group-settings-button">
+                        <button className="group-settings-button" onClick={handleSettings}>
                             <FontAwesomeIcon icon={faGear} style={{height: "2rem"}}/>
                         </button>
                     </div>

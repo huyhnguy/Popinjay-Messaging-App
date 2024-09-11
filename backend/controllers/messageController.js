@@ -19,9 +19,11 @@ exports.message_create_post = asyncHandler(async (req, res, next) => {
             newMessage.image = image.secure_url;
         }
 
-        newMessage.save();
-
-        const [newMessagePopulated, conversation] = await Promise.all([ newMessage.populate('user', 'id'), Conversation.findById(req.body.conversation_id).exec()])
+        const [newMessageSave, newMessagePopulated, conversation] = await Promise.all([ 
+            newMessage.save(), 
+            newMessage.populate('user', 'id'), 
+            Conversation.findById(req.body.conversation_id).exec()
+        ])
         conversation.history.push(newMessage._id);
         await conversation.save();
 
@@ -48,9 +50,10 @@ exports.message_update = asyncHandler(async (req, res, next) => {
         } else {
             message.image = null;
         }
-        await message.save();
-
-        const populatedMessage = await message.populate('user', 'display_name');
+        const [saveMessage, populatedMessage] = await Promise.all([
+            message.save(),
+            message.populate('user', 'display_name')
+        ])
 
         res.json({ updated_message: populatedMessage, message: "message successfully updated"})
     } catch (err) {
