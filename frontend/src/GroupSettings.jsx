@@ -6,12 +6,14 @@ import { faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 import ProfilePic from "./ProfilePic";
 import { useNavigate, useParams } from "react-router-dom";
 import MemberDropDown from "./MemberDropDown";
+import UserProfile from "./UserProfile";
 
 export default function GroupSettings() {
     const [displayName, setDisplayName] = useState(undefined);
     const [pic, setPic] = useState(null);
     const [users, setUsers] = useState(null);
     const [dropDown, setDropDown] = useState(null);
+    const [userProfile, setUserProfile] = useState(null);
     const [errors, setErrors] = useState(null);
 
     const urlParams = useParams();
@@ -135,12 +137,31 @@ export default function GroupSettings() {
         const previousDropDown = document.getElementById(`${dropDown}-dropdown`);
         previousDropDown.classList.add('invisible');
         setDropDown(null);
+
+        console.log('closedropdown function');
     }
+
+    const openUserProfile = (e, userId) => {
+        e.preventDefault();
+        console.log('openuserprofile function');
+        setUserProfile(userId);
+        closeDropDown();
+    }
+
 
     return(
         <div className="settings-page">
             { dropDown &&
-                <div style={{ height: "100vh", width: "100vw", position: "absolute", zIndex: "99",}} onClick={closeDropDown}></div>
+                <div style={{ height: "100vh", width: "100vw", position: "absolute", zIndex: "98",}} onClick={closeDropDown}></div>
+            }
+            { userProfile &&
+                <>
+                    <div className="shadow" onClick={() => {
+                        setUserProfile(null);
+                        closeDropDown();
+                        }}></div>
+                    <UserProfile userId={userProfile} />
+                </>
             }
             <div className="settings-container">
                 <div className="settings-card">
@@ -202,19 +223,10 @@ export default function GroupSettings() {
                                 { users &&
                                     users.map((user) => {
                                         return (
-                                            <div key={user._id} style={{position: "relative"}} onClick={() => {
-                                                handleDropdown(user._id)
-                                                /*console.log(document.getElementById(`${user._id}-dropdown`));
-                                                const dropdown = document.getElementById(`${user._id}-dropdown`);
-                                                if (dropdown.classList.contains('invisible')) {
-                                                    dropdown.classList.remove('invisible');
-                                                } else {
-                                                    dropdown.classList.add('invisible');
-                                                }*/
-                                            }}>
+                                            <div key={user._id} style={{position: "relative"}} onClick={() => {handleDropdown(user._id)}}>
                                                 <div >
                                                     <div className="member-card" >
-                                                        <ProfilePic imageSrc={user.profile_picture} size="3rem"/>
+                                                        <ProfilePic imageSrc={user.profile_picture} size="4rem"/>
                                                         <div className="name-message">
                                                             <h2>{user.display_name}</h2>
                                                         </div>
@@ -222,7 +234,7 @@ export default function GroupSettings() {
                                                     <hr style={{ margin: 0 }}/>
                                                 </div>
                                                 
-                                                <MemberDropDown user={user}/>
+                                                <MemberDropDown user={user} profileFunction={openUserProfile}/>
                   
                                             </div>
                                         )
