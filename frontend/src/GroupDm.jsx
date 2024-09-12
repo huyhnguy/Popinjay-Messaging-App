@@ -33,7 +33,7 @@ export default function GroupDm() {
             throw error
           })
           .then(res => {
-            console.log(res.group);
+            console.log(res);
             setDm(res.group);
             setSender(res.sender);
             setLoading(false);
@@ -145,6 +145,7 @@ export default function GroupDm() {
     }
 
     const displayUsersNamesInGroup = (users) => {
+        console.log(users);
         let names = "";
         for (let i = 0; i < users.length; i++) {
             if (i === 0) {

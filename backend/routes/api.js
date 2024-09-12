@@ -47,10 +47,6 @@ router.post("/dms/create", authenticateToken, conversationController.dms_create_
 
 router.get("/dms/:dmId", authenticateToken, conversationController.dm_get);
 
-router.put("/dms/:dmId", function (req, res) {
-    res.send(`dm ${req.params.dmId} GET`);
-});
-
 router.post("/messages/create", authenticateToken, upload.single('image'), messageController.message_create_post);
 
 router.put("/messages/:messageId", authenticateToken, upload.single('image'), messageController.message_update);

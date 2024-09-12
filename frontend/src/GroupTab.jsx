@@ -29,6 +29,7 @@ export default function GroupTab() {
             throw error
           })
           .then(res => {
+            console.log(res);
             const groupsArray = res.groups;
             sortByMostRecent(groupsArray);
             setGroups(groupsArray);

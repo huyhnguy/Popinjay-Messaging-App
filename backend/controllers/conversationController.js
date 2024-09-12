@@ -79,13 +79,16 @@ exports.dm_get = asyncHandler(async (req, res, next) => {
 })
 
 exports.group_get = asyncHandler(async (req, res, next) => {
-    const group = await Conversation.findById( req.params.groupId , { users: 0 }).lean().populate({
+    const group = await Conversation.findById( req.params.groupId ).lean().populate({
         path: 'history',
         select: 'content createdAt user image',
         populate: {
             path: 'user',
             select: 'display_name'
         }
+    }).populate({
+        path: 'users',
+        select: 'display_name'
     }).exec();
 
     res.json({ group: group, sender: req.user.id })
@@ -180,15 +183,17 @@ exports.group_settings_delete = asyncHandler(async (req, res, next) => {
             console.log('group not found');
             return;
         }
+
+            //await cloudinary.uploader.destroy(req.params.groupId, function(result) { console.log(result) });
+            const [deletedImageUrl, deletedMessages, deletedGroup] = await Promise.all([cloudinary.uploader.destroy(req.params.groupId, function(result) { console.log(result) }) ,Message.deleteMany({_id: { $in: group.history }}), Conversation.deleteOne({ _id: req.params.groupId }) ])
+       
     
-        const deletedMessages = await Message.deleteMany({_id: { $in: group.history }})
+        //const deletedMessages = await Message.deleteMany({_id: { $in: group.history }})
+        //const deletedGroup = await Conversation.deleteOne({ _id: req.params.groupId });
+
+       // const [deletedMessages, deletedGroup] = await Promise.all([Message.deleteMany({_id: { $in: group.history }}), Conversation.deleteOne({ _id: req.params.groupId }) ])
+
         console.log(`deleted ${deletedMessages.deletedCount} messages`);
-    
-        if (group.profile_picture) {
-            await cloudinary.uploader.destroy(req.params.groupId, function(result) { console.log(result) })
-        }
-    
-        const deletedGroup = await Conversation.deleteOne({ _id: req.params.groupId });
         
         if (deletedGroup.deletedCount === 1) {
             console.log('conversation successfully deleted')
@@ -227,6 +232,7 @@ exports.groups_list_get = asyncHandler(async (req, res, next) => {
             options: { limit: 5 }
         }).exec();
 
+        console.log(groups);
         res.json({ sender: req.user.id, groups: groups });
     } catch (err) {
         console.error(err);
@@ -255,22 +261,22 @@ exports.groups_create_post = [
                     display_name: req.body.display_name,
                     users: userArray,
                 })
-    
-                const options = {
-                    public_id: conversation._id,
-                    overwrite: true,
-                  };              
-                  try {
+                if (req.file) {
+                    const options = {
+                        public_id: conversation._id,
+                        overwrite: true,
+                      };              
+                    try {
                     const image = await cloudinary.uploader.upload(req.file.path , options);
                     conversation.profile_picture = image.secure_url;
-                    await conversation.save();
-
-                  } catch (err) {
+    
+                    } catch (err) {
                     console.error(err);
-                  }
+                    }
+                }
+                await conversation.save();
 
-
-                  console.log(conversation);
+                console.log(conversation);
 
                 res.status(201).json({ "status": 201, message: 'Successfully created conversation', conversation: conversation });
         }
