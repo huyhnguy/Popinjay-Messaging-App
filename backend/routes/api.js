@@ -37,6 +37,8 @@ router.put("/groups/:groupId/settings", authenticateToken, upload.single('profil
 
 router.delete("/groups/:groupId/settings", authenticateToken, conversationController.group_settings_delete);
 
+router.delete("/groups/:groupId/users/:userId", authenticateToken, conversationController.group_user_delete);
+
 router.put("/groups/:groupId", function (req, res) {
     res.send(`group ${req.params.groupId} PUT`);
 });

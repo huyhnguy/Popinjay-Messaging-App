@@ -282,3 +282,17 @@ exports.groups_create_post = [
         }
     })
 ]
+
+exports.group_user_delete = asyncHandler(async (req, res, next) => {
+    try {
+        const result = await Conversation.updateOne({ _id: req.params.groupId }, { $pull: { users: req.params.userId }});
+        console.log(result);
+        console.log(`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`);
+        res.json({ message: "successfully deleted user from group" })
+    } catch (err) {
+        console.log(`error deleting user from group: ${err}`)
+        res.status(500).json({ error: `error deleting user from group: ${err}` })
+    }
+})
+
+

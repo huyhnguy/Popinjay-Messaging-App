@@ -153,13 +153,10 @@ export default function GroupSettings() {
         const previousDropDown = document.getElementById(`${dropDown}-dropdown`);
         previousDropDown.classList.add('invisible');
         setDropDown(null);
-
-        console.log('closedropdown function');
     }
 
     const openUserProfile = (e, userId) => {
         e.preventDefault();
-        console.log('openuserprofile function');
         setUserProfile(userId);
         closeDropDown();
     }
@@ -187,6 +184,35 @@ export default function GroupSettings() {
           .catch(err => {
             console.log(err);
         })
+    }
+
+    const kickUser = (e, userId) => {
+        e.preventDefault();
+
+        fetch(`http://localhost:3000/api/groups/${urlParams.groupId}/users/${userId}`, {
+            method: 'DELETE',
+            credentials: "include",
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            }
+          })
+          .then(res => res.json())
+          .then(res => {
+            if (res.errors) {
+                console.log(res.errors);
+            } else {
+                console.log(res);
+                const newUsersArray = users.filter(user => user._id != userId);
+                closeDropDown();
+                setUsers(newUsersArray);
+
+            }
+          })
+          .catch(err => {
+            console.log(err);
+        })
+
     }
 
 
@@ -277,7 +303,7 @@ export default function GroupSettings() {
                                                     </div>
                                                     <hr style={{ margin: 0 }}/>
                                                 </div>
-                                                <MemberDropDown user={user} profileFunction={openUserProfile}/>
+                                                <MemberDropDown user={user} profileFunction={openUserProfile} kickFunction={kickUser}/>
                                             </div>
                                         )
                                     })
