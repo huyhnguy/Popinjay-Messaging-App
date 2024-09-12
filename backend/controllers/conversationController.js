@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Conversation = require("../models/conversation");
+const Message = require("../models/message")
 const { body, validationResult } = require("express-validator");
 const User = require("../models/user")
 const mongoose = require("mongoose");
@@ -156,7 +157,7 @@ exports.group_settings_put = [
                 } else {
                     if (req.body.picture_status === "delete") {
                         conversation.profile_picture = null;
-                        await cloudinary.uploader.destroy(req.user.id, function(result) { console.log(result) })
+                        await cloudinary.uploader.destroy(req.params.groupId, function(result) { console.log(result) })
                     }
                 } 
 
@@ -170,6 +171,38 @@ exports.group_settings_put = [
         }
     })
 ]
+
+exports.group_settings_delete = asyncHandler(async (req, res, next) => {
+    try {
+        const group = await Conversation.findById(req.params.groupId).exec();
+
+        if (!group) {
+            console.log('group not found');
+            return;
+        }
+    
+        const deletedMessages = await Message.deleteMany({_id: { $in: group.history }})
+        console.log(`deleted ${deletedMessages.deletedCount} messages`);
+    
+        if (group.profile_picture) {
+            await cloudinary.uploader.destroy(req.params.groupId, function(result) { console.log(result) })
+        }
+    
+        const deletedGroup = await Conversation.deleteOne({ _id: req.params.groupId });
+        
+        if (deletedGroup.deletedCount === 1) {
+            console.log('conversation successfully deleted')
+            res.json({ message: "group successfully deleted"})
+        } else {
+            console.log ('failed to delete conversation');
+            res.json({ message: "failed to delete conversation"})
+        }
+    } catch (err) {
+        console.log('error deleting group: ' + err);
+        res.status(500).json({ error: err, message: "error deleting group"})
+    }
+
+})
 
 exports.groups_list_get = asyncHandler(async (req, res, next) => {
     try {

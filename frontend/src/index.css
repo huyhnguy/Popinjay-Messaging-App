@@ -642,7 +642,7 @@ textarea {
   border-radius: 2.5px;
   display: grid;
   gap: 0.5rem;
-  grid-template-columns: 1fr 5fr;
+  grid-template-columns: 1fr 4fr;
 }
 
 .member-button:hover {

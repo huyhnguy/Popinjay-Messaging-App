@@ -65,10 +65,6 @@ export default function GroupSettings() {
     }
 
     const handleFileUpload = async (e) => {
-        if (guest) {
-            e.preventDefault();
-            return
-        }
         const file = e.target.files[0];
         const base64 = await convertToBase64(file);
         setPic(base64);
@@ -168,6 +164,31 @@ export default function GroupSettings() {
         closeDropDown();
     }
 
+    const handleDeleteGroup = (e) => {
+        e.preventDefault();
+
+        fetch(`http://localhost:3000/api/groups/${urlParams.groupId}/settings`, {
+            method: 'DELETE',
+            credentials: "include",
+            headers: {
+              'Accept': 'application/json',
+            }
+          })
+          .then(res => res.json())
+          .then(res => {
+            if (res.error) {
+                console.log(res.error);
+            } else {
+                console.log(res);
+                alert(res.message);
+                navigate('/groups');
+            }
+          })
+          .catch(err => {
+            console.log(err);
+        })
+    }
+
 
     return(
         <div className="settings-page">
@@ -247,7 +268,7 @@ export default function GroupSettings() {
                                     users.map((user) => {
                                         return (
                                             <div key={user._id} style={{position: "relative"}} onClick={() => {handleDropdown(user._id)}}>
-                                                <div >
+                                                <div>
                                                     <div className="member-card" >
                                                         <ProfilePic imageSrc={user.profile_picture} size="4rem"/>
                                                         <div className="name-message">
@@ -256,16 +277,14 @@ export default function GroupSettings() {
                                                     </div>
                                                     <hr style={{ margin: 0 }}/>
                                                 </div>
-                                                
                                                 <MemberDropDown user={user} profileFunction={openUserProfile}/>
-                  
                                             </div>
                                         )
                                     })
                                 }
                             </div>
                         </div>
-                        <button className="submit" style={{backgroundColor: "red"}}>Delete Group</button>
+                        <button className="submit" style={{backgroundColor: "red"}} onClick={(e) => {handleDeleteGroup(e)}}>Delete Group</button>
                         <button className="submit" style={{backgroundColor: "red"}}>Leave Group</button>
                     </form>
                 </div>

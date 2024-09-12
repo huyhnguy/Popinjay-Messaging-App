@@ -47,7 +47,7 @@ export default function MemberDropDown({ user, profileFunction }) {
                 </button>
                 <button className="member-button-red">
                     <FontAwesomeIcon icon={faUserXmark}/>
-                    <p style={{margin: 0}}>Kick from group</p>
+                    <p style={{margin: 0}}>Kick user</p>
                 </button>
             </div>
         </>
