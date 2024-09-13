@@ -679,3 +679,34 @@ textarea {
   visibility: hidden;
   pointer-events: none;
 }
+
+.add-user-button {
+  all: unset;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin: 1rem;
+}
+
+.hide {
+  display: none;
+}
+
+.user-list-search {
+  all: unset;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 1rem;
+  border: solid #00000033;
+  border-radius: 10px;
+  height: fit-content;
+  flex-grow: 1;
+}
+
+.users-header {
+  display: flex;
+  align-items: center;
+  margin: 1rem 2rem;
+  gap: 1rem;
+}

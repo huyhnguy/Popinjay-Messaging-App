@@ -2,7 +2,7 @@ import NavBar from "./NavBar"
 import { useState } from "react"
 import { useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCircleXmark, faUserGear, faCrown } from '@fortawesome/free-solid-svg-icons'
+import { faCircleXmark, faUserGear, faCrown, faCirclePlus } from '@fortawesome/free-solid-svg-icons'
 import ProfilePic from "./ProfilePic";
 import { useNavigate, useParams } from "react-router-dom";
 import MemberDropDown from "./MemberDropDown";
@@ -345,7 +345,7 @@ export default function GroupSettings() {
 
                         </div>
                         <button className="submit" onClick={handleSubmit}>Save</button>
-                        <div className="form-section" style={{ alignItems: "start" }}>
+                        <div className="form-section" style={{ alignItems: "start" , position: "relative"}}>
                             <p style={{ margin: 0 }}>Members</p>
                             <div className="members-container">
                                 { users &&
@@ -379,6 +379,9 @@ export default function GroupSettings() {
                                     })
                                 }
                             </div>
+                            <button className="add-user-button" onClick={() => {handleAddGroup("open")}}>
+                                <FontAwesomeIcon icon={faCirclePlus} className="file-upload-icon" style={{ height: "3rem" }}/>
+                            </button>
                         </div>
                         <button className="submit" style={{backgroundColor: "red"}} onClick={(e) => {handleDeleteGroup(e)}}>Delete Group</button>
                         <button className="submit" style={{backgroundColor: "red"}}>Leave Group</button>

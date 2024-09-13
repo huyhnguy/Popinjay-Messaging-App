@@ -27,7 +27,6 @@ export default function UserTab() {
             throw error
           })
           .then(res => {
-            console.log(res)
             setUsers(res);
           })
           .catch(err => {
@@ -44,14 +43,28 @@ export default function UserTab() {
       setProfilePopUp(user._id);
     }
 
+    const handleSearch = (e) => {
+      let value = e.target.value.toLowerCase();
+      
+      users.forEach(user => {
+        const isVisible = user.display_name.toLowerCase().includes(value);
+        const userCard = document.getElementById(`${user._id}`);
+        userCard.classList.toggle("hide", !isVisible);
+      })
+    }
+
     return(
         <div className="users-page">
-            <h1>Users</h1>
+          <div className="users-header">
+            <h1 style={{ margin: 0 }}>Users</h1>
+            <input type="search" placeholder="Search" className="user-list-search" onChange={(e) => handleSearch(e)}></input>
+          </div>
+
             <div style={{width: "100%", height: "100%", overflow: "scroll"}}>
                 <div className="users-container">
                 { users &&
                     users.map(user => 
-                        <div className="user-card" onClick={() => {handleUser(user)}} key={user._id}>
+                        <div className="user-card" onClick={() => {handleUser(user)}} key={user._id} id= {`${user._id}`}>
                             <ProfilePic imageSrc={user.profile_picture} size="5rem"/>
                             <p>{user.display_name}</p>
                         </div>
