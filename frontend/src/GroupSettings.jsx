@@ -2,7 +2,7 @@ import NavBar from "./NavBar"
 import { useState } from "react"
 import { useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCircleXmark } from '@fortawesome/free-solid-svg-icons'
+import { faCircleXmark, faUserGear, faCrown } from '@fortawesome/free-solid-svg-icons'
 import ProfilePic from "./ProfilePic";
 import { useNavigate, useParams } from "react-router-dom";
 import MemberDropDown from "./MemberDropDown";
@@ -15,6 +15,8 @@ export default function GroupSettings() {
     const [users, setUsers] = useState(null);
     const [dropDown, setDropDown] = useState(null);
     const [userProfile, setUserProfile] = useState(null);
+    const [adminIds, setAdminIds] = useState(null);
+    const [masterId, setMasterId] = useState(null);
     const [errors, setErrors] = useState(null);
 
     const urlParams = useParams();
@@ -39,10 +41,11 @@ export default function GroupSettings() {
             console.log(res);
             setDisplayName(res.group.display_name);
             setPic(res.group.profile_picture);
-            const users = res.group.users;
-            const admins = res.group.admins;
-            const members = admins.concat(users);
-            setUsers(members);
+            setAdminIds(res.group.admins);
+            setMasterId(res.group.master);
+            const sortedMembersList = sortMembers(res.group.users, res.group.admins, res.group.master)
+            console.log(sortedMembersList);
+            setUsers(sortedMembersList);
             setAdminPermissions(res.group.admin_permissions);
 
           })
@@ -244,13 +247,24 @@ export default function GroupSettings() {
 
     }
 
-    /*function sortMembers(membersArray) {
-        membersArray.sort((a,b) => {
-            if ()
+    function sortMembers(usersArray, adminsArray, master) {
+        
+        usersArray.sort((a,b) => {
+            if (a._id === master) { 
+                return -1
+            } else if (b._id === master) {
+                return 1
+            } else if (adminsArray.includes(a._id) && !adminsArray.includes(b._id)) {
+                return -1
+            } else if (!adminsArray.includes(a._id) && adminsArray.includes(b._id)) {
+                return 1
+            } else {
+                return 0
+            }
         })
         
-        return membersArray
-    }*/
+        return usersArray
+    }
 
 
 
@@ -337,6 +351,18 @@ export default function GroupSettings() {
                                                         <ProfilePic imageSrc={user.profile_picture} size="4rem"/>
                                                         <div className="name-message">
                                                             <h2>{user.display_name}</h2>
+                                                            { adminIds.includes(user._id) && 
+                                                                <div style={{ display: "flex", gap: "0.5rem", alignItems: "center"}}>
+                                                                    <FontAwesomeIcon icon={faUserGear} style={{color: "#007BFF", height: "1.5rem"}}/>
+                                                                    <p style={{margin: 0}}>Admin</p>
+                                                                </div>
+                                                            }
+                                                            { masterId === user._id &&
+                                                                <div style={{ display: "flex", gap: "0.5rem", alignItems: "center"}}>
+                                                                <FontAwesomeIcon icon={faCrown} style={{color: "gold", height: "1.5rem"}}/>
+                                                                <p style={{margin: 0}}>Master</p>
+                                                            </div>
+                                                            }
                                                         </div>
                                                     </div>
                                                     <hr style={{ margin: 0 }}/>

@@ -121,7 +121,7 @@ exports.group_settings_get = asyncHandler(async (req, res, next) => {
                     as: "users",
                 },
             },
-            {
+            /*{
                 $lookup: {
                     from: "users",
                     localField: "admins",
@@ -134,7 +134,7 @@ exports.group_settings_get = asyncHandler(async (req, res, next) => {
                     ],
                     as: "admins",
                 }
-            },
+            },*/
             {
                 $project: {
                     users: {
@@ -146,7 +146,6 @@ exports.group_settings_get = asyncHandler(async (req, res, next) => {
                     display_name: 1,
                     admin_permissions: 1,
                     master: 1
-
                 }
             }
         ]
@@ -316,6 +315,7 @@ exports.groups_create_post = [
                 const conversation = new Conversation({
                     display_name: req.body.display_name,
                     users: userArray,
+                    master: req.user.id
                 })
                 if (req.file) {
                     const options = {
@@ -355,8 +355,7 @@ exports.group_user_delete = asyncHandler(async (req, res, next) => {
 exports.group_user_admin_put = asyncHandler(async (req, res, next) => {
     try {
         const result = await Conversation.updateOne({ _id: req.params.groupId }, { 
-            $push: { admins: req.params.userId },
-            $pull: { users: req.params.userId }
+            $push: { admins: req.params.userId }
         });
         console.log(`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`);
 
