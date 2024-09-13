@@ -121,20 +121,6 @@ exports.group_settings_get = asyncHandler(async (req, res, next) => {
                     as: "users",
                 },
             },
-            /*{
-                $lookup: {
-                    from: "users",
-                    localField: "admins",
-                    foreignField: "_id",
-                    pipeline: [
-                        { $project: { 
-                            display_name: 1,
-                            profile_picture: 1
-                        } }
-                    ],
-                    as: "admins",
-                }
-            },*/
             {
                 $project: {
                     users: {
@@ -240,7 +226,11 @@ exports.group_settings_delete = asyncHandler(async (req, res, next) => {
         }
 
             //await cloudinary.uploader.destroy(req.params.groupId, function(result) { console.log(result) });
-            const [deletedImageUrl, deletedMessages, deletedGroup] = await Promise.all([cloudinary.uploader.destroy(req.params.groupId, function(result) { console.log(result) }) ,Message.deleteMany({_id: { $in: group.history }}), Conversation.deleteOne({ _id: req.params.groupId }) ])
+            const [deletedImageUrl, deletedMessages, deletedGroup] = await Promise.all([
+                cloudinary.uploader.destroy(req.params.groupId, function(result) { console.log(result) }),
+                Message.deleteMany({_id: { $in: group.history }}), 
+                Conversation.deleteOne({ _id: req.params.groupId }) 
+            ]);
        
     
         //const deletedMessages = await Message.deleteMany({_id: { $in: group.history }})
