@@ -39,7 +39,10 @@ export default function GroupSettings() {
             console.log(res);
             setDisplayName(res.group.display_name);
             setPic(res.group.profile_picture);
-            setUsers(res.group.users);
+            const users = res.group.users;
+            const admins = res.group.admins;
+            const members = admins.concat(users);
+            setUsers(members);
             setAdminPermissions(res.group.admin_permissions);
 
           })
@@ -215,6 +218,41 @@ export default function GroupSettings() {
 
     }
 
+    const adminUser = (e, userId) => {
+        e.preventDefault();
+
+        fetch(`http://localhost:3000/api/groups/${urlParams.groupId}/users/${userId}`, {
+            method: 'PUT',
+            credentials: "include",
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            }
+          })
+          .then(res => res.json())
+          .then(res => {
+            if (res.errors) {
+                console.log(res.errors);
+            } else {
+                console.log(res);
+                closeDropDown();
+            }
+          })
+          .catch(err => {
+            console.log(err);
+        })
+
+    }
+
+    /*function sortMembers(membersArray) {
+        membersArray.sort((a,b) => {
+            if ()
+        })
+        
+        return membersArray
+    }*/
+
+
 
     return(
         <div className="settings-page">
@@ -303,7 +341,7 @@ export default function GroupSettings() {
                                                     </div>
                                                     <hr style={{ margin: 0 }}/>
                                                 </div>
-                                                <MemberDropDown user={user} profileFunction={openUserProfile} kickFunction={kickUser}/>
+                                                <MemberDropDown user={user} profileFunction={openUserProfile} kickFunction={kickUser} adminFunction={adminUser}/>
                                             </div>
                                         )
                                     })

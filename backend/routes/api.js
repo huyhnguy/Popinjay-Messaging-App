@@ -37,11 +37,9 @@ router.put("/groups/:groupId/settings", authenticateToken, upload.single('profil
 
 router.delete("/groups/:groupId/settings", authenticateToken, conversationController.group_settings_delete);
 
-router.delete("/groups/:groupId/users/:userId", authenticateToken, conversationController.group_user_delete);
+router.put("/groups/:groupId/users/:userId", authenticateToken, conversationController.group_user_admin_put);
 
-router.put("/groups/:groupId", function (req, res) {
-    res.send(`group ${req.params.groupId} PUT`);
-});
+router.delete("/groups/:groupId/users/:userId", authenticateToken, conversationController.group_user_delete);
 
 router.get("/dms", authenticateToken, conversationController.dms_list_get);
 
@@ -54,6 +52,5 @@ router.post("/messages/create", authenticateToken, upload.single('image'), messa
 router.put("/messages/:messageId", authenticateToken, upload.single('image'), messageController.message_update);
 
 router.delete("/messages/:messageId", authenticateToken, messageController.message_delete);
-
 
 module.exports = router;

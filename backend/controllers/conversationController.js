@@ -96,14 +96,70 @@ exports.group_get = asyncHandler(async (req, res, next) => {
 })
 
 exports.group_settings_get = asyncHandler(async (req, res, next) => {
-    const group = await Conversation.findById( req.params.groupId , { history: 0 }).lean().populate({
+    /*const group = await Conversation.findById( req.params.groupId , { history: 0 }).lean().populate({
         path: 'users',
         select: 'display_name profile_picture'
-    }).exec();
+    }).populate({
+        path: 'admins',
+        select: 'display_name profile_picture'
+    }).exec();*/
 
-    console.log(group);
+    try {
+        const pipeline = [
+            { $match: { _id: new mongoose.Types.ObjectId(req.params.groupId) } },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "users",
+                    foreignField: "_id",
+                    pipeline: [
+                        { $project: { 
+                            display_name: 1,
+                            profile_picture: 1
+                        } }
+                    ],
+                    as: "users",
+                },
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "admins",
+                    foreignField: "_id",
+                    pipeline: [
+                        { $project: { 
+                            display_name: 1,
+                            profile_picture: 1
+                        } }
+                    ],
+                    as: "admins",
+                }
+            },
+            {
+                $project: {
+                    users: {
+                        $sortArray: { input: "$users", sortBy: { display_name: 1}}
+                    },
+                    admins: {
+                        $sortArray: { input: "$admins", sortBy: { display_name: 1}}
+                    },
+                    display_name: 1,
+                    admin_permissions: 1,
+                    master: 1
 
-    res.json({ group: group, sender: req.user.id })
+                }
+            }
+        ]
+    
+        const group = await Conversation.aggregate(pipeline).exec();
+    
+        console.log(group);
+    
+        res.json({ group: group[0], sender: req.user.id })
+    } catch (err) {
+        console.log(err)
+    }
+
 })
 
 exports.group_settings_put = [
@@ -285,13 +341,30 @@ exports.groups_create_post = [
 
 exports.group_user_delete = asyncHandler(async (req, res, next) => {
     try {
-        const result = await Conversation.updateOne({ _id: req.params.groupId }, { $pull: { users: req.params.userId }});
-        console.log(result);
+        const result = await Conversation.updateOne({ _id: req.params.groupId }, { $pull: { users: req.params.userId } });
         console.log(`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`);
+
         res.json({ message: "successfully deleted user from group" })
     } catch (err) {
         console.log(`error deleting user from group: ${err}`)
+
         res.status(500).json({ error: `error deleting user from group: ${err}` })
+    }
+})
+
+exports.group_user_admin_put = asyncHandler(async (req, res, next) => {
+    try {
+        const result = await Conversation.updateOne({ _id: req.params.groupId }, { 
+            $push: { admins: req.params.userId },
+            $pull: { users: req.params.userId }
+        });
+        console.log(`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`);
+
+        res.json({ message: "successfully gave user admin" })
+    } catch (err) {
+        console.log(`error giving user admin: ${err}`)
+        
+        res.status(500).json({ error: `error giving user admin: ${err}` })
     }
 })
 

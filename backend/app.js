@@ -21,6 +21,7 @@ main().catch((err) => console.log(err));
 async function main() {
   await mongoose.connect(mongoDB);
   console.log('database connected');
+
 }
 
 cloudinary.config({
