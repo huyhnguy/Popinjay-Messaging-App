@@ -171,13 +171,24 @@ export default function GroupTab() {
         return dms
     }
 
+    const handleSearch = (e) => {
+        let value = e.target.value.toLowerCase();
+
+        groups.forEach(group => {
+            const isVisible = group.display_name.toLowerCase().includes(value) || group.users.some((user) => user.display_name.toLowerCase().includes(value));
+            const groupCard = document.getElementById(`${group._id}`);
+            groupCard.classList.toggle("hide", !isVisible);
+        })
+    }
+
     return(
         <div className="messages-page" style={{ position: "relative" }}>
             { addGroup === "open" &&
                 <AddGroup closePopUp={handleAddGroup} />
             }
             <div className="groups-top-bar">
-                <h1>Groups</h1>
+                <h1 style={{ margin: 0 }}>Groups</h1>
+                <input type="search" placeholder="Search" className="user-list-search" onChange={(e) => handleSearch(e)}></input>
                 <button style={{all: "unset"}} onClick={() => {handleAddGroup("open")}}>
                     <FontAwesomeIcon icon={faCirclePlus} className="file-upload-icon" style={{ height: "3rem" }}/>
                 </button>
@@ -188,7 +199,7 @@ export default function GroupTab() {
                             groups.map((group) => {
                                 const lastMessage = group.history[group.history.length - 1];
                                 return (
-                                    <div key={group._id}>
+                                    <div key={group._id} id={`${group._id}`} >
                                         <div className="message-card"  onClick={() => {handleGroup(group)}}>
                                             { group._id === '66d7d2fead84fa8a36bea088' ?               
                                                 <div style={{position: "relative"}}>

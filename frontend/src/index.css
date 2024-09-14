@@ -364,6 +364,7 @@ nav {
   justify-content: space-between;
   margin: 1rem;
   align-items: center;
+  gap: 1rem;
 }
 
 .groups-top-bar h1 {
@@ -707,6 +708,6 @@ textarea {
 .users-header {
   display: flex;
   align-items: center;
-  margin: 1rem 2rem;
+  margin: 1rem;
   gap: 1rem;
 }

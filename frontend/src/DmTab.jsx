@@ -114,9 +114,23 @@ export default function DmTab() {
         return dms
     }
 
+    const handleSearch = (e) => {
+        let value = e.target.value.toLowerCase();
+
+        dms.forEach(dm => {
+            const receiver = dm.users.find(user => user._id != sender);
+            const isVisible = receiver.display_name.toLowerCase().includes(value);
+            const messageCard = document.getElementById(`${dm._id}`);
+            messageCard.classList.toggle("hide", !isVisible);
+        })
+    }
+
     return(
         <div className="messages-page">
-            <h1>Messages</h1>
+            <div className="users-header">
+                <h1 style={{ margin: 0 }}>Messages</h1>
+                <input type="search" placeholder="Search" className="user-list-search" onChange={(e) => handleSearch(e)}></input>
+            </div>
             <div style={{width: "100%", height: "100%", overflow: "scroll"}}>
                 <div className="messages-container">
                         { dms &&
@@ -124,7 +138,7 @@ export default function DmTab() {
                                 const receiver = dm.users.find(user => user._id != sender);
                                 const lastMessage = dm.history[dm.history.length - 1];
                                 return (
-                                    <div key={dm._id}>
+                                    <div id={`${dm._id}`} key={dm._id}>
                                         <div className="message-card"  onClick={() => {handleDM(dm)}}>
                                             <ProfilePic imageSrc={receiver.profile_picture} size="5rem"/>
                                             <div className="name-message">
