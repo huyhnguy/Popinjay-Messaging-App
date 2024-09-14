@@ -331,7 +331,7 @@ exports.groups_create_post = [
 
 exports.group_user_delete = asyncHandler(async (req, res, next) => {
     try {
-        const result = await Conversation.updateOne({ _id: req.params.groupId }, { $pull: { users: req.params.userId } });
+        const result = await Conversation.updateOne({ _id: req.params.groupId }, { $pull: { users: req.params.userId, admins: req.params.userId } });
         console.log(`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`);
 
         res.json({ message: "successfully deleted user from group" })
@@ -342,7 +342,7 @@ exports.group_user_delete = asyncHandler(async (req, res, next) => {
     }
 })
 
-exports.group_user_admin_put = asyncHandler(async (req, res, next) => {
+exports.group_user_put = asyncHandler(async (req, res, next) => {
     try {
         if (req.body.action === "Make admin") {
             const result = await Conversation.updateOne({ _id: req.params.groupId }, { 
@@ -358,6 +358,13 @@ exports.group_user_admin_put = asyncHandler(async (req, res, next) => {
             console.log(`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`);
     
             res.json({ message: "successfully removed user from admin list" })
+        } else if (req.body.action === "Add user") {
+            const result = await Conversation.updateOne({ _id: req.params.groupId }, { 
+                $push: { users: req.params.userId }
+            });
+            console.log(`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`);
+    
+            res.json({ message: "successfully added user to group" })
         }
 
     } catch (err) {

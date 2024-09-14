@@ -7,6 +7,7 @@ import ProfilePic from "./ProfilePic";
 import { useNavigate, useParams } from "react-router-dom";
 import MemberDropDown from "./MemberDropDown";
 import UserProfile from "./UserProfile";
+import AddUserPopUp from "./AddUserPopUp";
 
 export default function GroupSettings() {
     const [displayName, setDisplayName] = useState(undefined);
@@ -17,8 +18,10 @@ export default function GroupSettings() {
     const [userProfile, setUserProfile] = useState(null);
     const [adminIds, setAdminIds] = useState(null);
     const [masterId, setMasterId] = useState(null);
-    const [sender, setSender] = useState(null);
+    const [sender, setSender] = useState(null); 
+    const [addUserPopUp, setAddUserPopUp] = useState(false);
     const [errors, setErrors] = useState(null);
+
 
     const urlParams = useParams();
     const navigate = useNavigate();
@@ -282,8 +285,6 @@ export default function GroupSettings() {
         } else {
             console.log("error, no action received");
         }
-
-
     }
 
     function sortMembers(usersArray, adminsArray, master, sender) {
@@ -309,6 +310,20 @@ export default function GroupSettings() {
         return usersArray
     }
 
+    function sortNewMember(membersArray, newMemberId) {
+        membersArray.sort((a,b) => {
+            if (a._id === newMemberId) {
+                return -1
+            } else if (b._id === newMemberId) {
+                return 1
+            } else {
+                return 0
+            }
+        })
+
+        return membersArray
+    }
+
     const handleSearch = (e) => {
         let value = e.target.value.toLowerCase();
         
@@ -319,19 +334,80 @@ export default function GroupSettings() {
         })
       }
 
+    const handleAddUserPopUp = (e) => {
+        e.preventDefault();
+
+        if (!addUserPopUp) {
+            setAddUserPopUp(true);
+        } else {
+            setAddUserPopUp(false);
+        }
+    }
+
+    const addUserToGroup = (user) => {
+        fetch(`http://localhost:3000/api/groups/${urlParams.groupId}/users/${user._id}`, {
+            method: 'PUT',
+            credentials: "include",
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                action: "Add user"
+            })
+          })
+          .then(res => res.json())
+          .then(res => {
+            if (res.errors) {
+                console.log(res.errors);
+            } else {
+                console.log(res);
+                const newMembersList = [...users, user]
+                const sortedNewMembersList = sortNewMember(newMembersList, user._id);
+                setUsers(sortedNewMembersList);
+                setAddUserPopUp(false);
+            }
+          })
+          .catch(err => {
+            console.log(err);
+        })
+    }
+
+    useEffect(() => {
+        if (!addUserPopUp) {
+            scrollToTop();
+        }
+    }, [addUserPopUp]);
+
+    function scrollToTop () {
+        const membersDiv = document.querySelector(".members-container");
+        membersDiv.firstChild.scrollIntoView({
+            block: "start",
+            inline: "nearest",
+            behavior: "smooth",
+            alignToTop: false
+        });
+    }
+
     return(
         <div className="settings-page">
             { dropDown &&
                 <div style={{ height: "100vh", width: "100vw", position: "absolute", zIndex: "98",}} onClick={closeDropDown}></div>
             }
-            { userProfile &&
+            { userProfile || addUserPopUp &&
                 <>
                     <div className="shadow" onClick={() => {
                         setUserProfile(null);
+                        setAddUserPopUp(false);
                         closeDropDown();
                         }}></div>
-                    <UserProfile userId={userProfile} />
                 </>
+            }
+            { userProfile &&
+                <UserProfile userId={userProfile} />
+            }
+            {addUserPopUp &&
+                <AddUserPopUp groupMembersArray={users} addUserFunction={addUserToGroup}/>
             }
             <div className="settings-container">
                 <div className="settings-card">
@@ -428,7 +504,7 @@ export default function GroupSettings() {
                                     })
                                 }
                             </div>
-                            <button className="add-user-button" onClick={() => {handleAddGroup("open")}}>
+                            <button className="add-user-button" onClick={(e) => {handleAddUserPopUp(e)}}>
                                 <FontAwesomeIcon icon={faCirclePlus} className="file-upload-icon" style={{ height: "3rem" }}/>
                             </button>
                         </div>

@@ -410,10 +410,6 @@ nav {
   max-height: 247px;
 }
 
-.form-user-list {
-
-}
-
 .add-group-container {
   position: absolute;
   top: 50%;
@@ -710,4 +706,10 @@ textarea {
   align-items: center;
   margin: 1rem;
   gap: 1rem;
+}
+
+.user-list-invite {
+  max-height:500px;
+  overflow: scroll;
+  width: 100%;
 }
