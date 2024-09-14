@@ -223,29 +223,66 @@ export default function GroupSettings() {
 
     }
 
-    const adminUser = (e, userId) => {
+    const adminUser = (e, userId, action) => {
         e.preventDefault();
+        if (action === "Make admin") {
+            fetch(`http://localhost:3000/api/groups/${urlParams.groupId}/users/${userId}`, {
+                method: 'PUT',
+                credentials: "include",
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    action: "Make admin"
+                })
+              })
+              .then(res => res.json())
+              .then(res => {
+                if (res.errors) {
+                    console.log(res.errors);
+                } else {
+                    console.log(res);
+                    closeDropDown();
+                    setAdminIds([...adminIds, userId])
+                }
+              })
+              .catch(err => {
+                console.log(err);
+            })
+        } else if (action === "Remove admin") {
+            fetch(`http://localhost:3000/api/groups/${urlParams.groupId}/users/${userId}`, {
+                method: 'PUT',
+                credentials: "include",
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    action: "Remove admin"
+                })
+              })
+              .then(res => res.json())
+              .then(res => {
+                if (res.errors) {
+                    console.log(res.errors);
+                } else {
+                    console.log(res);
+                    closeDropDown();
+                    const indexOfAdmin = adminIds.indexOf(userId);
+                    console.log(`index ${indexOfAdmin}`)
+                    const newAdminIds = adminIds.toSpliced(indexOfAdmin, 1);
+                    console.log(`newAdminIds ${newAdminIds}`)
+                    setAdminIds(newAdminIds);
+                }
+              })
+              .catch(err => {
+                console.log(err);
+            })
+        } else {
+            console.log("error, no action received");
+        }
 
-        fetch(`http://localhost:3000/api/groups/${urlParams.groupId}/users/${userId}`, {
-            method: 'PUT',
-            credentials: "include",
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-            }
-          })
-          .then(res => res.json())
-          .then(res => {
-            if (res.errors) {
-                console.log(res.errors);
-            } else {
-                console.log(res);
-                closeDropDown();
-            }
-          })
-          .catch(err => {
-            console.log(err);
-        })
 
     }
 
@@ -272,7 +309,15 @@ export default function GroupSettings() {
         return usersArray
     }
 
-
+    const handleSearch = (e) => {
+        let value = e.target.value.toLowerCase();
+        
+        users.forEach(user => {
+          const isVisible = user.display_name.toLowerCase().includes(value);
+          const userCard = document.getElementById(`${user._id}`);
+          userCard.classList.toggle("hide", !isVisible);
+        })
+      }
 
     return(
         <div className="settings-page">
@@ -346,12 +391,15 @@ export default function GroupSettings() {
                         </div>
                         <button className="submit" onClick={handleSubmit}>Save</button>
                         <div className="form-section" style={{ alignItems: "start" , position: "relative"}}>
-                            <p style={{ margin: 0 }}>Members</p>
+                            <div className="users-header" style={{ margin: 0, width: "100%" }}>
+                                <p style={{ margin: 0 }}>Members</p>
+                                <input type="search" placeholder="Search name" className="user-list-search" style={{ padding: "0.25rem" }}onChange={(e) => handleSearch(e)}></input>
+                            </div>
                             <div className="members-container">
                                 { users &&
                                     users.map((user) => {
                                         return (
-                                            <div key={user._id} style={{position: "relative", pointerEvents: sender === user._id && "none"}} onClick={() => {handleDropdown(user._id)}}>
+                                            <div id={`${user._id}`}key={user._id} style={{position: "relative", pointerEvents: sender === user._id && "none"}} onClick={() => {handleDropdown(user._id)}}>
                                                 <div>
                                                     <div className="member-card" >
                                                         <ProfilePic imageSrc={user.profile_picture} size="4rem"/>
@@ -373,7 +421,8 @@ export default function GroupSettings() {
                                                     </div>
                                                     <hr style={{ margin: 0 }}/>
                                                 </div>
-                                                <MemberDropDown user={user} profileFunction={openUserProfile} kickFunction={kickUser} adminFunction={adminUser}/>
+                                                <MemberDropDown user={user} profileFunction={openUserProfile} kickFunction={kickUser} adminFunction={adminUser} admin={adminIds.includes(user._id) ? true : false}/>
+                                                  
                                             </div>
                                         )
                                     })

@@ -57,7 +57,7 @@ export default function UserTab() {
         <div className="users-page">
           <div className="users-header">
             <h1 style={{ margin: 0 }}>Users</h1>
-            <input type="search" placeholder="Search" className="user-list-search" onChange={(e) => handleSearch(e)}></input>
+            <input type="search" placeholder="Search name" className="user-list-search" onChange={(e) => handleSearch(e)}></input>
           </div>
 
             <div style={{width: "100%", height: "100%", overflow: "scroll"}}>

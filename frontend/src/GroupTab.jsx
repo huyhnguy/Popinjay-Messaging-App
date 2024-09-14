@@ -188,7 +188,7 @@ export default function GroupTab() {
             }
             <div className="groups-top-bar">
                 <h1 style={{ margin: 0 }}>Groups</h1>
-                <input type="search" placeholder="Search" className="user-list-search" onChange={(e) => handleSearch(e)}></input>
+                <input type="search" placeholder="Search group name or users" className="user-list-search" onChange={(e) => handleSearch(e)}></input>
                 <button style={{all: "unset"}} onClick={() => {handleAddGroup("open")}}>
                     <FontAwesomeIcon icon={faCirclePlus} className="file-upload-icon" style={{ height: "3rem" }}/>
                 </button>

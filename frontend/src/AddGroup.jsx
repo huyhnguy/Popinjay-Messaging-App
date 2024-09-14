@@ -123,6 +123,16 @@ export default function AddGroup({ closePopUp }) {
         setCheckedUsers(newArray);
     }
 
+    const handleSearch = (e) => {
+        let value = e.target.value.toLowerCase();
+        
+        usersList.forEach(user => {
+          const isVisible = user.display_name.toLowerCase().includes(value);
+          const userCard = document.getElementById(`card-${user._id}`);
+          userCard.classList.toggle("hide", !isVisible);
+        })
+      }
+
     return(
         <>
             <div className="shadow" onClick={() => {closePopUp("close")}}></div>
@@ -133,6 +143,7 @@ export default function AddGroup({ closePopUp }) {
                         <button className="next-button" onClick={() => {setNext(true)}}>
                             <FontAwesomeIcon icon={faCircleRight} className="next-icon"/>
                         </button>
+                        <input type="search" placeholder="Search name" className="user-list-search" onChange={(e) => handleSearch(e)} style={{ width: "100%", marginBottom: "1rem" }}></input>
                         <form action="" method="POST">
                             <section className="add-users-section">
                                 { checkedUsers.length > 0 &&
@@ -155,7 +166,7 @@ export default function AddGroup({ closePopUp }) {
                                     { usersList &&
                                         usersList.map(user => {
                                             return(
-                                                <div key={user._id}>
+                                                <div key={user._id} id={`card-${user._id}`}>
                                                     <label className={`user-card ${checkedUsers.includes(user) && 'selected-user'}`} htmlFor={user._id} id={user._id + "-label"}>
                                                         <ProfilePic imageSrc={user.profile_picture} size="3rem"/>
                                                         <p>{user.display_name}</p>

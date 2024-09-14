@@ -344,12 +344,22 @@ exports.group_user_delete = asyncHandler(async (req, res, next) => {
 
 exports.group_user_admin_put = asyncHandler(async (req, res, next) => {
     try {
-        const result = await Conversation.updateOne({ _id: req.params.groupId }, { 
-            $push: { admins: req.params.userId }
-        });
-        console.log(`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`);
+        if (req.body.action === "Make admin") {
+            const result = await Conversation.updateOne({ _id: req.params.groupId }, { 
+                $push: { admins: req.params.userId }
+            });
+            console.log(`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`);
+    
+            res.json({ message: "successfully gave user admin" })
+        } else if (req.body.action === "Remove admin") {
+            const result = await Conversation.updateOne({ _id: req.params.groupId }, { 
+                $pull: { admins: req.params.userId }
+            });
+            console.log(`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`);
+    
+            res.json({ message: "successfully removed user from admin list" })
+        }
 
-        res.json({ message: "successfully gave user admin" })
     } catch (err) {
         console.log(`error giving user admin: ${err}`)
         
