@@ -6,6 +6,7 @@ const upload = require('../middleware/multer-config');
 const userController = require("../controllers/userController");
 const conversationController = require("../controllers/conversationController");
 const messageController = require('../controllers/messageController');
+const notificationController = require('../controllers/notificationController');
 
 router.post("/login", userController.login_post);
 
@@ -52,5 +53,7 @@ router.post("/messages/create", authenticateToken, upload.single('image'), messa
 router.put("/messages/:messageId", authenticateToken, upload.single('image'), messageController.message_update);
 
 router.delete("/messages/:messageId", authenticateToken, messageController.message_delete);
+
+router.get("/notifications", authenticateToken, notificationController.notification_list_get);
 
 module.exports = router;

@@ -23,7 +23,6 @@ export default function GroupSettings() {
     const [scrollToBottomOfMemberList, setScrollToBottomOfMemberList] = useState(false);
     const [errors, setErrors] = useState(null);
 
-
     const urlParams = useParams();
     const navigate = useNavigate();
 
@@ -594,13 +593,8 @@ export default function GroupSettings() {
                                                         kickFunction={kickUser} 
                                                     />
                                                 }
-                                                { sender != masterId && !adminIds.includes(sender) &&
-                                                    <MemberDropDown 
-                                                        user={user} 
-                                                        profileFunction={openUserProfile} 
-                                                    />
-                                                }
-                                                { adminIds.includes(sender) && !adminPermissions.kick_users &&
+                                                { (sender != masterId && !adminIds.includes(sender) || 
+                                                adminIds.includes(sender) && !adminPermissions.kick_users) &&
                                                     <MemberDropDown 
                                                         user={user} 
                                                         profileFunction={openUserProfile} 
@@ -611,7 +605,7 @@ export default function GroupSettings() {
                                     })
                                 }
                             </div>
-                            { sender === masterId || (adminIds.includes(sender) && adminPermissions.invite_users) &&
+                            { (sender === masterId || adminIds.includes(sender) && adminPermissions.invite_users) &&
                                 <button className="add-user-button" onClick={(e) => {handleAddUserPopUp(e)}}>
                                     <FontAwesomeIcon icon={faCirclePlus} className="file-upload-icon" style={{ height: "3rem" }}/>
                                 </button>

@@ -5,7 +5,7 @@ export default function ProfilePic({ imageSrc = null, size= "5rem", group = fals
     return (
         <div className="profile-pic-container" style={{height: size, width: size}}>
             { imageSrc ?
-                <img src={imageSrc} alt="profile picture"/>
+                <img src={imageSrc} alt="profile picture" loading="lazy"/>
                 :
                 <FontAwesomeIcon icon={ group ? faUserGroup : faUser} />
             }

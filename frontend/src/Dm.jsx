@@ -121,12 +121,12 @@ export default function Dm() {
             throw error
           })
         .then(res => {
+            console.log(res);
             const newDm = dm;
             newDm.history.push(res.new_message);
             setDm(newDm);
             document.getElementById("new-message").value = "";
             document.getElementById("message-files").value = null;
-            console.log(document.getElementById("message-files").value);
             setBase64Pic(null);
             setNewMessage(true);
         })

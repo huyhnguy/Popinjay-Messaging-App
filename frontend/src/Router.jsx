@@ -14,6 +14,7 @@ import GroupTab from "./GroupTab";
 import GroupDm from "./GroupDm";
 import UserProfile from "./UserProfile";
 import GroupSettings from "./GroupSettings";
+import NotificationTab from "./NotificationTab";
 
 const router = createBrowserRouter([
     {
@@ -55,6 +56,10 @@ const router = createBrowserRouter([
     {
         path: "/groups/:groupId/settings",
         element: <GroupSettings />,
+    },
+    {
+        path: "/notifications",
+        element: <NotificationTab />,
     },
 ]);
 

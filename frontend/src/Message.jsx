@@ -19,7 +19,7 @@ export default function Message({ info, person, deleteMessage, editMessage }) {
         return(
             <div style={{ alignSelf: "end", alignItems: "end" }} className="message-container">
                 { info.image &&
-                    <img src={info.image} alt="" style={{ height: "200px", borderRadius: "10px" }}/>
+                    <img src={info.image} alt="" style={{ height: "200px", borderRadius: "10px" }} loading="lazy"/>
                 }
                 { info.content &&
                     <p className="message" style={{ backgroundColor: "#007BFF" }}>{info.content}</p>
@@ -42,7 +42,7 @@ export default function Message({ info, person, deleteMessage, editMessage }) {
         return(
             <div className="message-container">
                 { info.image &&
-                    <img src={info.image} alt="" style={{ height: "200px", borderRadius: "10px" }}/>
+                    <img src={info.image} alt="" style={{ height: "200px", borderRadius: "10px" }} loading="lazy"/>
                 }
                 { info.content &&
                     <p  className="message" style={{ backgroundColor: "#6b6b6b"}}>{info.content}</p>
@@ -57,7 +57,7 @@ export default function Message({ info, person, deleteMessage, editMessage }) {
             <div className="message-container">
                 <p style={{ margin: 0, fontSize: "0.75rem" }}>{info.user.display_name}</p>
                 { info.image &&
-                    <img src={info.image} alt="" style={{ height: "200px", borderRadius: "10px" }}/>
+                    <img src={info.image} alt="" style={{ height: "200px", borderRadius: "10px" }} loading="lazy"/>
                 }
                 { info.content &&
                     <p  className="message" style={{ backgroundColor: "#6b6b6b"}}>{info.content}</p>

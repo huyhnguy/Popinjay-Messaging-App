@@ -2,9 +2,11 @@ const asyncHandler = require("express-async-handler");
 const Message = require("../models/message");
 const Conversation = require("../models/conversation");
 const cloudinary = require('cloudinary').v2;
+const Notification = require("../models/notification")
 
 exports.message_create_post = asyncHandler(async (req, res, next) => {
     try {
+
         const newMessage = new Message({
             user: req.user.id,
             content: req.body.new_message,
@@ -27,7 +29,22 @@ exports.message_create_post = asyncHandler(async (req, res, next) => {
         conversation.history.push(newMessage._id);
         await conversation.save();
 
-        res.json({ new_message: newMessagePopulated , message: "Message successfully created and saved into the conversation" })
+        const otherUserArray = conversation.users.filter((userId) => userId != req.user.id);
+
+        console.log(otherUserArray);
+
+        const notification = new Notification({
+            from: req.user.id,
+            to: otherUserArray,
+            resourceId: conversation._id,
+            type: "Message",
+        })
+
+        notification.save();
+
+        console.log(notification);
+
+        res.json({ notification: notification, new_message: newMessagePopulated , message: "Message successfully created and saved into the conversation" })
     } catch (err) {
         console.error('error saving conversation:', err);
 
