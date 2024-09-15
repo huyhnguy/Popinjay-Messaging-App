@@ -425,6 +425,35 @@ export default function GroupSettings() {
 
     }
 
+    const handleLeaveGroup = (e) => {
+        e.preventDefault();
+
+        if (sender === masterId) {
+            alert("You must give the master role to someone else before leaving")
+        } else {
+            fetch(`http://localhost:3000/api/groups/${urlParams.groupId}/users/${sender}`, {
+                method: 'DELETE',
+                credentials: "include",
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+                }
+              })
+              .then(res => res.json())
+              .then(res => {
+                if (res.errors) {
+                    console.log(res.errors);
+                } else {
+                    console.log(res);
+                    navigate('/groups');
+                }
+              })
+              .catch(err => {
+                console.log(err);
+            })
+        }
+    } 
+
     return(
         <div className="settings-page">
             { dropDown &&
@@ -548,7 +577,7 @@ export default function GroupSettings() {
                                                     </div>
                                                     <hr style={{ margin: 0 }}/>
                                                 </div>
-                                                {sender === masterId &&
+                                                { sender === masterId &&
                                                     <MemberDropDown 
                                                         user={user} 
                                                         profileFunction={openUserProfile} 
@@ -558,14 +587,20 @@ export default function GroupSettings() {
                                                         masterFunction={masterUser}
                                                     />
                                                 }
-                                                {adminIds.includes(sender) && adminPermissions.kick_users &&
+                                                { adminIds.includes(sender) && adminPermissions.kick_users &&
                                                     <MemberDropDown 
                                                         user={user} 
                                                         profileFunction={openUserProfile} 
                                                         kickFunction={kickUser} 
                                                     />
                                                 }
-                                                {sender != masterId && !adminIds.includes(sender) || (adminIds.includes(sender) && !adminPermissions.kick_users) &&
+                                                { sender != masterId && !adminIds.includes(sender) &&
+                                                    <MemberDropDown 
+                                                        user={user} 
+                                                        profileFunction={openUserProfile} 
+                                                    />
+                                                }
+                                                { adminIds.includes(sender) && !adminPermissions.kick_users &&
                                                     <MemberDropDown 
                                                         user={user} 
                                                         profileFunction={openUserProfile} 
@@ -582,8 +617,10 @@ export default function GroupSettings() {
                                 </button>
                             }
                         </div>
-                        <button className="submit" style={{backgroundColor: "red"}} onClick={(e) => {handleDeleteGroup(e)}}>Delete Group</button>
-                        <button className="submit" style={{backgroundColor: "red"}}>Leave Group</button>
+                        { sender === masterId &&
+                            <button className="submit" style={{backgroundColor: "red"}} onClick={(e) => {handleDeleteGroup(e)}} >Delete Group</button>
+                        }
+                        <button className="submit" style={{backgroundColor: "red"}}onClick={(e) => {handleLeaveGroup(e)}} >Leave Group</button>
                     </form>
                 </div>
             </div>
