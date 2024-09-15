@@ -2,7 +2,7 @@ import NavBar from "./NavBar"
 import { useState } from "react"
 import { useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCircleXmark, faUserGear, faCrown, faCirclePlus } from '@fortawesome/free-solid-svg-icons'
+import { faCircleXmark, faUserGear, faCrown, faCirclePlus, faLock } from '@fortawesome/free-solid-svg-icons'
 import ProfilePic from "./ProfilePic";
 import { useNavigate, useParams } from "react-router-dom";
 import MemberDropDown from "./MemberDropDown";
@@ -453,7 +453,7 @@ export default function GroupSettings() {
                             <div style={{position: "relative"}} className="pic-container-x">
                                 { pic ?
                                     <>
-                                        <label htmlFor="profile-picture" style={{ cursor: "pointer" }}>
+                                        <label htmlFor="profile-picture" style={{ cursor: sender === masterId && "pointer" }}>
                                             <ProfilePic imageSrc={pic} size="10rem"/>
                                         </label>
                                         <button className="x-button-pfp" onClick={(e) => {
@@ -464,44 +464,59 @@ export default function GroupSettings() {
                                         </button>
                                     </>
                                     :
-                                    <label htmlFor="profile-picture" style={{ cursor: "pointer" }}>
+                                    <label htmlFor="profile-picture" style={{ cursor: sender === masterId && "pointer" }}>
                                         <ProfilePic size="10rem"/>
                                     </label>
                                 }
                             </div>
-                            <label htmlFor="profile-picture" style={{ alignSelf: "start" }}>Profile Picture </label>
-                            <input style={{ cursor: "pointer", color: "grey" }} className="input" type="file" id="profile-picture" name="profile-picture" accept="image/*" defaultValue={ pic && pic } onChange={(e) => {handleFileUpload(e)}}/>
+                            <label htmlFor="profile-picture" style={{ alignSelf: "start" }}>
+                                {sender != masterId && 
+                                    <FontAwesomeIcon icon={faLock} style={{ height: "1rem", marginRight: "0.5rem" }}/>
+                                }
+                                Profile Picture 
+                            </label>
+                            <input style={{ cursor: sender === masterId && "pointer", color: "grey" }} className="input" type="file" id="profile-picture" name="profile-picture" accept="image/*" defaultValue={ pic && pic } onChange={(e) => {handleFileUpload(e)}} disabled={sender != masterId  ? true : false}/>
                         </div>
                         <div className="form-section" style={{ alignItems: "start" }}>
-                            <label htmlFor="display-name">Display Name</label>
+                            <label htmlFor="display-name">
+                                {sender != masterId && 
+                                    <FontAwesomeIcon icon={faLock} style={{ height: "1rem", marginRight: "0.5rem" }}/>
+                                }
+                                Display Name
+                            </label>
                             <div className="input-containers">
-                                <input className="input" id="display-name" type="text" defaultValue={displayName} style={{ borderColor: errors && errors.display_name && "red" }}/>
+                                <input className="input" id="display-name" type="text" defaultValue={displayName} style={{ cursor: sender === masterId && "pointer", borderColor: errors && errors.display_name && "red", color: sender != masterId && "grey"}} disabled={sender != masterId  ? true : false}/>
                                 { errors && errors.display_name &&
                                     <p className="error-message">{errors.display_name.msg}</p>
                                 }
                             </div>
                         </div>
                         <div className="form-section" style={{ alignItems: "start" }}>
-                            <p style={{ margin: 0 }}>Admin Permissions</p>
+                            <p style={{ margin: 0 }}>
+                                {sender != masterId && 
+                                    <FontAwesomeIcon icon={faLock} style={{ height: "1rem", marginRight: "0.5rem" }}/>
+                                }
+                                Admin Permissions
+                            </p>
                             { adminPermissions &&
-                                <div className="form-section-container">
+                                <div className="form-section-container" style={{ backgroundColor: sender != masterId && "light-dark(rgba(239, 239, 239, 0.3), rgba(59, 59, 59, 0.3))", color: sender != masterId && "grey"}}>
                                     <div className="checkbox-container">
                                         <label htmlFor="delete-messages">Can delete messages</label>
-                                        <input  id="delete-messages" name="admin-permissions" value="delete-messages" type="checkbox" defaultChecked= {adminPermissions.delete_messages ? true : false}/>
+                                        <input  id="delete-messages" name="admin-permissions" value="delete-messages" type="checkbox" defaultChecked= {adminPermissions.delete_messages ? true : false} disabled={sender != masterId  ? true : false} />
                                     </div>
                                     <div className="checkbox-container">
                                         <label htmlFor="invite-users">Can invite users</label>
-                                        <input  id="invite-users" name="admin-permissions" value="invite-users" type="checkbox" defaultChecked= {adminPermissions.invite_users ? true : false}/>
+                                        <input  id="invite-users" name="admin-permissions" value="invite-users" type="checkbox" defaultChecked= {adminPermissions.invite_users ? true : false} disabled={sender != masterId  ? true : false} />
                                     </div>
                                     <div className="checkbox-container">
                                         <label htmlFor="kick-users">Can kick users</label>
-                                        <input  id="kick-users" name="admin-permissions" value="kick-users" type="checkbox" defaultChecked= {adminPermissions.kick_users ? true : false}/>
+                                        <input  id="kick-users" name="admin-permissions" value="kick-users" type="checkbox" defaultChecked= {adminPermissions.kick_users ? true : false} disabled={sender != masterId  ? true : false} />
                                     </div>
                                 </div>
                             }
 
                         </div>
-                        <button className="submit" onClick={handleSubmit}>Save</button>
+                        <button className="submit" onClick={handleSubmit} style={{ backgroundColor: sender != masterId && "grey", pointerEvents: sender != masterId && "none" }}>Save</button>
                         <div className="form-section" style={{ alignItems: "start" , position: "relative"}}>
                             <div className="users-header" style={{ margin: 0, width: "100%" }}>
                                 <p style={{ margin: 0 }}>Members</p>
