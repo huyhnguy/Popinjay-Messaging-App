@@ -20,6 +20,7 @@ export default function GroupSettings() {
     const [masterId, setMasterId] = useState(null);
     const [sender, setSender] = useState(null); 
     const [addUserPopUp, setAddUserPopUp] = useState(false);
+    const [scrollToBottomOfMemberList, setScrollToBottomOfMemberList] = useState(false);
     const [errors, setErrors] = useState(null);
 
 
@@ -287,6 +288,35 @@ export default function GroupSettings() {
         }
     }
 
+    const masterUser = (e, userId) => {
+        e.preventDefault();
+
+        fetch(`http://localhost:3000/api/groups/${urlParams.groupId}/users/${userId}`, {
+            method: 'PUT',
+            credentials: "include",
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                action: "Make master"
+            })
+          })
+          .then(res => res.json())
+          .then(res => {
+            if (res.errors) {
+                console.log(res.errors);
+            } else {
+                console.log(res);
+                setMasterId(userId);
+                closeDropDown();
+            }
+          })
+          .catch(err => {
+            console.log(err);
+        })
+    }
+
     function sortMembers(usersArray, adminsArray, master, sender) {
         console.log(sender);
         usersArray.sort((a,b) => {
@@ -313,9 +343,9 @@ export default function GroupSettings() {
     function sortNewMember(membersArray, newMemberId) {
         membersArray.sort((a,b) => {
             if (a._id === newMemberId) {
-                return -1
-            } else if (b._id === newMemberId) {
                 return 1
+            } else if (b._id === newMemberId) {
+                return -1
             } else {
                 return 0
             }
@@ -366,6 +396,7 @@ export default function GroupSettings() {
                 const sortedNewMembersList = sortNewMember(newMembersList, user._id);
                 setUsers(sortedNewMembersList);
                 setAddUserPopUp(false);
+                setScrollToBottomOfMemberList(true)
             }
           })
           .catch(err => {
@@ -374,19 +405,24 @@ export default function GroupSettings() {
     }
 
     useEffect(() => {
-        if (!addUserPopUp) {
-            scrollToTop();
+        if (scrollToBottomOfMemberList) {
+            scrollToBottom();
+            setScrollToBottomOfMemberList(false);
         }
-    }, [addUserPopUp]);
+    }, [scrollToBottomOfMemberList]);
 
-    function scrollToTop () {
+    function scrollToBottom () {
+        
         const membersDiv = document.querySelector(".members-container");
-        membersDiv.firstChild.scrollIntoView({
-            block: "start",
-            inline: "nearest",
-            behavior: "smooth",
-            alignToTop: false
-        });
+        if (users) {
+            membersDiv.lastChild.scrollIntoView({
+                block: "start",
+                inline: "nearest",
+                behavior: "smooth",
+                alignToTop: false
+            });
+        }
+
     }
 
     return(
@@ -497,16 +533,39 @@ export default function GroupSettings() {
                                                     </div>
                                                     <hr style={{ margin: 0 }}/>
                                                 </div>
-                                                <MemberDropDown user={user} profileFunction={openUserProfile} kickFunction={kickUser} adminFunction={adminUser} admin={adminIds.includes(user._id) ? true : false}/>
-                                                  
+                                                {sender === masterId &&
+                                                    <MemberDropDown 
+                                                        user={user} 
+                                                        profileFunction={openUserProfile} 
+                                                        kickFunction={kickUser} 
+                                                        adminFunction={adminUser} 
+                                                        admin={adminIds.includes(user._id) ? true : false}
+                                                        masterFunction={masterUser}
+                                                    />
+                                                }
+                                                {adminIds.includes(sender) && adminPermissions.kick_users &&
+                                                    <MemberDropDown 
+                                                        user={user} 
+                                                        profileFunction={openUserProfile} 
+                                                        kickFunction={kickUser} 
+                                                    />
+                                                }
+                                                {sender != masterId && !adminIds.includes(sender) || (adminIds.includes(sender) && !adminPermissions.kick_users) &&
+                                                    <MemberDropDown 
+                                                        user={user} 
+                                                        profileFunction={openUserProfile} 
+                                                    />
+                                                }
                                             </div>
                                         )
                                     })
                                 }
                             </div>
-                            <button className="add-user-button" onClick={(e) => {handleAddUserPopUp(e)}}>
-                                <FontAwesomeIcon icon={faCirclePlus} className="file-upload-icon" style={{ height: "3rem" }}/>
-                            </button>
+                            { sender === masterId || (adminIds.includes(sender) && adminPermissions.invite_users) &&
+                                <button className="add-user-button" onClick={(e) => {handleAddUserPopUp(e)}}>
+                                    <FontAwesomeIcon icon={faCirclePlus} className="file-upload-icon" style={{ height: "3rem" }}/>
+                                </button>
+                            }
                         </div>
                         <button className="submit" style={{backgroundColor: "red"}} onClick={(e) => {handleDeleteGroup(e)}}>Delete Group</button>
                         <button className="submit" style={{backgroundColor: "red"}}>Leave Group</button>

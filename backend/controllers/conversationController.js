@@ -365,6 +365,11 @@ exports.group_user_put = asyncHandler(async (req, res, next) => {
             console.log(`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`);
     
             res.json({ message: "successfully added user to group" })
+        } else if (req.body.action === "Make master") {
+            const result = await Conversation.updateOne({ _id: req.params.groupId }, { master: req.params.userId });
+            console.log(`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`);
+    
+            res.json({ message: "successfully made user master" })
         }
 
     } catch (err) {

@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom";
 import ProfilePic from "./ProfilePic";
 
 export default function AddUserPopUp({ groupMembersArray, addUserFunction }) {
     const [users, setUsers] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetch('http://localhost:3000/api/users', {

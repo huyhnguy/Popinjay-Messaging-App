@@ -638,7 +638,7 @@ textarea {
   cursor: pointer;
 }
 
-.member-button, .member-button-red {
+.member-button, .member-button-red, .member-button-gold {
   all: unset;
   padding: 0.25rem;
   cursor: pointer;
@@ -650,6 +650,10 @@ textarea {
 
 .member-button:hover {
   background-color: #007BFF;
+}
+
+.member-button-gold:hover {
+  background-color: gold;
 }
 
 .member-button-red:hover {

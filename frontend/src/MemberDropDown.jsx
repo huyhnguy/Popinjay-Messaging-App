@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUserGear, faMessage, faUserXmark, faEye } from '@fortawesome/free-solid-svg-icons'
+import { faUserGear, faMessage, faUserXmark, faEye, faCrown } from '@fortawesome/free-solid-svg-icons'
 
-export default function MemberDropDown({ user, profileFunction, kickFunction, adminFunction, admin}) {
+export default function MemberDropDown({ user, profileFunction, kickFunction, adminFunction, admin, masterFunction}) {
     const navigate = useNavigate();
 
     const handleMessage = (e) => {
@@ -40,21 +40,30 @@ export default function MemberDropDown({ user, profileFunction, kickFunction, ad
                     <FontAwesomeIcon icon={faEye}/>
                     <p style={{margin: 0}}>View profile</p>
                 </button>
-                <button onClick={(e) => {
-                    if (admin) {
-                        adminFunction(e, user._id, "Remove admin");
-                    } else {
-                        adminFunction(e, user._id, "Make admin");
-                    }
-                }} className="member-button">
-                    <FontAwesomeIcon icon={faUserGear}/>
-                    <p style={{margin: 0}}>{ admin ? "Remove admin" : "Make admin"}</p>
-                </button>
-                
-                <button onClick={(e) => {kickFunction(e, user._id)}} className="member-button-red">
-                    <FontAwesomeIcon icon={faUserXmark}/>
-                    <p style={{margin: 0}}>Kick user</p>
-                </button>
+                { adminFunction &&
+                    <button onClick={(e) => {
+                        if (admin) {
+                            adminFunction(e, user._id, "Remove admin");
+                        } else {
+                            adminFunction(e, user._id, "Make admin");
+                        }
+                    }} className="member-button">
+                        <FontAwesomeIcon icon={faUserGear}/>
+                        <p style={{margin: 0}}>{ admin ? "Remove admin" : "Make admin"}</p>
+                    </button>
+                }
+                { masterFunction &&
+                    <button onClick={(e) => {masterFunction(e, user._id)}} className="member-button-gold">
+                        <FontAwesomeIcon icon={faCrown}/>
+                        <p style={{margin: 0}}>Make master</p>
+                    </button>
+                }
+                { kickFunction &&
+                    <button onClick={(e) => {kickFunction(e, user._id)}} className="member-button-red">
+                        <FontAwesomeIcon icon={faUserXmark}/>
+                        <p style={{margin: 0}}>Kick user</p>
+                    </button>
+                }
             </div>
         </>
 
