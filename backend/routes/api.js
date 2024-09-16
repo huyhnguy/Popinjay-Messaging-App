@@ -56,4 +56,10 @@ router.delete("/messages/:messageId", authenticateToken, messageController.messa
 
 router.get("/notifications", authenticateToken, notificationController.notification_list_get);
 
+router.put("/notifications", authenticateToken, notificationController.notification_list_put);
+
+router.put("/notifications/:notificationId", authenticateToken, notificationController.notification_put);
+
+
+
 module.exports = router;

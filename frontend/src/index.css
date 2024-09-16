@@ -178,7 +178,7 @@ nav {
   padding: 0.5rem;
 }
 
-.nav-link:hover, .user-card:hover, .message-card:hover, .member-card:hover{
+.nav-link:hover, .user-card:hover, .message-card:hover, .member-card:hover, .notification:hover{
   background-color: #dddddd;
 }
 
@@ -710,6 +710,7 @@ textarea {
   align-items: center;
   margin: 1rem;
   gap: 1rem;
+  justify-content: space-between;
 }
 
 .user-list-invite {
@@ -737,4 +738,8 @@ textarea {
 
 .notification > * {
   margin: 0;
+}
+
+.new {
+  background-color: rgb(0 123 255 / 20%);
 }
