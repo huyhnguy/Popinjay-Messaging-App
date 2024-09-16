@@ -2,10 +2,7 @@ const asyncHandler = require("express-async-handler");
 const Notification = require("../models/notification");
 
 exports.notification_list_get = asyncHandler(async (req, res, next) => {
-    const notifications = await Notification.find({ to: req.user.id }).populate({
-        path: 'from',
-        select: 'display_name profile_picture'
-    }).exec();
+    const notifications = await Notification.find({ to: req.user.id }).populate('from', 'display_name profile_picture').exec();
     console.log(notifications);
 
     res.json({ notifications: notifications})

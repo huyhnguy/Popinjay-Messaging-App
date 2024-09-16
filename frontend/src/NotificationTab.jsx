@@ -47,7 +47,7 @@ export default function NotificationTab() {
                                         <ProfilePic imageSrc={notification.from.profile_picture} size="4rem"/>
                                         <div>
                                             <h1 style={{ margin: 0 }}>{notification.from.display_name}</h1>
-                                            <p style={{ margin: 0}}>{notification.type === "Message" && "sent you new messages"}</p>
+                                            <p style={{ margin: 0}}>{notification.update}</p>
                                         </div>
                                         <p style={{ color: "grey" }}>30m</p>
                                     </div>

@@ -33,18 +33,34 @@ exports.message_create_post = asyncHandler(async (req, res, next) => {
 
         console.log(otherUserArray);
 
-        const notification = new Notification({
-            from: req.user.id,
-            to: otherUserArray,
-            resourceId: conversation._id,
-            type: "Message",
-        })
+        if (req.body.conversation_type === "Group") {
+            const notification = new Notification({
+                to: otherUserArray,
+                from: conversation._id,
+                from_type: 'Conversation',
+                conversation_id: conversation._id,
+                update: "You have new messages.",
+            })
+    
+            await notification.save();
+    
+            console.log(notification);
+        } else {
+            const notification = new Notification({
+                to: otherUserArray,
+                from: req.user.id,
+                from_type: 'User',
+                conversation_id: conversation._id,
+                update: "sent you a message.",
+            })
 
-        notification.save();
+            await notification.save();
+            
+            console.log(notification);
+        }
 
-        console.log(notification);
 
-        res.json({ notification: notification, new_message: newMessagePopulated , message: "Message successfully created and saved into the conversation" })
+        res.json({ new_message: newMessagePopulated , message: "Message successfully created and saved into the conversation" })
     } catch (err) {
         console.error('error saving conversation:', err);
 

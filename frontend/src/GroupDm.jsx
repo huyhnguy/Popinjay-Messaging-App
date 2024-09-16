@@ -94,12 +94,14 @@ export default function GroupDm() {
                 new_message:  document.getElementById("new-message").value,
                 conversation_id: urlParams.groupId,
                 image: image.src,
+                conversation_type: 'Group'
             }
         } else {
             dataPackage = {
                 new_message:  document.getElementById("new-message").value,
                 conversation_id: urlParams.groupId,
-                image: null
+                image: null,
+                conversation_type: 'Group'
             }
         }
 

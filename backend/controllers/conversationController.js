@@ -5,6 +5,7 @@ const { body, validationResult } = require("express-validator");
 const User = require("../models/user")
 const mongoose = require("mongoose");
 const cloudinary = require('cloudinary').v2;
+const Notification = require("../models/notification");
 
 exports.dms_create_post = asyncHandler(async (req, res, next) => {
     // look for a possible pre-existing conversation between these two users in the database
@@ -322,9 +323,17 @@ exports.groups_create_post = [
                 }
                 await conversation.save();
 
-                console.log(conversation);
+                const notification = new Notification({
+                    to: req.body.users,
+                    from: conversation._id,
+                    from_type: 'Conversation',
+                    conversation_id: conversation._id,
+                    update: "You have been added to the group."
+                })
 
-                res.status(201).json({ "status": 201, message: 'Successfully created conversation', conversation: conversation });
+                await notification.save();
+
+                res.status(201).json({ "status": 201, message: 'Successfully created conversation', conversation: conversation, notification: notification });
         }
     })
 ]
@@ -333,6 +342,15 @@ exports.group_user_delete = asyncHandler(async (req, res, next) => {
     try {
         const result = await Conversation.updateOne({ _id: req.params.groupId }, { $pull: { users: req.params.userId, admins: req.params.userId } });
         console.log(`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`);
+
+        const notification = new Notification({
+            to: [req.params.userId],
+            from: req.params.groupId,
+            from_type: 'Conversation',
+            update: "You have been kicked."
+        })
+
+        await notification.save();
 
         res.json({ message: "successfully deleted user from group" })
     } catch (err) {
@@ -349,6 +367,16 @@ exports.group_user_put = asyncHandler(async (req, res, next) => {
                 $push: { admins: req.params.userId }
             });
             console.log(`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`);
+
+            const notification = new Notification({
+                to: [req.params.userId],
+                from: req.params.groupId,
+                from_type: 'Conversation',
+                conversation_id: req.params.groupId,
+                update: "You are now an admin."
+            })
+
+            await notification.save();
     
             res.json({ message: "successfully gave user admin" })
         } else if (req.body.action === "Remove admin") {
@@ -356,6 +384,16 @@ exports.group_user_put = asyncHandler(async (req, res, next) => {
                 $pull: { admins: req.params.userId }
             });
             console.log(`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`);
+
+            const notification = new Notification({
+                to: [req.params.userId],
+                from: req.params.groupId,
+                from_type: 'Conversation',
+                conversation_id: req.params.groupId,
+                update: "You are no longer an admin."
+            })
+
+            await notification.save();
     
             res.json({ message: "successfully removed user from admin list" })
         } else if (req.body.action === "Add user") {
@@ -363,11 +401,31 @@ exports.group_user_put = asyncHandler(async (req, res, next) => {
                 $push: { users: req.params.userId }
             });
             console.log(`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`);
+
+            const notification = new Notification({
+                to: [req.params.userId],
+                from: req.params.groupId,
+                from_type: 'Conversation',
+                conversation_id: req.params.groupId,
+                update: "You have been added to the group."
+            })
+
+            await notification.save();
     
             res.json({ message: "successfully added user to group" })
         } else if (req.body.action === "Make master") {
             const result = await Conversation.updateOne({ _id: req.params.groupId }, { master: req.params.userId });
             console.log(`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`);
+
+            const notification = new Notification({
+                to: [req.params.userId],
+                from: req.params.groupId,
+                from_type: 'Conversation',
+                conversation_id: req.params.groupId,
+                update: "You are the new master."
+            })
+
+            await notification.save();
     
             res.json({ message: "successfully made user master" })
         }
