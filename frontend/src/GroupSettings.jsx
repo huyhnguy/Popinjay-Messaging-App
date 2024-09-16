@@ -484,12 +484,14 @@ export default function GroupSettings() {
                                         <label htmlFor="profile-picture" style={{ cursor: sender === masterId && "pointer" }}>
                                             <ProfilePic imageSrc={pic} size="10rem"/>
                                         </label>
-                                        <button className="x-button-pfp" onClick={(e) => {
-                                            e.preventDefault();
-                                            setPic(null);
-                                        }}>
-                                            <FontAwesomeIcon icon={faCircleXmark} className="x-icon" style={{height: "3rem"}}/>
-                                        </button>
+                                        { sender === masterId &&
+                                            <button className="x-button-pfp" onClick={(e) => {
+                                                e.preventDefault();
+                                                setPic(null);
+                                            }}>
+                                                <FontAwesomeIcon icon={faCircleXmark} className="x-icon" style={{height: "3rem"}}/>
+                                            </button>
+                                        }
                                     </>
                                     :
                                     <label htmlFor="profile-picture" style={{ cursor: sender === masterId && "pointer" }}>

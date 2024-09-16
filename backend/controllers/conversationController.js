@@ -132,7 +132,8 @@ exports.group_settings_get = asyncHandler(async (req, res, next) => {
                     },
                     display_name: 1,
                     admin_permissions: 1,
-                    master: 1
+                    master: 1,
+                    profile_picture: 1,
                 }
             }
         ]
