@@ -8,10 +8,10 @@ exports.notification_list_get = asyncHandler(async (req, res, next) => {
 });
 
 exports.new_notification_counter_get = asyncHandler(async (req, res, next) => {
-    const notifications = await Notification.countDocuments({ to: req.user.id, is_read: false }).exec();
+    const notifications = await Notification.find({ to: req.user.id, is_read: false }, '_id from_type conversation_id').exec();
 
     console.log(`new notifications: ${notifications}`);
-    res.json({ new_notification_counter: notifications })
+    res.json({ new_notifications: notifications })
 });
 
 exports.notification_list_put = asyncHandler(async (req, res, next) => {

@@ -6,6 +6,7 @@ import ProfilePic from "./ProfilePic";
 export default function DmTab() {
     const [dms, setDms] = useState(null);
     const [sender, setSender] = useState(null);
+    const [notifications, setNotifications] = useState(null);
 
     const navigate = useNavigate();
     
@@ -51,6 +52,34 @@ export default function DmTab() {
                 history: dm.history
             } 
         });
+
+        const notification = checkArrayOfNotificationsForDmId(notifications, dm._id);
+
+        if (notification) {
+            fetch(`http://localhost:3000/api/notifications/${notification._id}`, {
+                method: 'PUT',
+                credentials: "include",
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+                },
+              })
+              .then(res => {
+                if (res.ok) { return res.json() }
+                const error = new Error(res.message);
+                error.code = res.status;
+                throw error
+              })
+              .then(res => {
+                console.log(res);
+              })
+              .catch(err => {
+                console.log(err);
+                if (err.code === 401) {
+                    navigate('/login');
+                }
+            })
+        }
     }
 
     function sameDay(d1, d2) {
@@ -125,6 +154,18 @@ export default function DmTab() {
         })
     }
 
+    const markUpdatedDms = (dmNotifications) => {
+        setNotifications(dmNotifications);
+    }
+
+    const checkArrayOfNotificationsForDmId = (notifications, dmId) => {
+        for (let i = 0; i < notifications.length; i++) {
+            if (notifications[i].conversation_id === dmId) return notifications[i]
+        }
+
+        return false
+    }
+
     return(
         <div className="messages-page">
             <div className="users-header">
@@ -137,9 +178,10 @@ export default function DmTab() {
                             dms.map((dm) => {
                                 const receiver = dm.users.find(user => user._id != sender);
                                 const lastMessage = dm.history[dm.history.length - 1];
+
                                 return (
                                     <div id={`${dm._id}`} key={dm._id}>
-                                        <div className="message-card"  onClick={() => {handleDM(dm)}}>
+                                        <div className={`message-card ${checkArrayOfNotificationsForDmId(notifications, dm._id) && "new"}`}  onClick={() => {handleDM(dm)}}>
                                             <ProfilePic imageSrc={receiver.profile_picture} size="5rem"/>
                                             <div className="name-message">
                                                 <h2>{receiver.display_name}</h2>
@@ -158,7 +200,7 @@ export default function DmTab() {
                         }
                 </div>
             </div>
-            <NavBar active='Messages'/>
+            <NavBar active='Messages' markUpdatedDms={markUpdatedDms}/>
         </div>
     )
 }

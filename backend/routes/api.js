@@ -62,6 +62,4 @@ router.put("/notifications", authenticateToken, notificationController.notificat
 
 router.put("/notifications/:notificationId", authenticateToken, notificationController.notification_put);
 
-
-
 module.exports = router;

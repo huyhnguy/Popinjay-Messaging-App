@@ -10,6 +10,7 @@ export default function GroupTab() {
     const [groups, setGroups] = useState(null);
     const [sender, setSender] = useState(null);
     const [addGroup, setAddGroup] = useState("closed");
+    const [notifications, setNotifications] = useState(null);
 
     const navigate = useNavigate();
     
@@ -46,6 +47,34 @@ export default function GroupTab() {
     const handleGroup = (group) => {
         const route = `/groups/${group._id}`;
         navigate(route);
+
+        const notification = checkArrayOfNotificationsForGroupId(notifications, group._id);
+
+        if (notification) {
+            fetch(`http://localhost:3000/api/notifications/${notification._id}`, {
+                method: 'PUT',
+                credentials: "include",
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+                },
+              })
+              .then(res => {
+                if (res.ok) { return res.json() }
+                const error = new Error(res.message);
+                error.code = res.status;
+                throw error
+              })
+              .then(res => {
+                console.log(res);
+              })
+              .catch(err => {
+                console.log(err);
+                if (err.code === 401) {
+                    navigate('/login');
+                }
+            })
+        }
     }
 
     function sameDay(d1, d2) {
@@ -181,6 +210,18 @@ export default function GroupTab() {
         })
     }
 
+    const markUpdatedGroups = (groupNotifications) => {
+        setNotifications(groupNotifications);
+    }
+
+    const checkArrayOfNotificationsForGroupId = (notifications, groupId) => {
+        for (let i = 0; i < notifications.length; i++) {
+            if (notifications[i].conversation_id === groupId) return notifications[i]
+        }
+
+        return false
+    }
+
     return(
         <div className="messages-page" style={{ position: "relative" }}>
             { addGroup === "open" &&
@@ -200,7 +241,7 @@ export default function GroupTab() {
                                 const lastMessage = group.history[group.history.length - 1];
                                 return (
                                     <div key={group._id} id={`${group._id}`} >
-                                        <div className="message-card"  onClick={() => {handleGroup(group)}}>
+                                        <div className={`message-card ${checkArrayOfNotificationsForGroupId(notifications, group._id) && "new"}`}  onClick={() => {handleGroup(group)}}>
                                             { group._id === '66d7d2fead84fa8a36bea088' ?               
                                                 <div style={{position: "relative"}}>
                                                     <ProfilePic imageSrc={group.profile_picture} size="5rem" group={true} />
@@ -234,7 +275,7 @@ export default function GroupTab() {
                         }
                 </div>
             </div>
-            <NavBar active='Groups'/>
+            <NavBar active='Groups' markUpdatedGroups={markUpdatedGroups}/>
         </div>
     )
 }
