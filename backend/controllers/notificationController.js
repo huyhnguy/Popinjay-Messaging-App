@@ -7,6 +7,13 @@ exports.notification_list_get = asyncHandler(async (req, res, next) => {
     res.json({ notifications: notifications })
 });
 
+exports.new_notification_counter_get = asyncHandler(async (req, res, next) => {
+    const notifications = await Notification.countDocuments({ to: req.user.id, is_read: false }).exec();
+
+    console.log(`new notifications: ${notifications}`);
+    res.json({ new_notification_counter: notifications })
+});
+
 exports.notification_list_put = asyncHandler(async (req, res, next) => {
     try {
         const result = await Notification.updateMany( {to: req.user.id}, {$set: { is_read: true }} )

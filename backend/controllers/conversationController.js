@@ -76,7 +76,6 @@ exports.dm_get = asyncHandler(async (req, res, next) => {
     }).lean().exec();
 
     res.json({ dm: dm, sender: req.user.id })
-    console.log(dm);
 })
 
 exports.group_get = asyncHandler(async (req, res, next) => {
@@ -93,7 +92,6 @@ exports.group_get = asyncHandler(async (req, res, next) => {
     }).exec();
 
     res.json({ group: group, sender: req.user.id })
-    console.log(group);
 })
 
 exports.group_settings_get = asyncHandler(async (req, res, next) => {
@@ -140,7 +138,6 @@ exports.group_settings_get = asyncHandler(async (req, res, next) => {
     
         const group = await Conversation.aggregate(pipeline).exec();
     
-        console.log(group);
     
         res.json({ group: group[0], sender: req.user.id })
     } catch (err) {
@@ -169,8 +166,6 @@ exports.group_settings_put = [
             })
         } else {
             try {
-                console.log(req.file);
-                console.log(req.body);
                 
                 const conversation = await Conversation.findById(req.params.groupId).exec();
                 conversation.display_name = req.body.display_name;
@@ -228,10 +223,11 @@ exports.group_settings_delete = asyncHandler(async (req, res, next) => {
         }
 
             //await cloudinary.uploader.destroy(req.params.groupId, function(result) { console.log(result) });
-            const [deletedImageUrl, deletedMessages, deletedGroup] = await Promise.all([
+            const [deletedImageUrl, deletedMessages, deletedGroup, deletedNotifications] = await Promise.all([
                 cloudinary.uploader.destroy(req.params.groupId, function(result) { console.log(result) }),
                 Message.deleteMany({_id: { $in: group.history }}), 
-                Conversation.deleteOne({ _id: req.params.groupId }) 
+                Conversation.deleteOne({ _id: req.params.groupId }),
+                Notification.deleteMany({ from: req.params.groupId})
             ]);
        
     
@@ -279,7 +275,6 @@ exports.groups_list_get = asyncHandler(async (req, res, next) => {
             options: { limit: 5 }
         }).exec();
 
-        console.log(groups);
         res.json({ sender: req.user.id, groups: groups });
     } catch (err) {
         console.error(err);

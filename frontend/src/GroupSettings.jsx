@@ -482,7 +482,7 @@ export default function GroupSettings() {
                                 { pic ?
                                     <>
                                         <label htmlFor="profile-picture" style={{ cursor: sender === masterId && "pointer" }}>
-                                            <ProfilePic imageSrc={pic} size="10rem"/>
+                                            <ProfilePic imageSrc={pic} size="10rem" />
                                         </label>
                                         { sender === masterId &&
                                             <button className="x-button-pfp" onClick={(e) => {
@@ -495,7 +495,7 @@ export default function GroupSettings() {
                                     </>
                                     :
                                     <label htmlFor="profile-picture" style={{ cursor: sender === masterId && "pointer" }}>
-                                        <ProfilePic size="10rem"/>
+                                        <ProfilePic size="10rem" group={true}/>
                                     </label>
                                 }
                             </div>

@@ -31,8 +31,6 @@ exports.message_create_post = asyncHandler(async (req, res, next) => {
 
         const otherUserArray = conversation.users.filter((userId) => userId != req.user.id);
 
-        console.log(otherUserArray);
-
         if (req.body.conversation_type === "Group") {
             const notification = new Notification({
                 to: otherUserArray,
@@ -44,7 +42,6 @@ exports.message_create_post = asyncHandler(async (req, res, next) => {
     
             await notification.save();
     
-            console.log(notification);
         } else {
             const notification = new Notification({
                 to: otherUserArray,
@@ -55,8 +52,7 @@ exports.message_create_post = asyncHandler(async (req, res, next) => {
             })
 
             await notification.save();
-            
-            console.log(notification);
+
         }
 
 

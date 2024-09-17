@@ -56,6 +56,8 @@ router.delete("/messages/:messageId", authenticateToken, messageController.messa
 
 router.get("/notifications", authenticateToken, notificationController.notification_list_get);
 
+router.get("/notifications/counter", authenticateToken, notificationController.new_notification_counter_get);
+
 router.put("/notifications", authenticateToken, notificationController.notification_list_put);
 
 router.put("/notifications/:notificationId", authenticateToken, notificationController.notification_put);

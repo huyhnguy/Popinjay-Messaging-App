@@ -140,9 +140,9 @@ export default function NotificationTab() {
                             return (
                                 <div key={notification._id}>
                                     <div className={`notification ${!notification.is_read && "new"}`} onClick={() => {routeToResource(notification)}}>
-                                        <ProfilePic imageSrc={notification.from.profile_picture} size="4rem"/>
+                                        <ProfilePic imageSrc={notification.from.profile_picture && notification.from.profile_picture} size="4rem" group={ notification.from_type === "Conversation" && true}/>
                                         <div>
-                                            <h1 style={{ margin: 0 }}>{notification.from.display_name}</h1>
+                                            <h1 style={{ margin: 0 }}>{ notification.from.display_name ? notification.from.display_name : "Group" }</h1>
                                             <p style={{ margin: 0}}>{notification.update}</p>
                                         </div>
                                         <p style={{ color: "grey" }}>{convertDate(notification.createdAt)}</p>

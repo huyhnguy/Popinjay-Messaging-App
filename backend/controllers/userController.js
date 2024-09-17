@@ -234,7 +234,6 @@ exports.user_profile_put = [
             })
         } else {
             try {
-                console.log(req.file);
                 const user = await User.findById(req.user.id).exec();
                 user.display_name = req.body.display_name;
                 user.about_me = req.body.about_me;
