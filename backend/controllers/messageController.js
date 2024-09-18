@@ -31,30 +31,52 @@ exports.message_create_post = asyncHandler(async (req, res, next) => {
 
         const otherUserArray = conversation.users.filter((userId) => userId != req.user.id);
 
+        const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+
         if (req.body.conversation_type === "Group") {
-            const notification = new Notification({
-                to: otherUserArray,
+            const recentNotifications = await Notification.exists({ 
+                to: otherUserArray, 
                 from: conversation._id,
                 from_type: 'Conversation',
                 conversation_id: conversation._id,
                 update: "You have new messages.",
-            })
-    
-            await notification.save();
+                createdAt: { $gte: oneHourAgo }
+            });
+
+            if (!recentNotifications) {
+                const notification = new Notification({
+                    to: otherUserArray,
+                    from: conversation._id,
+                    from_type: 'Conversation',
+                    conversation_id: conversation._id,
+                    update: "You have new messages.",
+                })
+        
+                await notification.save();
+            }
     
         } else {
-            const notification = new Notification({
-                to: otherUserArray,
+            const recentNotifications = await Notification.exists({ 
+                to: otherUserArray, 
                 from: req.user.id,
                 from_type: 'User',
                 conversation_id: conversation._id,
                 update: "sent you a message.",
-            })
+                createdAt: { $gte: oneHourAgo }
+            });
 
-            await notification.save();
-
+            if (!recentNotifications) {
+                const notification = new Notification({
+                    to: otherUserArray,
+                    from: req.user.id,
+                    from_type: 'User',
+                    conversation_id: conversation._id,
+                    update: "sent you a message.",
+                })
+    
+                await notification.save();
+            }
         }
-
 
         res.json({ new_message: newMessagePopulated , message: "Message successfully created and saved into the conversation" })
     } catch (err) {
