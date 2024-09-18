@@ -458,7 +458,7 @@ export default function GroupSettings() {
             { dropDown &&
                 <div style={{ height: "100vh", width: "100vw", position: "absolute", zIndex: "98",}} onClick={closeDropDown}></div>
             }
-            { userProfile || addUserPopUp &&
+            { (userProfile || addUserPopUp) &&
                 <>
                     <div className="shadow" onClick={() => {
                         setUserProfile(null);

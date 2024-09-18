@@ -5,7 +5,7 @@ import { faMessage } from '@fortawesome/free-solid-svg-icons'
 import ProfilePic from "./ProfilePic";
 import { useNavigate } from "react-router-dom";
 
-export default function UserProfile({ userId }) {
+export default function UserProfile({ userId, messageButton = true }) {
     const [user, setUser] = useState(null);
 
     const navigate = useNavigate();
@@ -87,7 +87,7 @@ export default function UserProfile({ userId }) {
                         <div>
                             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "5rem" }}>
                                 <h1 style={{ margin: 0 }}>{user.display_name}</h1>
-                                <button className={'submit message-button'} onClick={() => {handleDM(user)}}>
+                                <button className={'submit message-button'} onClick={() => {handleDM(user)}} style={{ backgroundColor: !messageButton && "grey", pointerEvents: !messageButton && "none" }}>
                                     <FontAwesomeIcon icon={faMessage} style={{ height: "1rem" }}/>
                                     <p style={{ margin: 0 }}>Message</p>
                                 </button>

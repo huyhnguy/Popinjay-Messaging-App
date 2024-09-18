@@ -5,6 +5,7 @@ import ProfilePic from "./ProfilePic";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faPaperPlane, faCircleChevronUp, faCircleXmark} from '@fortawesome/free-solid-svg-icons'
 import FileMessageInput from "./FileMessageInput";
+import UserProfile from "./UserProfile";
 
 export default function Dm() {
     const [dm, setDm] = useState(null);
@@ -13,6 +14,7 @@ export default function Dm() {
     const [loading, setLoading] = useState(true);
     const [newMessage, setNewMessage] = useState(false);
     const [edit, setEdit] = useState(null);
+    const [profilePopUp, setProfilePopUp] = useState(false);
 
     const urlParams = useParams();
     const navigate = useNavigate();
@@ -33,6 +35,7 @@ export default function Dm() {
             throw error
           })
           .then(res => {
+            console.log(res);
             setDm(res.dm);
             setSender(res.sender);
             setLoading(false);
@@ -235,9 +238,15 @@ export default function Dm() {
 
     return(
         <>
+            { profilePopUp &&
+              <>
+                <UserProfile userId={profilePopUp} messageButton={false}/>
+                <div className="shadow" onClick={() => {setProfilePopUp(false)}}></div>
+              </>
+            }
             { dm &&
                 <div className="dm-page">
-                        <div className="receiver-container">
+                        <div className="receiver-container" style={{ cursor: "pointer" }}onClick={() => {setProfilePopUp(dm.users[0]._id)}}>
                             <ProfilePic imageSrc={dm.users[0].profile_picture} size="2.5rem"/>
                             <h1>{dm.users[0].display_name}</h1>
                         </div>

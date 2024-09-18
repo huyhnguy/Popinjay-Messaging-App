@@ -31,9 +31,6 @@ body {
 }
 
 @media (max-width: 750px) {
-  .site-name {
-    margin-top: 3rem;
-  }
 
   #root {
     display: flex;
@@ -52,6 +49,20 @@ body {
 
   div .messages-container {
     margin-inline: 0;
+  }
+
+  .user-profile-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .profile-pic-container {
+    height: 4rem;
+    width: 4rem;
+  }
+
+  .add-group-container {
+    width: 80%;
   }
 }
 
@@ -704,6 +715,7 @@ textarea {
   border-radius: 10px;
   height: fit-content;
   flex-grow: 1;
+  width: 100%;
 }
 
 .users-header {

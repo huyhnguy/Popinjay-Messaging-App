@@ -1,4 +1,4 @@
-import { useLocation, useParams, useNavigate } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react";
 import Message from "./Message";
 import ProfilePic from "./ProfilePic";
@@ -261,7 +261,7 @@ export default function GroupDm() {
             { dm &&   
                 <div className="dm-page">
                     <div className="group-header">
-                        <div className="receiver-container">
+                        <div className="receiver-container" onClick={handleSettings} style={{cursor: "pointer"}}>
                             <ProfilePic imageSrc={dm.profile_picture} size="2.5rem"/>
                             <h1>{dm.display_name != "" ? dm.display_name : displayUsersNamesInGroup(dm.users)}</h1>
                         </div>

@@ -12,14 +12,13 @@ import Settings from "./Settings";
 import DmTab from "./DmTab";
 import GroupTab from "./GroupTab";
 import GroupDm from "./GroupDm";
-import UserProfile from "./UserProfile";
 import GroupSettings from "./GroupSettings";
 import NotificationTab from "./NotificationTab";
 
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <App />,
+        element: <LogIn />,
     },
     {
         path: "/login",
