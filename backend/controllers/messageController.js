@@ -31,7 +31,7 @@ exports.message_create_post = asyncHandler(async (req, res, next) => {
 
         const otherUserArray = conversation.users.filter((userId) => userId != req.user.id);
 
-        const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+        const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
 
         if (req.body.conversation_type === "Group") {
             const recentNotifications = await Notification.exists({ 
@@ -40,7 +40,7 @@ exports.message_create_post = asyncHandler(async (req, res, next) => {
                 from_type: 'Conversation',
                 conversation_id: conversation._id,
                 update: "You have new messages.",
-                createdAt: { $gte: oneHourAgo }
+                createdAt: { $gte: tenMinutesAgo }
             });
 
             if (!recentNotifications) {
@@ -62,7 +62,7 @@ exports.message_create_post = asyncHandler(async (req, res, next) => {
                 from_type: 'User',
                 conversation_id: conversation._id,
                 update: "sent you a message.",
-                createdAt: { $gte: oneHourAgo }
+                createdAt: { $gte: tenMinutesAgo }
             });
 
             if (!recentNotifications) {
