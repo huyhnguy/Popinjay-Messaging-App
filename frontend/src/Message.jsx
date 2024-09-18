@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash, faPen } from '@fortawesome/free-solid-svg-icons'
 import { useEffect } from 'react'
 
-export default function Message({ info, person, deleteMessage, editMessage }) {
+export default function Message({ info, person, deleteMessage, editMessage, deletePower }) {
 
     let options = {
         month: "short",
@@ -56,15 +56,25 @@ export default function Message({ info, person, deleteMessage, editMessage }) {
         return(
             <div className="message-container">
                 <p style={{ margin: 0, fontSize: "0.75rem" }}>{info.user.display_name}</p>
-                { info.image &&
-                    <img src={info.image} alt="" style={{ height: "200px", borderRadius: "10px" }} loading="lazy"/>
-                }
-                { info.content &&
-                    <p  className="message" style={{ backgroundColor: "#6b6b6b"}}>{info.content}</p>
-                }
+                <div style={{ width: "fit-content", position: "relative"}}>
+                    { info.image &&
+                        <img src={info.image} alt="" style={{ height: "200px", borderRadius: "10px" }} loading="lazy"/>
+                    }
+                    { info.content &&
+                        <p  className="message" style={{ backgroundColor: "#6b6b6b"}}>{info.content}</p>
+                    }
+                    { deletePower &&
+                        <section className="message-buttons" >
+                            <button className="single-message-button" onClick={deleteMessage}>
+                                <FontAwesomeIcon icon={faTrash} />
+                            </button>
+                        </section>
+                    }
+                </div>
                 { formattedDate &&
                     <p className="timestamp">{formattedDate}</p>
                 }
+             
             </div>
         )
     }else {
