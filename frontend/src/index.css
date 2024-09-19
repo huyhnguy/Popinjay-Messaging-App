@@ -55,6 +55,7 @@ body {
     border-radius: 0;
     padding:0;
     background-color: transparent;
+    margin: 1rem 0 0 0;
   }
 
   div .messages-container {
@@ -301,6 +302,8 @@ nav {
   padding: 0.5rem;
   gap: 0.5rem;
   animation: fade-in 0.5s;
+  width: 4.5rem;
+  overflow: hidden;
 }
 
 .chosen-user-card {
@@ -327,6 +330,7 @@ nav {
   margin: 0;
 }
 
+
 .name-role {
   display: flex;
   align-items: center;
@@ -335,6 +339,7 @@ nav {
 
 .user-card p, .chosen-user-card p {
   margin: 0;
+  white-space: nowrap;
 }
 
 .profile-container h2 {
@@ -398,13 +403,6 @@ nav {
 .groups-top-bar h1 {
   margin: 0;
 }
-
-/*.add-users-section {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}*/
 
 .chosen-users {
   display: flex;
@@ -788,7 +786,7 @@ textarea {
 .notification-counter {
   margin: 0px;
   position: absolute;
-  z-index: 100;
+  z-index: 90;
   color: white;
   width: 24px;
   height: 24px;

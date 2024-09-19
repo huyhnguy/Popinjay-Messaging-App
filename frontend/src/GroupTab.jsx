@@ -90,14 +90,7 @@ export default function GroupTab() {
     }
 
     const convertDate = (date) => {
-        let options = {
-            month: "short",
-            day: "numeric",
-            weekday: "short",
-            hour: "numeric",
-            minute: "numeric",
-            year: "numeric"
-        }
+        let options;
         const readableDate = new Date(date);
         const currentDate = new Date();
 
@@ -116,7 +109,7 @@ export default function GroupTab() {
             let options = {
                 month: "numeric",
                 day: "numeric",
-                year: "numeric"
+                year: "2-digit"
             }
             const formatter = new Intl.DateTimeFormat("en-US", options);
             const formattedDate = formatter.format(readableDate, options);

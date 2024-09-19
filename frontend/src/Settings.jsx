@@ -166,7 +166,7 @@ export default function Settings() {
                 <div className="settings-card">
                     <h1 style={{margin: "0 0 1rem 0"}}>Settings</h1>
                     {guest &&
-                        <p style={{color: "red", marginTop: 0}}>**Log out and create an account to change settings!**</p>
+                        <p style={{color: "red", marginTop: 0, textAlign: "center"}}>Guest users cannot change settings!</p>
                     }
                     <form action="" method="POST">
                         <div className="form-section">

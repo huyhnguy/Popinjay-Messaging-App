@@ -66,7 +66,7 @@ export default function UserTab() {
                     users.map(user => 
                         <div className="user-card" onClick={() => {handleUser(user)}} key={user._id} id= {`${user._id}`}>
                             <ProfilePic imageSrc={user.profile_picture} size="4rem"/>
-                            <p>{user.display_name}</p>
+                            <p >{user.display_name}</p>
                         </div>
                     )
                 }

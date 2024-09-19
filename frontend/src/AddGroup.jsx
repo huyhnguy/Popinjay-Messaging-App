@@ -6,7 +6,7 @@ import { faCircleLeft, faCircleRight, faCircleXmark, faSquarePlus} from '@fortaw
 export default function AddGroup({ closePopUp }) {
     const [base64Pic, setBase64Pic] = useState(null);
     const [usersList, setUsersList] = useState(null);
-    const [checkedUsers, setCheckedUsers] = useState([]);
+    const [chosenUsers, setChosenUsers] = useState([]);
     const [next, setNext] = useState(false);
 
     useEffect(() => {
@@ -36,16 +36,16 @@ export default function AddGroup({ closePopUp }) {
     }, [])
 
     useEffect(() => {
-        const checkedUsersDiv = document.querySelector(".chosen-users");
-        if (checkedUsersDiv) {
-            checkedUsersDiv.lastChild.scrollIntoView({
+        const chosenUsersContainer = document.querySelector(".chosen-users");
+        if (chosenUsersContainer) {
+            chosenUsersContainer.lastChild.scrollIntoView({
                 block: "start",
                 inline: "nearest",
                 behavior: "smooth",
                 alignToTop: false
               });
         }
-    }, [checkedUsers]);
+    }, [chosenUsers]);
 
     const convertToBase64 = (file) => {
         return new Promise((resolve, reject) => {
@@ -70,16 +70,14 @@ export default function AddGroup({ closePopUp }) {
         e.preventDefault();
         const groupName = document.getElementById("group-name").value;
         const groupPic = document.getElementById("group-picture").files[0]
-        console.log(checkedUsers);
-        const checkedUsersIds = Array.from(checkedUsers, user => user._id)
-        console.log(checkedUsersIds);
+        const chosenUsersIds = Array.from(chosenUsers, user => user._id)
 
         const formData = new FormData();
         formData.append("display_name", groupName);
         formData.append("group_picture", groupPic);
         
-        for (let i = 0; i < checkedUsersIds.length; i++) {
-            formData.append(`users[${i}]`, checkedUsersIds[i]);
+        for (let i = 0; i < chosenUsersIds.length; i++) {
+            formData.append(`users[${i}]`, chosenUsersIds[i]);
           }
           
         
@@ -107,20 +105,20 @@ export default function AddGroup({ closePopUp }) {
         const label = document.getElementById(inputId + "-label");
         if (e.target.checked) {
             label.classList.add("selected-user");
-            const newCheckedUser = usersList.find(user => user._id === inputId)
-            setCheckedUsers([...checkedUsers, newCheckedUser])
+            const newChosenUser = usersList.find(user => user._id === inputId)
+            setChosenUsers([...chosenUsers, newChosenUser])
         } else {
             label.classList.remove("selected-user");
-            const newArray = checkedUsers.filter(user => user._id != e.target.id);
-            setCheckedUsers(newArray);
+            const newArray = chosenUsers.filter(user => user._id != e.target.id);
+            setChosenUsers(newArray);
         }
     }
 
     const handleDeleteUser = (userId) => {
         const label = document.getElementById(userId + "-label");
         label.classList.remove("selected-user");
-        const newArray = checkedUsers.filter(user => user._id != userId);
-        setCheckedUsers(newArray);
+        const newArray = chosenUsers.filter(user => user._id != userId);
+        setChosenUsers(newArray);
     }
 
     const handleSearch = (e) => {
@@ -146,9 +144,9 @@ export default function AddGroup({ closePopUp }) {
                         <input type="search" placeholder="Search name" className="user-list-search" onChange={(e) => handleSearch(e)} style={{ width: "100%", marginBottom: "1rem" }}></input>
                         <form action="" method="POST">
                             <section className="add-users-section">
-                                { checkedUsers.length > 0 &&
+                                { chosenUsers.length > 0 &&
                                     <div className="chosen-users">
-                                        {checkedUsers.map(user => 
+                                        {chosenUsers.map(user => 
                                             <div className="chosen-user-card" key={user._id}>
                                                 <div style={{position: "relative"}}>
                                                     <ProfilePic imageSrc={user.profile_picture} size="3rem"/>
@@ -167,11 +165,11 @@ export default function AddGroup({ closePopUp }) {
                                         usersList.map(user => {
                                             return(
                                                 <div key={user._id} id={`card-${user._id}`}>
-                                                    <label className={`user-card ${checkedUsers.includes(user) && 'selected-user'}`} htmlFor={user._id} id={user._id + "-label"}>
+                                                    <label className={`user-card ${chosenUsers.includes(user) && 'selected-user'}`} htmlFor={user._id} id={user._id + "-label"}>
                                                         <ProfilePic imageSrc={user.profile_picture} size="3rem"/>
                                                         <p>{user.display_name}</p>
                                                     </label>
-                                                    <input type="checkbox" id={user._id} name={user._id} value={user._id} style={{ position: "absolute", visibility: "hidden", pointerEvents: "none", width: '0px', height: '0px'}} onChange={(e) => {handleCheckbox(e)}} checked={checkedUsers.includes(user) ? true : false}/>
+                                                    <input type="checkbox" id={user._id} name={user._id} value={user._id} style={{ position: "absolute", visibility: "hidden", pointerEvents: "none", width: '0px', height: '0px'}} onChange={(e) => {handleCheckbox(e)}} checked={chosenUsers.includes(user) ? true : false}/>
                                                 </div>
                                             )
                                         })
@@ -211,20 +209,3 @@ export default function AddGroup({ closePopUp }) {
         </>
     )
 }
-
-/*
-                    <section className="picture-section">
-                        { base64Pic ?
-                            <ProfilePic imageSrc={base64Pic} size="10rem"/>
-                            :
-                            <ProfilePic size="10rem"/>
-                        }
-                        <label htmlFor="profile-picture" style={{ alignSelf: "start" }}>Group Picture</label>
-                        <input style={{ cursor: "pointer" }} className="input" type="file" id="group-picture" accept="image/*" onChange={(e) => {handleFileUpload(e)}}/>
-                    </section>
-                    <div style={{ alignItems: "start" }}>
-                        <label htmlFor="group-name">Group Name</label>
-                        <input className="input" id="group-name" type="text" />
-                    </div>
-                    <button className="submit" onClick={handleSubmit}>Save</button>
-                    */
