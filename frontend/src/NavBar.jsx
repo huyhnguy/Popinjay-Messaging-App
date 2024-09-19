@@ -34,14 +34,14 @@ export default function NavBar({ active, markUpdatedDms, markUpdatedGroups }) {
 
             if (active === 'Groups') {
                 const groupNotifications = res.new_notifications.filter((notification) => notification.from_type === "Conversation");
-                markUpdatedGroups(groupNotifications);
+                if (markUpdatedGroups) markUpdatedGroups(groupNotifications);
             }
 
           })
           .catch(err => {
             console.log(err);
             if (err.code === 401) {
-                navigate('/login');
+                navigate('/');
             }
         })
     }, [])

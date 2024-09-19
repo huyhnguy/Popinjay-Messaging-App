@@ -32,7 +32,7 @@ export default function NotificationTab() {
           .catch(err => {
             console.log(err);
             if (err.code === 401) {
-                navigate('/login');
+                navigate('/');
             }
         })
 
@@ -77,7 +77,7 @@ export default function NotificationTab() {
           .catch(err => {
             console.log(err);
             if (err.code === 401) {
-                navigate('/login');
+                navigate('/');
             }
         })
 
@@ -120,7 +120,7 @@ export default function NotificationTab() {
         .catch(err => {
             console.log(err);
             if (err.code === 401) {
-                navigate('/login');
+                navigate('/');
             }
         })
     }
@@ -141,8 +141,8 @@ export default function NotificationTab() {
                                 <div key={notification._id}>
                                     <div className={`notification ${!notification.is_read && "new"}`} onClick={() => {routeToResource(notification)}}>
                                         <ProfilePic imageSrc={notification.from.profile_picture && notification.from.profile_picture} size="4rem" group={ notification.from_type === "Conversation" && true}/>
-                                        <div>
-                                            <h1 style={{ margin: 0 }}>{ notification.from.display_name ? notification.from.display_name : "Group" }</h1>
+                                        <div className="name-message">
+                                            <h1 style={{ margin: 0, overflowWrap: "break-word" }}>{ notification.from.display_name ? notification.from.display_name : "Group" }</h1>
                                             <p style={{ margin: 0}}>{notification.update}</p>
                                         </div>
                                         <p style={{ color: "grey" }}>{convertDate(notification.createdAt)}</p>

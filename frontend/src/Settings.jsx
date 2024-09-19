@@ -43,7 +43,7 @@ export default function Settings() {
           .catch(err => {
             console.log(err);
             if (err.code === 401) {
-                navigate('/login');
+                navigate('/');
             }
         })
     }, [])
@@ -134,7 +134,7 @@ export default function Settings() {
             },
         }).then(res => {
             if (res.ok) {
-                navigate('/login');
+                navigate('/');
             }
             const error = new Error(res.message);
             error.code = res.status;

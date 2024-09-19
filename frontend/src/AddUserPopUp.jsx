@@ -32,7 +32,7 @@ export default function AddUserPopUp({ groupMembersArray, addUserFunction }) {
           .catch(err => {
             console.log(err);
             if (err.code === 401) {
-                navigate('/login');
+                navigate('/');
             }
         })
     }, [])

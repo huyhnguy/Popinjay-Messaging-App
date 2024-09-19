@@ -46,7 +46,7 @@ export default function SignUp() {
                 })
             } else {
                 alert(res.message);
-                navigate('/login');
+                navigate('/');
             }
           })
     }

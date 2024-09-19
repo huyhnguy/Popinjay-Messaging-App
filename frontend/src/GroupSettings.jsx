@@ -57,7 +57,7 @@ export default function GroupSettings() {
           .catch(err => {
             console.log(err);
             if (err.code === 401) {
-                navigate('/login');
+                navigate('/');
             }
         })
     }, [])
@@ -147,7 +147,6 @@ export default function GroupSettings() {
     }
 
     const handleDropdown = (userId) => {
-        console.log(document.getElementById(`${userId}-dropdown`));
         const currentDropdown = document.getElementById(`${userId}-dropdown`);
         
         if (currentDropdown.classList.contains('invisible')) {
@@ -157,11 +156,15 @@ export default function GroupSettings() {
                 previousDropDown.classList.add('invisible');
             }
             setDropDown(userId)
-        } 
+        } else {
+            currentDropdown.classList.add('invisible');
+            setDropDown(null);
+        }
     }
 
     const closeDropDown = () => {
         const previousDropDown = document.getElementById(`${dropDown}-dropdown`);
+        console.log(previousDropDown);
         previousDropDown.classList.add('invisible');
         setDropDown(null);
     }
@@ -199,30 +202,33 @@ export default function GroupSettings() {
 
     const kickUser = (e, userId) => {
         e.preventDefault();
+        if (users.length > 3) {
+            fetch(`http://localhost:3000/api/groups/${urlParams.groupId}/users/${userId}`, {
+                method: 'DELETE',
+                credentials: "include",
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+                }
+              })
+              .then(res => res.json())
+              .then(res => {
+                if (res.errors) {
+                    console.log(res.errors);
+                } else {
+                    console.log(res);
+                    const newUsersArray = users.filter(user => user._id != userId);
+                    closeDropDown();
+                    setUsers(newUsersArray);
+                }
+              })
+              .catch(err => {
+                console.log(err);
+            })
+        } else {
+            alert("Groups can't have less than 3 people") 
+        }
 
-        fetch(`http://localhost:3000/api/groups/${urlParams.groupId}/users/${userId}`, {
-            method: 'DELETE',
-            credentials: "include",
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-            }
-          })
-          .then(res => res.json())
-          .then(res => {
-            if (res.errors) {
-                console.log(res.errors);
-            } else {
-                console.log(res);
-                const newUsersArray = users.filter(user => user._id != userId);
-                closeDropDown();
-                setUsers(newUsersArray);
-
-            }
-          })
-          .catch(err => {
-            console.log(err);
-        })
 
     }
 
@@ -272,6 +278,7 @@ export default function GroupSettings() {
                 } else {
                     console.log(res);
                     closeDropDown();
+                    handleDropdown();
                     const indexOfAdmin = adminIds.indexOf(userId);
                     console.log(`index ${indexOfAdmin}`)
                     const newAdminIds = adminIds.toSpliced(indexOfAdmin, 1);

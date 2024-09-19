@@ -85,8 +85,10 @@ exports.logout = (req, res, next) => {
 exports.signup_post = [
     body("display_name")
         .trim()
-        .isLength({ min: 1, max: 30 })
+        .isLength({ min: 1})
         .withMessage("Enter a display name")
+        .isLength({ max: 30 })
+        .withMessage("Cannot be longer than 30 characters")
         .custom(async displayName => {
             const user = await User.findOne({ 
                 display_name : displayName

@@ -32,7 +32,7 @@ export default function UserProfile({ userId, messageButton = true }) {
           .catch(err => {
             console.log(err);
             if (err.code === 401) {
-                navigate('/login');
+                navigate('/');
             }
         })
     }, [])
@@ -75,7 +75,7 @@ export default function UserProfile({ userId, messageButton = true }) {
           })
           .catch(err => {
             console.log(err);
-            navigate('/login');
+            navigate('/');
         })
     }
 
@@ -84,9 +84,9 @@ export default function UserProfile({ userId, messageButton = true }) {
                 { user &&
                     <>
                         <ProfilePic imageSrc={user.profile_picture} size="10rem" style={{ flexShrink: "0" }}/>
-                        <div>
-                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "5rem" }}>
-                                <h1 style={{ margin: 0 }}>{user.display_name}</h1>
+                        <div style={{}}>
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
+                                <h1 style={{ margin: 0, overflowWrap: "break-word", maxWidth: "300px" }}>{user.display_name}</h1>
                                 <button className={'submit message-button'} onClick={() => {handleDM(user)}} style={{ backgroundColor: !messageButton && "grey", pointerEvents: !messageButton && "none" }}>
                                     <FontAwesomeIcon icon={faMessage} style={{ height: "1rem" }}/>
                                     <p style={{ margin: 0 }}>Message</p>

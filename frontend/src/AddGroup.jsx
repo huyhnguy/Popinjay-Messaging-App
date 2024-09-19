@@ -32,7 +32,7 @@ export default function AddGroup({ closePopUp }) {
           .catch(err => {
             console.log(err);
             if (err.code === 401) {
-                navigate('/login');
+                navigate('/');
             }
         })
     }
@@ -123,16 +123,12 @@ export default function AddGroup({ closePopUp }) {
         createNewGroup(formData);
     }
 
-    const findUserInUserList = (userId) => {
-        return usersList.find(user => user._id === userId);
-    }
-
     const updateChosenUsers = (userId, shouldAdd) => {
         const userCard = document.getElementById(userId + "-label");
         userCard.classList.toggle("chosen-user");
 
         if (shouldAdd) {
-            const newChosenUser = findUserInUserList(userId);
+            const newChosenUser = usersList.find(user => user._id === userId);
             setChosenUsers([...chosenUsers, newChosenUser]);
         } else {
             const newChosenUsers = chosenUsers.filter(chosenUser => chosenUser._id != userId);
@@ -255,7 +251,7 @@ export default function AddGroup({ closePopUp }) {
                                 <div className="input-containers">
                                     <input className="input" id="group-name" type="text" defaultValue={displayName && displayName}/>
                                     { errors && errors.display_name &&
-                                        <p className="error-message">{errors.display_name}</p>
+                                        <p className="error-message" style={{position: "static"}}>{errors.display_name}</p>
                                     }
                                 </div>
       

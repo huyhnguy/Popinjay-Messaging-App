@@ -149,8 +149,6 @@ exports.group_settings_get = asyncHandler(async (req, res, next) => {
 exports.group_settings_put = [
     body("display_name")
         .trim()
-        .isLength({ min: 1 })
-        .withMessage("Enter a display name")
         .isLength({ max: 30 })
         .withMessage("Display name cannot be longer than 30 characters")
         .escape(),
