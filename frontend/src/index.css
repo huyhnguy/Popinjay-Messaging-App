@@ -153,6 +153,7 @@ nav {
   padding: 1rem;
   display: flex;
   border-top: solid;
+  animation: fade-in 0.5s
 }
 
 .message-file-upload {
@@ -277,6 +278,7 @@ nav {
   border-bottom: solid;
   padding: 1rem;
   flex-wrap: wrap;
+  animation: fade-in 0.5s
 }
 
 .receiver-container h1 {
@@ -450,7 +452,7 @@ nav {
   margin: 0 0 1rem 0;
 }
 
-.selected-user {
+.chosen-user {
   background-color: #c0c0c0;
 }
 
@@ -613,6 +615,7 @@ textarea {
   display: flex;
   border-bottom: solid;
   justify-content: space-between;
+  animation: fade-in 0.5s
 }
 
 .group-header .receiver-container {

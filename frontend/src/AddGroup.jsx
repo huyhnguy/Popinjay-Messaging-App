@@ -9,7 +9,7 @@ export default function AddGroup({ closePopUp }) {
     const [chosenUsers, setChosenUsers] = useState([]);
     const [next, setNext] = useState(false);
 
-    useEffect(() => {
+    const fetchAllUsers = () => {
         fetch('http://localhost:3000/api/users', {
             method: 'GET',
             credentials: "include",
@@ -33,9 +33,13 @@ export default function AddGroup({ closePopUp }) {
                 navigate('/login');
             }
         })
-    }, [])
+    }
 
     useEffect(() => {
+        fetchAllUsers();
+    }, [])
+
+    const scrollToNewChosenUser = () => {
         const chosenUsersContainer = document.querySelector(".chosen-users");
         if (chosenUsersContainer) {
             chosenUsersContainer.lastChild.scrollIntoView({
@@ -45,6 +49,10 @@ export default function AddGroup({ closePopUp }) {
                 alignToTop: false
               });
         }
+    }
+
+    useEffect(() => {
+        scrollToNewChosenUser();
     }, [chosenUsers]);
 
     const convertToBase64 = (file) => {
@@ -66,21 +74,22 @@ export default function AddGroup({ closePopUp }) {
         setBase64Pic(base64);
     }
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const appendDataToForm = () => {
         const groupName = document.getElementById("group-name").value;
-        const groupPic = document.getElementById("group-picture").files[0]
-        const chosenUsersIds = Array.from(chosenUsers, user => user._id)
+        const groupPicture = document.getElementById("group-picture").files[0];
+        const chosenUsersIdArray = Array.from(chosenUsers, user => user._id);
 
         const formData = new FormData();
         formData.append("display_name", groupName);
-        formData.append("group_picture", groupPic);
-        
-        for (let i = 0; i < chosenUsersIds.length; i++) {
-            formData.append(`users[${i}]`, chosenUsersIds[i]);
-          }
-          
-        
+        formData.append("group_picture", groupPicture);
+        for (let i = 0; i < chosenUsersIdArray.length; i++) {
+            formData.append(`users[${i}]`, chosenUsersIdArray[i]);
+        }
+
+        return formData
+    }
+
+    const createNewGroup = (formData) => {
         fetch('http://localhost:3000/api/groups/create', {
             method: 'POST',
             credentials: "include",
@@ -97,35 +106,61 @@ export default function AddGroup({ closePopUp }) {
           .catch(err => {
             console.log(err);
         })
-
     }
 
-    const handleCheckbox = (e) => {
-        const inputId = e.target.id
-        const label = document.getElementById(inputId + "-label");
-        if (e.target.checked) {
-            label.classList.add("selected-user");
-            const newChosenUser = usersList.find(user => user._id === inputId)
-            setChosenUsers([...chosenUsers, newChosenUser])
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        const formData = appendDataToForm();
+        createNewGroup(formData);
+    }
+
+    const makeBackgroundColorGrey = (userCard) => {
+        userCard.classList.add("chosen-user");
+    }
+
+    const removeGreyBackgroundColor = (userCard) => {
+        userCard.classList.remove("chosen-user");
+    }
+
+    const findUserInUserList = (userId) => {
+        return usersList.find(user => user._id === userId);
+    }
+
+    const removeFromChosenUsersList = (userId) => {
+        const newChosenUsers = chosenUsers.filter(chosenUser => chosenUser._id != userId);
+        setChosenUsers(newChosenUsers);
+    }
+
+    const addToChosenUsersList = (userId) => {
+        const newChosenUser = findUserInUserList(userId);
+        setChosenUsers([...chosenUsers, newChosenUser]);
+    }
+
+    const handleClickedUser = (e) => {
+        const clickedUser = e.target;
+        const clickedUserCard = document.getElementById(clickedUser.id + "-label");
+
+        if (clickedUser.checked) {
+            makeBackgroundColorGrey(clickedUserCard);
+            addToChosenUsersList(clickedUser.id);
         } else {
-            label.classList.remove("selected-user");
-            const newArray = chosenUsers.filter(user => user._id != e.target.id);
-            setChosenUsers(newArray);
+            removeGreyBackgroundColor(clickedUserCard);
+            removeFromChosenUsersList(clickedUser.id);
         }
     }
 
-    const handleDeleteUser = (userId) => {
-        const label = document.getElementById(userId + "-label");
-        label.classList.remove("selected-user");
-        const newArray = chosenUsers.filter(user => user._id != userId);
-        setChosenUsers(newArray);
+    const handleDeleteChosenUser = (userId) => {
+        const userCard = document.getElementById(userId + "-label");
+        removeGreyBackgroundColor(userCard);
+        removeFromChosenUsersList(userId);
     }
 
     const handleSearch = (e) => {
-        let value = e.target.value.toLowerCase();
+        const inputValue = e.target.value.toLowerCase();
         
         usersList.forEach(user => {
-          const isVisible = user.display_name.toLowerCase().includes(value);
+          const isVisible = user.display_name.toLowerCase().includes(inputValue);
           const userCard = document.getElementById(`card-${user._id}`);
           userCard.classList.toggle("hide", !isVisible);
         })
@@ -150,7 +185,7 @@ export default function AddGroup({ closePopUp }) {
                                             <div className="chosen-user-card" key={user._id}>
                                                 <div style={{position: "relative"}}>
                                                     <ProfilePic imageSrc={user.profile_picture} size="3rem"/>
-                                                    <button className="x-button" onClick={() => {handleDeleteUser(user._id)}}>
+                                                    <button className="x-button" onClick={() => {handleDeleteChosenUser(user._id)}}>
                                                         <FontAwesomeIcon icon={faCircleXmark} className="x-icon"/>
                                                     </button>
                                                 </div>
@@ -165,11 +200,11 @@ export default function AddGroup({ closePopUp }) {
                                         usersList.map(user => {
                                             return(
                                                 <div key={user._id} id={`card-${user._id}`}>
-                                                    <label className={`user-card ${chosenUsers.includes(user) && 'selected-user'}`} htmlFor={user._id} id={user._id + "-label"}>
+                                                    <label className={`user-card ${chosenUsers.includes(user) && 'chosen-user'}`} htmlFor={user._id} id={user._id + "-label"}>
                                                         <ProfilePic imageSrc={user.profile_picture} size="3rem"/>
                                                         <p>{user.display_name}</p>
                                                     </label>
-                                                    <input type="checkbox" id={user._id} name={user._id} value={user._id} style={{ position: "absolute", visibility: "hidden", pointerEvents: "none", width: '0px', height: '0px'}} onChange={(e) => {handleCheckbox(e)}} checked={chosenUsers.includes(user) ? true : false}/>
+                                                    <input type="checkbox" id={user._id} name={user._id} value={user._id} style={{ position: "absolute", visibility: "hidden", pointerEvents: "none", width: '0px', height: '0px'}} onChange={(e) => {handleClickedUser(e)}} checked={chosenUsers.includes(user) ? true : false}/>
                                                 </div>
                                             )
                                         })
@@ -204,7 +239,6 @@ export default function AddGroup({ closePopUp }) {
                         </form>
                     </>         
                 }
-
             </div>
         </>
     )
