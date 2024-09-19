@@ -115,45 +115,35 @@ export default function AddGroup({ closePopUp }) {
         createNewGroup(formData);
     }
 
-    const makeBackgroundColorGrey = (userCard) => {
-        userCard.classList.add("chosen-user");
-    }
-
-    const removeGreyBackgroundColor = (userCard) => {
-        userCard.classList.remove("chosen-user");
-    }
-
     const findUserInUserList = (userId) => {
         return usersList.find(user => user._id === userId);
     }
 
-    const removeFromChosenUsersList = (userId) => {
-        const newChosenUsers = chosenUsers.filter(chosenUser => chosenUser._id != userId);
-        setChosenUsers(newChosenUsers);
-    }
+    const updateChosenUsers = (userId, shouldAdd) => {
+        const userCard = document.getElementById(userId + "-label");
+        userCard.classList.toggle("chosen-user");
 
-    const addToChosenUsersList = (userId) => {
-        const newChosenUser = findUserInUserList(userId);
-        setChosenUsers([...chosenUsers, newChosenUser]);
-    }
+        if (shouldAdd) {
+            const newChosenUser = findUserInUserList(userId);
+            setChosenUsers([...chosenUsers, newChosenUser]);
+        } else {
+            const newChosenUsers = chosenUsers.filter(chosenUser => chosenUser._id != userId);
+            setChosenUsers(newChosenUsers);
+        }
+    } 
 
     const handleClickedUser = (e) => {
         const clickedUser = e.target;
-        const clickedUserCard = document.getElementById(clickedUser.id + "-label");
 
         if (clickedUser.checked) {
-            makeBackgroundColorGrey(clickedUserCard);
-            addToChosenUsersList(clickedUser.id);
+            updateChosenUsers(clickedUser.id, true);
         } else {
-            removeGreyBackgroundColor(clickedUserCard);
-            removeFromChosenUsersList(clickedUser.id);
+            updateChosenUsers(clickedUser.id, false);
         }
     }
 
-    const handleDeleteChosenUser = (userId) => {
-        const userCard = document.getElementById(userId + "-label");
-        removeGreyBackgroundColor(userCard);
-        removeFromChosenUsersList(userId);
+    const handleXClick = (userId) => {
+        updateChosenUsers(userId, false);
     }
 
     const handleSearch = (e) => {
@@ -166,6 +156,11 @@ export default function AddGroup({ closePopUp }) {
         })
       }
 
+    const handleNextClick = (goNext) => {
+        if (goNext) setNext(true);
+        else setNext(false);
+    }
+
     return(
         <>
             <div className="shadow" onClick={() => {closePopUp("close")}}></div>
@@ -173,7 +168,7 @@ export default function AddGroup({ closePopUp }) {
                 { !next ?
                     <>
                         <h1>Add Users</h1>
-                        <button className="next-button" onClick={() => {setNext(true)}}>
+                        <button className="next-button" onClick={() => {handleNextClick(true)}}>
                             <FontAwesomeIcon icon={faCircleRight} className="next-icon"/>
                         </button>
                         <input type="search" placeholder="Search name" className="user-list-search" onChange={(e) => handleSearch(e)} style={{ width: "100%", marginBottom: "1rem" }}></input>
@@ -185,12 +180,11 @@ export default function AddGroup({ closePopUp }) {
                                             <div className="chosen-user-card" key={user._id}>
                                                 <div style={{position: "relative"}}>
                                                     <ProfilePic imageSrc={user.profile_picture} size="3rem"/>
-                                                    <button className="x-button" onClick={() => {handleDeleteChosenUser(user._id)}}>
+                                                    <button className="x-button" onClick={() => {handleXClick(user._id)}}>
                                                         <FontAwesomeIcon icon={faCircleXmark} className="x-icon"/>
                                                     </button>
                                                 </div>
                                                 <p>{user.display_name}</p>
-            
                                             </div>
                                         )}
                                     </div>
@@ -216,7 +210,7 @@ export default function AddGroup({ closePopUp }) {
                     :
                     <>
                         <h1>New Group</h1>
-                        <button className="back-button" onClick={() => {setNext(false)}}>
+                        <button className="back-button" onClick={() => {handleNextClick(false)}}>
                             <FontAwesomeIcon icon={faCircleLeft} className="next-icon"/>
                         </button>
                         <button className="next-button" onClick={handleSubmit}>
