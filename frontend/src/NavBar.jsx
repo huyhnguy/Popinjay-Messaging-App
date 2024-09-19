@@ -1,11 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faGear, faUsers, faEarthAmericas, faMessage, faBell, faCircle} from '@fortawesome/free-solid-svg-icons'
 import { useEffect, useState} from "react";
-import { noAuto } from "@fortawesome/fontawesome-svg-core";
 
 export default function NavBar({ active, markUpdatedDms, markUpdatedGroups }) {
     const [newNotifications, setNewNotifications] = useState(null);
+
+    const navigate = useNavigate();
     
     useEffect(() => {
         fetch('http://localhost:3000/api/notifications/counter', {

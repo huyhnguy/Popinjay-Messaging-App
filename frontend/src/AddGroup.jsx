@@ -5,9 +5,11 @@ import { faCircleLeft, faCircleRight, faCircleXmark, faSquarePlus} from '@fortaw
 
 export default function AddGroup({ closePopUp }) {
     const [base64Pic, setBase64Pic] = useState(null);
+    const [displayName, setDisplayName] = useState(null);
     const [usersList, setUsersList] = useState(null);
     const [chosenUsers, setChosenUsers] = useState([]);
     const [next, setNext] = useState(false);
+    const [errors, setErrors] = useState(null);
 
     const fetchAllUsers = () => {
         fetch('http://localhost:3000/api/users', {
@@ -100,8 +102,14 @@ export default function AddGroup({ closePopUp }) {
           })
           .then(res => res.json())
           .then(res => {
-            console.log(res.conversation);
-            closePopUp("completed");
+            console.log(res)
+            if (res.errors) {
+                setErrors({
+                    display_name: res.errors[0].msg
+                })
+            } else {
+                closePopUp("completed");
+            }
           })
           .catch(err => {
             console.log(err);
@@ -157,8 +165,21 @@ export default function AddGroup({ closePopUp }) {
       }
 
     const handleNextClick = (goNext) => {
-        if (goNext) setNext(true);
-        else setNext(false);
+        if (goNext) {
+            if (chosenUsers.length >= 2) {
+                setNext(true);
+                setErrors(null);
+            } else {
+                setErrors({ 
+                    add_users: "Choose atleast two users"
+                })
+            }
+        } else {
+            const groupName = document.getElementById("group-name").value;
+            setDisplayName(groupName);
+            setNext(false)
+            setBase64Pic(null);
+        };
     }
 
     return(
@@ -171,6 +192,9 @@ export default function AddGroup({ closePopUp }) {
                         <button className="next-button" onClick={() => {handleNextClick(true)}}>
                             <FontAwesomeIcon icon={faCircleRight} className="next-icon"/>
                         </button>
+                        { errors && errors.add_users &&
+                            <p style={{margin: "0 0 1rem 0", color: "red"}}>{errors.add_users}</p>
+                        }
                         <input type="search" placeholder="Search name" className="user-list-search" onChange={(e) => handleSearch(e)} style={{ width: "100%", marginBottom: "1rem" }}></input>
                         <form action="" method="POST">
                             <section className="add-users-section">
@@ -216,7 +240,7 @@ export default function AddGroup({ closePopUp }) {
                         <button className="next-button" onClick={handleSubmit}>
                             <FontAwesomeIcon icon={faSquarePlus} className="next-icon"/>
                         </button>
-                        <form action="" method="POST">
+                        <form action="" method="" onSubmit={handleSubmit}>
                             <section className="picture-section">
                                 { base64Pic ?
                                     <ProfilePic imageSrc={base64Pic} size="10rem"/>
@@ -228,7 +252,13 @@ export default function AddGroup({ closePopUp }) {
                             </section>
                             <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                                 <label htmlFor="group-name">Group Name <span style={{color: "grey"}}>(optional)</span></label>
-                                <input className="input" id="group-name" type="text" />
+                                <div className="input-containers">
+                                    <input className="input" id="group-name" type="text" defaultValue={displayName && displayName}/>
+                                    { errors && errors.display_name &&
+                                        <p className="error-message">{errors.display_name}</p>
+                                    }
+                                </div>
+      
                             </div>
                         </form>
                     </>         

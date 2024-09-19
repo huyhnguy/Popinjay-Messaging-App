@@ -289,47 +289,49 @@ exports.groups_create_post = [
         .escape(),
     asyncHandler(async (req, res, next) => {
         const errors = validationResult(req);
-        const userArray = [...req.body.users, req.user.id];
 
         if (!errors.isEmpty()) {
             res.json({
                 profile_picture: req.file,
                 display_name: req.body.display_name,
-                users: userArray,
+                users: req.body.users,
                 errors: errors.array()
             })
         } else {
-                const conversation = new Conversation({
-                    display_name: req.body.display_name,
-                    users: userArray,
-                    master: req.user.id
-                })
-                if (req.file) {
-                    const options = {
-                        public_id: conversation._id,
-                        overwrite: true,
-                      };              
-                    try {
-                    const image = await cloudinary.uploader.upload(req.file.path , options);
-                    conversation.profile_picture = image.secure_url;
-    
-                    } catch (err) {
-                    console.error(err);
-                    }
+            const userArray = [...req.body.users, req.user.id];
+            const conversation = new Conversation({
+                display_name: req.body.display_name,
+                users: userArray,
+                master: req.user.id
+            });
+
+            if (req.file) {
+                const options = {
+                    public_id: conversation._id,
+                    overwrite: true,
+                    };              
+                try {
+                const image = await cloudinary.uploader.upload(req.file.path , options);
+                conversation.profile_picture = image.secure_url;
+
+                } catch (err) {
+                console.error(err);
                 }
-                await conversation.save();
+            }
+            
+            await conversation.save();
 
-                const notification = new Notification({
-                    to: req.body.users,
-                    from: conversation._id,
-                    from_type: 'Conversation',
-                    conversation_id: conversation._id,
-                    update: "You have been added to the group."
-                })
+            const notification = new Notification({
+                to: req.body.users,
+                from: conversation._id,
+                from_type: 'Conversation',
+                conversation_id: conversation._id,
+                update: "You have been added to the group."
+            })
 
-                await notification.save();
+            await notification.save();
 
-                res.status(201).json({ "status": 201, message: 'Successfully created conversation', conversation: conversation, notification: notification });
+            res.status(201).json({ "status": 201, message: 'Successfully created conversation', conversation: conversation, notification: notification });
         }
     })
 ]
