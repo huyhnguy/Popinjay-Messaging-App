@@ -86,23 +86,37 @@ export default function Dm() {
         setBase64Pic(base64);
     }
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
+    const appendNewMessageToForm = () => {
         const image = document.getElementById("message-files").files[0];
         const newMessage = document.getElementById("new-message").value;
         const conversationId = urlParams.dmId;
         const formData = new FormData();
+
+        formData.append("conversation_id", conversationId);
+
         if (image) {
             formData.append("image", image)
         } else {
             formData.append("image", null)
         }
+
         if (newMessage) {
             formData.append("new_message", newMessage)
         } 
 
-        formData.append("conversation_id", conversationId);
+        return formData
+    }
+
+    const clearUserInputs = () => {
+        document.getElementById("new-message").value = "";
+        document.getElementById("message-files").value = null;
+        setBase64Pic(null);
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        const formData = appendNewMessageToForm();
 
         if (edit) {
             submitEditMessage(edit, formData);
@@ -125,13 +139,11 @@ export default function Dm() {
             throw error
           })
         .then(res => {
-            console.log(res);
             const newDm = dm;
             newDm.history.push(res.new_message);
             setDm(newDm);
-            document.getElementById("new-message").value = "";
-            document.getElementById("message-files").value = null;
-            setBase64Pic(null);
+
+            clearUserInputs();
             setNewMessage(true);
         })
         .catch(err => {
@@ -142,8 +154,15 @@ export default function Dm() {
         })
     }
 
-    const handleDelete = () => {
+    const handleDeletePictureInput = () => {
         setBase64Pic(null);
+    }
+
+    const removeMessageOnClient = (message) => {
+        const newDmHistory= dm.history.filter(element => element != message);
+        const cloneDm = structuredClone(dm)
+        cloneDm.history = newDmHistory
+        setDm(cloneDm);
     }
 
     const handleDeleteMessage = (message) => {
@@ -171,10 +190,7 @@ export default function Dm() {
                 })
             .then(res => {
                 if (res.message === "message successfully deleted") {
-                    const newDmHistory= dm.history.filter(element => element != message);
-                    const cloneDm = structuredClone(dm)
-                    cloneDm.history = newDmHistory
-                    setDm(cloneDm);
+                    removeMessageOnClient(message)
                 } else {
                     console.log(res);
                 }
@@ -193,6 +209,16 @@ export default function Dm() {
 
         if (message.content) messageInput.value = message.content;
         if (message.image) setBase64Pic(message.image);
+    }
+
+    const updateEditedMessageOnClient = (oldMessage, updatedMessage) => {
+        const indexOfOldMessage = dm.history.findIndex((element) => element === oldMessage);
+
+        setDm(prevDm => {
+            const cloneDm = structuredClone(prevDm);
+            cloneDm.history.splice(indexOfOldMessage, 1, updatedMessage);
+            return cloneDm;
+        });
     }
 
     const submitEditMessage = (oldMessage, newMessageInputs) => {
@@ -215,15 +241,8 @@ export default function Dm() {
                 })
             .then(res => {
                 if (res.message === "message successfully updated") {
-                    const indexOfOldMessage = dm.history.findIndex((element) => element === oldMessage);
-
-                    setDm(prevDm => {
-                        const cloneDm = structuredClone(prevDm);
-                        cloneDm.history.splice(indexOfOldMessage, 1, res.updated_message);
-                        return cloneDm;
-                    });
-                    document.getElementById("new-message").value = "";
-                    setBase64Pic(null);
+                    updateEditedMessageOnClient(oldMessage, res.updated_message);
+                    clearUserInputs();
                     setEdit(null);
                 } else {
                     console.log(res);
@@ -289,7 +308,7 @@ export default function Dm() {
                         <input style={{ position: "absolute", visibility: "hidden", pointerEvents: "none", width: '0px', height: '0px'}} id="message-files" type="file" accept="image/*" onChange={(e) => {handleFileUpload(e)}}/>
                         <div style={{width: "100%"}}>
                         { base64Pic &&
-                            <FileMessageInput imgSrc={base64Pic} deleteFunction={handleDelete} style={{top: "160px"}} />
+                            <FileMessageInput imgSrc={base64Pic} deleteFunction={handleDeletePictureInput} style={{top: "160px"}} />
                         }
                             <input type="text" id="new-message" required className="input" placeholder="Message"/>
 

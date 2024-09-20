@@ -4,7 +4,15 @@ import ProfilePic from "./ProfilePic";
 
 export default function AddUserPopUp({ groupMembersArray, addUserFunction }) {
     const [users, setUsers] = useState(null);
+    
     const navigate = useNavigate();
+
+    const removeGroupMembersFromUsersArray = (usersArray) => {
+        for (let i = 0; i < groupMembersArray.length; i++) {
+            const index = usersArray.findIndex((user) => user._id === groupMembersArray[i]._id);
+            usersArray.splice(index, 1);
+        }
+    }
     
     useEffect(() => {
         fetch('http://localhost:3000/api/users', {
@@ -23,10 +31,7 @@ export default function AddUserPopUp({ groupMembersArray, addUserFunction }) {
           })
           .then(res => {
             const allUsersArray = res;
-            for (let i = 0; i < groupMembersArray.length; i++) {
-                const index = allUsersArray.findIndex((user) => user._id === groupMembersArray[i]._id);
-                allUsersArray.splice(index, 1);
-            }
+            removeGroupMembersFromUsersArray(allUsersArray);
             setUsers(allUsersArray);
           })
           .catch(err => {
@@ -34,8 +39,7 @@ export default function AddUserPopUp({ groupMembersArray, addUserFunction }) {
             if (err.code === 401) {
                 navigate('/');
             }
-        })
-    }, [])
+        })    }, [])
 
     const handleSearch = (e) => {
         let value = e.target.value.toLowerCase();
