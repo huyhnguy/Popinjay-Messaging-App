@@ -34,7 +34,6 @@ export default function GroupDm() {
             throw error
           })
           .then(res => {
-            console.log(res);
             setDm(res.group);
             setSender(res.sender);
             setLoading(false);
@@ -84,30 +83,41 @@ export default function GroupDm() {
         setBase64Pic(base64);
     }
 
+    const clearUserInputs = () => {
+        document.getElementById("new-message").value = "";
+        document.getElementById("message-files").value = null;
+        setBase64Pic(null);
+    }
+
+    const appendNewMessageToForm = () => {
+        const image = document.getElementById("message-files").files[0];
+        const newMessage = document.getElementById("new-message").value;
+        const conversationId = urlParams.groupId;
+        const formData = new FormData();
+
+        formData.append("conversation_id", conversationId);
+
+        if (image) {
+            formData.append("image", image)
+        } else {
+            formData.append("image", null)
+        }
+
+        if (newMessage) {
+            formData.append("new_message", newMessage)
+        } 
+
+        return formData
+    }
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        const image = document.getElementById("image-upload");
-        let dataPackage;
-
-        if (image) {
-            dataPackage = {
-                new_message:  document.getElementById("new-message").value,
-                conversation_id: urlParams.groupId,
-                image: image.src,
-                conversation_type: 'Group'
-            }
-        } else {
-            dataPackage = {
-                new_message:  document.getElementById("new-message").value,
-                conversation_id: urlParams.groupId,
-                image: null,
-                conversation_type: 'Group'
-            }
-        }
+        const formData = appendNewMessageToForm();
 
         if (edit) {
-            submitEditMessage(edit, dataPackage);
+            if (base64Pic && !document.getElementById("message-files").value) formData.append("image_same", true);
+            submitEditMessage(edit, formData);
 
             return
         }
@@ -117,9 +127,8 @@ export default function GroupDm() {
             credentials: "include",
             headers: {
               'Accept': 'application/json',
-              'Content-Type': 'application/json',
             },
-            body: JSON.stringify(dataPackage)
+            body: formData
           })
         .then(res => {
             if (res.ok) { return res.json() }
@@ -131,8 +140,7 @@ export default function GroupDm() {
             const newDm = dm;
             newDm.history.push(res.new_message);
             setDm(newDm);
-            document.getElementById("new-message").value = "";
-            setBase64Pic(null);
+            clearUserInputs();
             setNewMessage(true);
         })
         .catch(err => {
@@ -148,9 +156,8 @@ export default function GroupDm() {
     }
 
     const displayUsersNamesInGroup = (users) => {
-        console.log(users);
         let names = "";
-        for (let i = 0; i < users.length; i++) {
+        for (let i = 0; i < 6; i++) {
             if (i === 0) {
                 names = users[i].display_name;
             } else {
@@ -158,6 +165,13 @@ export default function GroupDm() {
             }
         }
         return names
+    }
+
+    const removeMessageOnClient = (message) => {
+        const newDmHistory= dm.history.filter(element => element != message);
+        const cloneDm = structuredClone(dm)
+        cloneDm.history = newDmHistory
+        setDm(cloneDm);
     }
 
     const handleDeleteMessage = (message) => {
@@ -173,7 +187,6 @@ export default function GroupDm() {
             })
         })
             .then(res => {
-                console.log(res);
                 if (res.ok) { 
                     return res.json() 
                 }
@@ -184,9 +197,7 @@ export default function GroupDm() {
                 })
             .then(res => {
                 if (res.message === "message successfully deleted") {
-                    const newDmHistory= dm.history.filter(element => element != message);
-                    const cloneDm = { ...dm }
-                    cloneDm.history = newDmHistory;
+                    removeMessageOnClient(message);
                     setDm(cloneDm);
                 } else {
                     console.log(res);
@@ -208,16 +219,23 @@ export default function GroupDm() {
         if (message.image) setBase64Pic(message.image);
     }
 
-    const submitEditMessage = (oldMessage, newMessageInputs) => {
+    const updateEditedMessageOnClient = (oldMessage, updatedMessage) => {
+        const indexOfOldMessage = dm.history.findIndex((element) => element === oldMessage);
+        setDm(prevDm => {
+            const cloneDm = structuredClone(prevDm);
+            cloneDm.history.splice(indexOfOldMessage, 1, updatedMessage);
+            return cloneDm;
+        });
+    }
 
+    const submitEditMessage = (oldMessage, newMessageInputs) => {
         fetch('http://localhost:3000/api/messages/' + oldMessage._id, {
             method: 'PUT',
             credentials: "include",
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json',
             },
-            body: JSON.stringify(newMessageInputs)
+            body: newMessageInputs
         })
             .then(res => {
                 if (res.ok) { 
@@ -230,16 +248,8 @@ export default function GroupDm() {
                 })
             .then(res => {
                 if (res.message === "message successfully updated") {
-                    const indexOfOldMessage = dm.history.findIndex((element) => element === oldMessage);
-                    console.log(oldMessage);
-                    console.log(res.updated_message);
-                    setDm(prevDm => {
-                        const cloneDm = structuredClone(prevDm);
-                        cloneDm.history.splice(indexOfOldMessage, 1, res.updated_message);
-                        return cloneDm;
-                    });
-                    document.getElementById("new-message").value = "";
-                    setBase64Pic(null);
+                    updateEditedMessageOnClient(oldMessage, res.updated_message);
+                    clearUserInputs();
                     setEdit(null);
                 } else {
                     console.log(res);
@@ -253,7 +263,7 @@ export default function GroupDm() {
             })
     }
 
-    const handleSettings = () => {
+    const handleSettingsClick = () => {
         navigate('settings')
     }
 
@@ -264,7 +274,7 @@ export default function GroupDm() {
                     <div className="group-header">
                             <ProfilePic imageSrc={dm.profile_picture} size="2.5rem"/>
                             <h1>{dm.display_name != "" ? dm.display_name : displayUsersNamesInGroup(dm.users)}</h1>
-                            <button className="group-settings-button" onClick={handleSettings}>
+                            <button className="group-settings-button" onClick={handleSettingsClick}>
                                 <FontAwesomeIcon icon={faGear} style={{height: "2rem"}}/>
                             </button>
 
@@ -287,8 +297,7 @@ export default function GroupDm() {
                     { edit &&
                         <div className="edit-div">
                             <button className="x-button" style={{ position: "static" }} onClick={() => {
-                                document.getElementById("new-message").value = "";
-                                setBase64Pic(null);
+                                clearUserInputs();
                                 setEdit(null)
                                 }}>
                                 <FontAwesomeIcon icon={faCircleXmark} className="x-icon"/>

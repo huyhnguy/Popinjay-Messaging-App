@@ -119,6 +119,9 @@ export default function Dm() {
         const formData = appendNewMessageToForm();
 
         if (edit) {
+            console.log(base64Pic);
+            console.log(document.getElementById("message-files").value);
+            if (base64Pic && !document.getElementById("message-files").value) formData.append("image_same", true);
             submitEditMessage(edit, formData);
 
             return
@@ -222,6 +225,8 @@ export default function Dm() {
     }
 
     const submitEditMessage = (oldMessage, newMessageInputs) => {
+        console.log(...newMessageInputs);
+
         fetch('http://localhost:3000/api/messages/' + oldMessage._id, {
             method: 'PUT',
             credentials: "include",
@@ -292,8 +297,7 @@ export default function Dm() {
                     { edit &&
                         <div className="edit-div">
                             <button className="x-button" style={{ position: "static" }} onClick={() => {
-                                document.getElementById("new-message").value = "";
-                                setBase64Pic(null);
+                                clearUserInputs();
                                 setEdit(null)
                                 }}>
                                 <FontAwesomeIcon icon={faCircleXmark} className="x-icon"/>

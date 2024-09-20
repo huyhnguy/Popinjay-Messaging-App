@@ -98,9 +98,10 @@ exports.message_update = asyncHandler(async (req, res, next) => {
               };              
             const image = await cloudinary.uploader.upload(req.file.path , options);
             message.image = image.secure_url;
-        } else {
+        } else if (!req.body.image_same) {
             message.image = null;
         }
+        
         const [saveMessage, populatedMessage] = await Promise.all([
             message.save(),
             message.populate('user', 'display_name')

@@ -29,7 +29,7 @@ export default function NavBar({ active, markUpdatedDms, markUpdatedGroups }) {
 
             if (active === 'Messages') {
                 const dmNotifications = res.new_notifications.filter((notification) => notification.from_type === "User");
-                markUpdatedDms(dmNotifications);
+                if (markUpdatedDms) markUpdatedDms(dmNotifications);
             }
 
             if (active === 'Groups') {

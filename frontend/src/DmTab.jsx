@@ -42,47 +42,45 @@ export default function DmTab() {
         })
     }, [])
 
-    const handleDM = (dm) => {
-        const receiver = dm.users.find(user => user._id != sender);
+    const markNotificationAsRead = (notification) => {
+        fetch(`http://localhost:3000/api/notifications/${notification._id}`, {
+            method: 'PUT',
+            credentials: "include",
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+          })
+          .then(res => {
+            if (res.ok) { return res.json() }
+            const error = new Error(res.message);
+            error.code = res.status;
+            throw error
+          })
+          .then(res => {
+            console.log(res);
+          })
+          .catch(err => {
+            console.log(err);
+            if (err.code === 401) {
+                const loginPage = '/'
+                navigate(loginPage);
+            }
+        })
+    }
 
-        const route = `/dms/${dm._id}`;
-        navigate(route, { 
-            state: {
-                receiver: receiver,
-                history: dm.history
-            } 
-        });
+    const handleClick = (dm) => {
+        const uniqueDirectMessage = `/dms/${dm._id}`;
+        navigate(uniqueDirectMessage);
 
         const notification = checkArrayOfNotificationsForDmId(notifications, dm._id);
 
         if (notification) {
-            fetch(`http://localhost:3000/api/notifications/${notification._id}`, {
-                method: 'PUT',
-                credentials: "include",
-                headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-                },
-              })
-              .then(res => {
-                if (res.ok) { return res.json() }
-                const error = new Error(res.message);
-                error.code = res.status;
-                throw error
-              })
-              .then(res => {
-                console.log(res);
-              })
-              .catch(err => {
-                console.log(err);
-                if (err.code === 401) {
-                    navigate('/');
-                }
-            })
+            markNotificationAsRead(notification);
         }
     }
 
-    function sameDay(d1, d2) {
+    function isSameDay(d1, d2) {
         return d1.getFullYear() === d2.getFullYear() &&
           d1.getMonth() === d2.getMonth() &&
           d1.getDate() === d2.getDate();
@@ -95,12 +93,11 @@ export default function DmTab() {
     }
 
     const convertDate = (date) => {
-        let options;
         const readableDate = new Date(date);
         const currentDate = new Date();
 
-        if (sameDay(readableDate, currentDate) === true) {
-            options = {
+        if (isSameDay(readableDate, currentDate) === true) {
+            let options = {
                 hour: "numeric",
                 minute: "numeric",
             }
@@ -110,7 +107,7 @@ export default function DmTab() {
             return formattedDate
         } else if (isYesterday(readableDate, currentDate) === true) {
             return "Yesterday"
-        } else if (sameDay(readableDate, currentDate) === false) {
+        } else if (isSameDay(readableDate, currentDate) === false) {
             let options = {
                 month: "numeric",
                 day: "numeric",
@@ -174,7 +171,7 @@ export default function DmTab() {
 
                                 return (
                                     <div id={`${dm._id}`} key={dm._id}>
-                                        <div className={`message-card ${checkArrayOfNotificationsForDmId(notifications, dm._id) && "new"}`}  onClick={() => {handleDM(dm)}}>
+                                        <div className={`message-card ${checkArrayOfNotificationsForDmId(notifications, dm._id) && "new"}`}  onClick={() => {handleClick(dm)}}>
                                             <ProfilePic imageSrc={receiver.profile_picture} size="5rem"/>
                                             <div className="name-message">
                                                 <h2>{receiver.display_name}</h2>
