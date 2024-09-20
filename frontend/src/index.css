@@ -283,6 +283,8 @@ nav {
 
 .receiver-container h1 {
   margin: 0;
+  max-width: 70%;
+  overflow: hidden;
 }
 
 .login-page, .signup-page {
@@ -628,10 +630,13 @@ textarea {
 }
 
 .group-header {
-  display: flex;
+  display: grid;
   border-bottom: solid;
-  justify-content: space-between;
-  animation: fade-in 0.5s
+  animation: fade-in 0.5s;
+  grid-template-columns: auto minmax(100px, 10fr) auto;
+  align-items: center;
+  padding-inline: 1rem;
+  gap: 0.5rem;
 }
 
 .group-header .receiver-container {
@@ -813,4 +818,9 @@ textarea {
   align-items: center;
   justify-content: center;
   top: 0;
+}
+
+.user-about-me {
+  overflow-wrap: break-word;
+  max-width: 300px;
 }

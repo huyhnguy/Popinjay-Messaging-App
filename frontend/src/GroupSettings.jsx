@@ -278,7 +278,6 @@ export default function GroupSettings() {
                 } else {
                     console.log(res);
                     closeDropDown();
-                    handleDropdown();
                     const indexOfAdmin = adminIds.indexOf(userId);
                     console.log(`index ${indexOfAdmin}`)
                     const newAdminIds = adminIds.toSpliced(indexOfAdmin, 1);

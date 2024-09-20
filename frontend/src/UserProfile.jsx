@@ -92,7 +92,7 @@ export default function UserProfile({ userId, messageButton = true }) {
                                     <p style={{ margin: 0 }}>Message</p>
                                 </button>
                             </div>
-                            <p>{user.about_me}</p>
+                            <p className="user-about-me">{user.about_me}</p>
                             <p>Member since: {convertDate(user.createdAt)}</p>
                         </div>
 

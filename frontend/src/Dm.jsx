@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faPaperPlane, faCircleChevronUp, faCircleXmark} from '@fortawesome/free-solid-svg-icons'
 import FileMessageInput from "./FileMessageInput";
 import UserProfile from "./UserProfile";
+import NavBar from "./NavBar";
 
 export default function Dm() {
     const [dm, setDm] = useState(null);
@@ -281,7 +282,7 @@ export default function Dm() {
                             <p style={{ margin: 0 }}>Editing Message</p>
                         </div>
                     }
-                    <form method="POST" className="message-form">
+                    <form method="POST" className="message-form" onSubmit={(e) => {handleSubmit(e)}}>
                         <label htmlFor="message-files" >
                             <FontAwesomeIcon icon={faCircleChevronUp} className="file-upload-icon" style={{ }}/>
                         </label>
@@ -297,11 +298,14 @@ export default function Dm() {
                             <FontAwesomeIcon icon={faPaperPlane} />
                         </button>
                     </form>
+                    <NavBar active='Messages' />
                 </div>
             }
             { loading &&
                 <h1>Loading...</h1>
             }
+
+
         </>
 
     )
