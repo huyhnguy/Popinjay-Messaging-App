@@ -38,7 +38,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 const corsOptions = {
-  origin: "https://popinjay-frontend.vercel.app",
+  origin: "https://popinjay-frontend",
   credentials: true
 }
 
