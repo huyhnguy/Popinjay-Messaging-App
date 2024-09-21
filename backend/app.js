@@ -63,11 +63,18 @@ app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
+//app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, 'build')));
+
+// Handle all other GET requests by sending back the React app
+
 app.use('/api', apiRouter);
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
