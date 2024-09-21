@@ -149,9 +149,12 @@ export default function DmTab() {
     }
 
     const checkArrayOfNotificationsForDmId = (notifications, dmId) => {
-        for (let i = 0; i < notifications.length; i++) {
-            if (notifications[i].conversation_id === dmId) return notifications[i]
+        if (notifications) {
+            for (let i = 0; i < notifications.length; i++) {
+                if (notifications[i].conversation_id === dmId) return notifications[i]
+            }
         }
+
 
         return false
     }
