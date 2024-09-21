@@ -96,6 +96,7 @@ export default function GroupDm() {
         const formData = new FormData();
 
         formData.append("conversation_id", conversationId);
+        formData.append("conversation_type", "Group");
 
         if (image) {
             formData.append("image", image)
