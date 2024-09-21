@@ -61,7 +61,8 @@ exports.login_post = [
                 
                 let options = {
                     httpOnly: true,
-                    sameSite: "lax",
+                    sameSite: "none",
+                    secure: true,
                     maxAge: 900000,
                 }
                 
