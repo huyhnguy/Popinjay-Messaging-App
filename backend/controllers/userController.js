@@ -68,6 +68,7 @@ exports.login_post = [
                 
                 try {
                     res.cookie("token", accessToken, options);
+                    res.set('Access-Control-Allow-Origin', 'https://popinjay-frontend.vercel.app');
                     res.json({ status: 200, message: "Cookie has been set" })
                 } catch (error) {
                     console.error("Error setting cookie:", error);
