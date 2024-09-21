@@ -235,7 +235,7 @@ export default function GroupTab() {
                                 return (
                                     <div key={group._id} id={`${group._id}`} >
                                         <div className={`message-card ${checkArrayOfNotificationsForGroupId(notifications, group._id) && "new"}`}  onClick={() => {handleGroup(group)}}>
-                                            { group._id === '66d7d2fead84fa8a36bea088' ?               
+                                            { group._id === '66ef1677007b15bccb9a1cca' ?               
                                                 <div style={{position: "relative"}}>
                                                     <ProfilePic imageSrc={group.profile_picture} size="5rem" group={true} />
                                                     <FontAwesomeIcon icon={faStar} style={{ height: "2rem", color: "gold", position: "absolute", top: "-5px", right: "-5px" }}/>

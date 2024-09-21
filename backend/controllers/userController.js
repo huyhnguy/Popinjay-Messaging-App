@@ -158,9 +158,21 @@ exports.signup_post = [
                     await user.save();
                 })
             })
-            const globalGroupChat = await Conversation.findById('66ef1677007b15bccb9a1cca').exec();
-            globalGroupChat.users.push(user._id);
-            await globalGroupChat.save();
+
+            const result = await Conversation.updateOne({ _id: '66ef1677007b15bccb9a1cca' }, { 
+                $push: { users: user._id }
+            });
+            console.log(`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`);
+
+            const notification = new Notification({
+                to: [user._id],
+                from: '66ef1677007b15bccb9a1cca',
+                from_type: 'Conversation',
+                conversation_id: '66ef1677007b15bccb9a1cca',
+                update: "You have been added to the group."
+            })
+
+            await notification.save();
 
             res.status(201).json({ "status": 201, message: 'Successfully signed up' })
         }
@@ -180,7 +192,7 @@ exports.users_list = asyncHandler(async (req, res, next) => {
 exports.user_profile_get = asyncHandler(async (req, res, next) => {
     const user = await User.findById(req.user.id).lean().exec();
 
-    if (req.user.id === "66d0f850353bc0d50dfd3f1c") {
+    if (req.user.id === "66ef189e146ab1b35b827993") {
         res.json({
             display_name: user.display_name,
             profile_picture: user.profile_picture,
