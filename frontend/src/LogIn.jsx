@@ -14,7 +14,7 @@ export default function LogIn() {
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
 
-        fetch('http://localhost:3000/api/login', {
+        fetch('https://popinjay-frontend.vercel.app/api/login', {
             method: 'POST',
             credentials: "include",
             headers: {
@@ -48,7 +48,7 @@ export default function LogIn() {
         const username = "guest"
         const password = "guestguest123"
 
-        fetch('http://localhost:3000/api/login', {
+        fetch('https://popinjay-frontend.vercel.app/api/login', {
             method: 'POST',
             credentials: "include",
             headers: {
