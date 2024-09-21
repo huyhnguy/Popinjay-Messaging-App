@@ -38,7 +38,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: "https://popinjay-7457d2787149.herokuapp.com",
   credentials: true
 }
 
