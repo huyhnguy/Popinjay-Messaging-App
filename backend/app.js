@@ -10,6 +10,9 @@ const apiRouter = require('./routes/api');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const cloudinary = require('cloudinary').v2;
+const compression = require('compression');
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
 
 const app = express();
 
@@ -39,6 +42,20 @@ const corsOptions = {
   credentials: true
 }
 
+const RateLimit = require("express-rate-limit");
+const limiter = RateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 20,
+});
+
+app.use(
+  mongoSanitize({
+    replaceWith: '_',
+  }),
+);
+//app.use(limiter);
+//app.use(helmet());
+app.use(compression());
 app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(bodyParser.json({ limit: '10mb' }));
