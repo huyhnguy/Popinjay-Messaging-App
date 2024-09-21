@@ -9,7 +9,7 @@ export default function NavBar({ active, markUpdatedDms, markUpdatedGroups }) {
     const navigate = useNavigate();
     
     useEffect(() => {
-        fetch('http://localhost:3000/api/notifications/counter', {
+        fetch('https://popinjay-7457d2787149.herokuapp.com/api/notifications/counter', {
             method: 'GET',
             credentials: "include",
             headers: {

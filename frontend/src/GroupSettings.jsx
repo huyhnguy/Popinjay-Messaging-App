@@ -27,7 +27,7 @@ export default function GroupSettings() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch(`http://localhost:3000/api/groups/${urlParams.groupId}/settings`, {
+        fetch(`https://popinjay-7457d2787149.herokuapp.com/api/groups/${urlParams.groupId}/settings`, {
             method: 'GET',
             credentials: "include",
             headers: {
@@ -119,7 +119,7 @@ export default function GroupSettings() {
         }
 
         console.log([...formData])
-        fetch(`http://localhost:3000/api/groups/${urlParams.groupId}/settings`, {
+        fetch(`https://popinjay-7457d2787149.herokuapp.com/api/groups/${urlParams.groupId}/settings`, {
             method: 'PUT',
             credentials: "include",
             headers: {
@@ -178,7 +178,7 @@ export default function GroupSettings() {
     const handleDeleteGroup = (e) => {
         e.preventDefault();
 
-        fetch(`http://localhost:3000/api/groups/${urlParams.groupId}/settings`, {
+        fetch(`https://popinjay-7457d2787149.herokuapp.com/api/groups/${urlParams.groupId}/settings`, {
             method: 'DELETE',
             credentials: "include",
             headers: {
@@ -203,7 +203,7 @@ export default function GroupSettings() {
     const kickUser = (e, userId) => {
         e.preventDefault();
         if (users.length > 3) {
-            fetch(`http://localhost:3000/api/groups/${urlParams.groupId}/users/${userId}`, {
+            fetch(`https://popinjay-7457d2787149.herokuapp.com/api/groups/${urlParams.groupId}/users/${userId}`, {
                 method: 'DELETE',
                 credentials: "include",
                 headers: {
@@ -235,7 +235,7 @@ export default function GroupSettings() {
     const adminUser = (e, userId, action) => {
         e.preventDefault();
         if (action === "Make admin") {
-            fetch(`http://localhost:3000/api/groups/${urlParams.groupId}/users/${userId}`, {
+            fetch(`https://popinjay-7457d2787149.herokuapp.com/api/groups/${urlParams.groupId}/users/${userId}`, {
                 method: 'PUT',
                 credentials: "include",
                 headers: {
@@ -260,7 +260,7 @@ export default function GroupSettings() {
                 console.log(err);
             })
         } else if (action === "Remove admin") {
-            fetch(`http://localhost:3000/api/groups/${urlParams.groupId}/users/${userId}`, {
+            fetch(`https://popinjay-7457d2787149.herokuapp.com/api/groups/${urlParams.groupId}/users/${userId}`, {
                 method: 'PUT',
                 credentials: "include",
                 headers: {
@@ -296,7 +296,7 @@ export default function GroupSettings() {
     const masterUser = (e, userId) => {
         e.preventDefault();
 
-        fetch(`http://localhost:3000/api/groups/${urlParams.groupId}/users/${userId}`, {
+        fetch(`https://popinjay-7457d2787149.herokuapp.com/api/groups/${urlParams.groupId}/users/${userId}`, {
             method: 'PUT',
             credentials: "include",
             headers: {
@@ -380,7 +380,7 @@ export default function GroupSettings() {
     }
 
     const addUserToGroup = (user) => {
-        fetch(`http://localhost:3000/api/groups/${urlParams.groupId}/users/${user._id}`, {
+        fetch(`https://popinjay-7457d2787149.herokuapp.com/api/groups/${urlParams.groupId}/users/${user._id}`, {
             method: 'PUT',
             credentials: "include",
             headers: {
@@ -436,7 +436,7 @@ export default function GroupSettings() {
         if (sender === masterId) {
             alert("You must give the master role to someone else before leaving")
         } else {
-            fetch(`http://localhost:3000/api/groups/${urlParams.groupId}/users/${sender}`, {
+            fetch(`https://popinjay-7457d2787149.herokuapp.com/api/groups/${urlParams.groupId}/users/${sender}`, {
                 method: 'DELETE',
                 credentials: "include",
                 headers: {

@@ -21,7 +21,7 @@ export default function Dm() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch('http://localhost:3000/api/dms/' + urlParams.dmId , {
+        fetch('https://popinjay-7457d2787149.herokuapp.com/api/dms/' + urlParams.dmId , {
             method: 'GET',
             credentials: "include",
             headers: {
@@ -127,7 +127,7 @@ export default function Dm() {
             return
         }
         
-        fetch('http://localhost:3000/api/messages/create', {
+        fetch('https://popinjay-7457d2787149.herokuapp.com/api/messages/create', {
             method: 'POST',
             credentials: "include",
             headers: {
@@ -170,7 +170,7 @@ export default function Dm() {
 
     const handleDeleteMessage = (message) => {
 
-        fetch('http://localhost:3000/api/messages/' + message._id, {
+        fetch('https://popinjay-7457d2787149.herokuapp.com/api/messages/' + message._id, {
             method: 'DELETE',
             credentials: "include",
             headers: {
@@ -227,7 +227,7 @@ export default function Dm() {
     const submitEditMessage = (oldMessage, newMessageInputs) => {
         console.log(...newMessageInputs);
 
-        fetch('http://localhost:3000/api/messages/' + oldMessage._id, {
+        fetch('https://popinjay-7457d2787149.herokuapp.com/api/messages/' + oldMessage._id, {
             method: 'PUT',
             credentials: "include",
             headers: {

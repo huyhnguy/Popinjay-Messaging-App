@@ -19,7 +19,7 @@ export default function GroupDm() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch('http://localhost:3000/api/groups/' + urlParams.groupId , {
+        fetch('https://popinjay-7457d2787149.herokuapp.com/api/groups/' + urlParams.groupId , {
             method: 'GET',
             credentials: "include",
             headers: {
@@ -122,7 +122,7 @@ export default function GroupDm() {
             return
         }
         
-        fetch('http://localhost:3000/api/messages/create', {
+        fetch('https://popinjay-7457d2787149.herokuapp.com/api/messages/create', {
             method: 'POST',
             credentials: "include",
             headers: {
@@ -175,7 +175,7 @@ export default function GroupDm() {
     }
 
     const handleDeleteMessage = (message) => {
-        fetch('http://localhost:3000/api/messages/' + message._id, {
+        fetch('https://popinjay-7457d2787149.herokuapp.com/api/messages/' + message._id, {
             method: 'DELETE',
             credentials: "include",
             headers: {
@@ -229,7 +229,7 @@ export default function GroupDm() {
     }
 
     const submitEditMessage = (oldMessage, newMessageInputs) => {
-        fetch('http://localhost:3000/api/messages/' + oldMessage._id, {
+        fetch('https://popinjay-7457d2787149.herokuapp.com/api/messages/' + oldMessage._id, {
             method: 'PUT',
             credentials: "include",
             headers: {

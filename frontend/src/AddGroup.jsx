@@ -12,7 +12,7 @@ export default function AddGroup({ closePopUp }) {
     const [errors, setErrors] = useState(null);
 
     const fetchAllUsers = () => {
-        fetch('http://localhost:3000/api/users', {
+        fetch('https://popinjay-7457d2787149.herokuapp.com/api/users', {
             method: 'GET',
             credentials: "include",
             headers: {

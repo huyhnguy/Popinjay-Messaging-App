@@ -22,7 +22,7 @@ export default function SignUp() {
             confirm_password: confirmPassword
         }
 
-        fetch('http://localhost:3000/api/signup', {
+        fetch('https://popinjay-7457d2787149.herokuapp.com/api/signup', {
             method: 'POST',
             headers: {
               'Accept': 'application/json',

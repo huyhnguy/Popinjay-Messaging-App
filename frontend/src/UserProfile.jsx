@@ -11,7 +11,7 @@ export default function UserProfile({ userId, messageButton = true }) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch('http://localhost:3000/api/users/' + userId, {
+        fetch('https://popinjay-7457d2787149.herokuapp.com/api/users/' + userId, {
             method: 'GET',
             credentials: "include",
             headers: {
@@ -57,7 +57,7 @@ export default function UserProfile({ userId, messageButton = true }) {
 
     const handleDM = (user) => {
 
-        fetch('http://localhost:3000/api/dms/create', {
+        fetch('https://popinjay-7457d2787149.herokuapp.com/api/dms/create', {
             method: 'POST',
             credentials: "include",
             headers: {
