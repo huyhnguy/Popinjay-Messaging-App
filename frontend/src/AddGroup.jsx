@@ -45,7 +45,7 @@ export default function AddGroup({ closePopUp }) {
         const chosenUsersContainer = document.querySelector(".chosen-users");
         if (chosenUsersContainer) {
             chosenUsersContainer.lastChild.scrollIntoView({
-                block: "start",
+                block: "nearest",
                 inline: "nearest",
                 behavior: "smooth",
                 alignToTop: false
@@ -197,7 +197,7 @@ export default function AddGroup({ closePopUp }) {
                                 { chosenUsers.length > 0 &&
                                     <div className="chosen-users">
                                         {chosenUsers.map(user => 
-                                            <div className="chosen-user-card" key={user._id}>
+                                            <div className="chosen-user-card" key={`${user._id}-chosen`}>
                                                 <div style={{position: "relative"}}>
                                                     <ProfilePic imageSrc={user.profile_picture} size="3rem"/>
                                                     <button className="x-button" onClick={() => {handleXClick(user._id)}}>

@@ -828,3 +828,20 @@ textarea {
   overflow-wrap: break-word;
   max-width: 300px;
 }
+
+/* styling for firefox */
+
+@-moz-document url-prefix() {
+  .file-upload-icon {
+    width: 57px;
+  }
+}
+
+body {
+  overflow: hidden;
+}
+
+.form-user-list {
+  -moz-user-select: none;
+}
+
