@@ -38,7 +38,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 const corsOptions = {
-  origin: "https://popinjay-frontend.vercel.app/",
+  origin: "https://popinjay-frontend.vercel.app",
   credentials: true
 }
 
@@ -57,7 +57,7 @@ app.use(
 //app.use(helmet());
 app.use(compression());
 app.use(cookieParser());
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 app.use(logger('dev'));
