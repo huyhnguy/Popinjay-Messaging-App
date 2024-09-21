@@ -170,9 +170,9 @@ export default function GroupTab() {
 
     function sortByMostRecent(dms) {
         dms.sort((a,b) => {
-            if (a._id === '66d7d2fead84fa8a36bea088') {
+            if (a._id === '66ef1677007b15bccb9a1cca') {
                 return -1
-            } else if (b._id === '66d7d2fead84fa8a36bea088') {
+            } else if (b._id === '66ef1677007b15bccb9a1cca') {
                 return 1
             }else if (!a.history[a.history.length - 1] && !b.history[b.history.length - 1]) {
                 return 0

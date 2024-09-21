@@ -158,7 +158,7 @@ exports.signup_post = [
                     await user.save();
                 })
             })
-            const globalGroupChat = await Conversation.findById('66d7d2fead84fa8a36bea088').exec();
+            const globalGroupChat = await Conversation.findById('66ef1677007b15bccb9a1cca').exec();
             globalGroupChat.users.push(user._id);
             await globalGroupChat.save();
 
