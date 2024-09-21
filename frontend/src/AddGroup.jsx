@@ -92,7 +92,7 @@ export default function AddGroup({ closePopUp }) {
     }
 
     const createNewGroup = (formData) => {
-        fetch('http://localhost:3000/api/groups/create', {
+        fetch('https://popinjay-7457d2787149.herokuapp.com/api/groups/create', {
             method: 'POST',
             credentials: "include",
             headers: {
