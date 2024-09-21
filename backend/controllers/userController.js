@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require("dotenv").config();
 const cloudinary = require('cloudinary').v2;
+const Notification = require('../models/notification');
 
 exports.login_post = [
     body("username")
