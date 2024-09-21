@@ -46,7 +46,7 @@ export default function LogIn() {
         e.preventDefault();
         console.log(e.key);
         const username = "guest"
-        const password = "guestguest123"
+        const password = "guestnguyen1"
 
         fetch('https://popinjay-7457d2787149.herokuapp.com/api/login', {
             method: 'POST',
