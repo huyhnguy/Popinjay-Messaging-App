@@ -57,7 +57,7 @@ app.use(
 //app.use(helmet());
 app.use(compression());
 app.use(cookieParser());
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 app.use(logger('dev'));
