@@ -234,7 +234,7 @@ export default function GroupTab() {
                                 const lastMessage = group.history[group.history.length - 1];
                                 return (
                                     <div key={group._id} id={`${group._id}`} >
-                                        <div className={`message-card ${checkArrayOfNotificationsForGroupId(notifications, group._id) && "new"}`}  onClick={() => {handleGroup(group)}}>
+                                        <div className={`message-card ${(notifications && checkArrayOfNotificationsForGroupId(notifications, group._id)) && "new"}`}  onClick={() => {handleGroup(group)}}>
                                             { group._id === '66ef1677007b15bccb9a1cca' ?               
                                                 <div style={{position: "relative"}}>
                                                     <ProfilePic imageSrc={group.profile_picture} size="5rem" group={true} />

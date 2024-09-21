@@ -174,7 +174,7 @@ export default function DmTab() {
 
                                 return (
                                     <div id={`${dm._id}`} key={dm._id}>
-                                        <div className={`message-card ${checkArrayOfNotificationsForDmId(notifications, dm._id) && "new"}`}  onClick={() => {handleClick(dm)}}>
+                                        <div className={`message-card ${(notifications && checkArrayOfNotificationsForDmId(notifications, dm._id)) && "new"}`}  onClick={() => {handleClick(dm)}}>
                                             <ProfilePic imageSrc={receiver.profile_picture} size="5rem"/>
                                             <div className="name-message">
                                                 <h2>{receiver.display_name}</h2>
