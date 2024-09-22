@@ -158,8 +158,11 @@ export default function GroupDm() {
 
     const displayUsersNamesInGroup = (users) => {
         let names = "";
-        for (let i = 0; i < 6; i++) {
-            if (i === 0) {
+
+        for (let i = 0; i < users.length ; i++) {
+            if (i === 6) { 
+                break 
+            }else if (i === 0) {
                 names = users[i].display_name;
             } else {
                 names = names + ", " + users[i].display_name;
