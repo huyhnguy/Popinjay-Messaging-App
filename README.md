@@ -9,6 +9,7 @@ A messaging app created with Node.js, Express, MongoDB, React, Javascript, HTML,
     - [Group-Management](#group-management)
     - [Notifications](#notifications)
 - [Technologies](#technologies)
+- [How-to-use-the-Project](#how-to-use-the-project)
 - [How-to-Run-Project-Locally](#how-to-run-project-locally)
 
 ## Description
