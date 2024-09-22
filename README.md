@@ -26,10 +26,15 @@ A messaging app created with Node.js, Express, MongoDB, React, Javascript, HTML,
 - Efficient database queries for fast, efficient site performance
 
 ### Group Management
-Users can create group chats and manage them as a master. Groups will have a master, admins, and regular members. Masters can change the display name, profile picture and admin permissions of the group. Masters can also delete messages, kick users, and invite users. Admin powers depend on the admin permissions granted by the master but at most they can kick users, invite users, and delete messages.
+Users can create group chats...
+![Add Group Image](/images/new_group.png "New Group")
+
+and manage them as a master. Groups will have a master, admins, and regular members. Masters can change the display name, profile picture and admin permissions of the group. Masters can also delete messages, kick users, and invite users. Admin powers depend on the admin permissions granted by the master but at most they can kick users, invite users, and delete messages.
+![Master](/images//master.png "Master")
 
 ### Notifications
 Notifications will be shown in the notifications tab and new notifications will be marked with a light blue background in notifications, in the group tab, and in the messages tab. Users will be notified of any new notifications by a counter that will pop up in the navigation bar on the bell icon.
+![Notifications](/images/notifications.png "Notifications")
 
 Users will receive notifications whenever...
 - they get new messages in groups or private messages
@@ -57,13 +62,10 @@ Users will receive notifications whenever...
 
 ##  How to Use The Project 
 - Make a new group by navigating to the group tab and clicking the plus button at the top right 
-![Add Group Image](/images/new_group.png "New Group")
 - To manage groups, click on a group in the group tab, then click on the cog icon in the top right. 
     - Masters can do a number of things to each member based on the options given in the dropdown when they click a member within the member list
-    ![Master](/images//master.png "Master")
     - Admins are granted powers based on the permissions given from the master. At most they can kick users, invite users, and delete messages
 - To mark all new notifications as read, click the envelope icon in the top right of the notification tab, or click an individual notification to mark it as read
-![Notifications](/images/notifications.png "Notifications")
 - To upload images into your messages, click the up arrow icon in the bottom left of a conversation.
 - To edit or delete messages, hover over them for the options
 ![Messages](/images/crud_message.png "Messages")
