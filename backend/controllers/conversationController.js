@@ -273,6 +273,7 @@ exports.groups_list_get = asyncHandler(async (req, res, next) => {
             options: { limit: 5 }
         }).exec();
 
+        res.set('Access-Control-Allow-Origin', 'https://popinjay-frontend.vercel.app');
         res.json({ sender: req.user.id, groups: groups });
     } catch (err) {
         console.error(err);

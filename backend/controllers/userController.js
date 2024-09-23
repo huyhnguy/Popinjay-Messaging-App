@@ -62,12 +62,13 @@ exports.login_post = [
                 
                 let options = {
                     httpOnly: true,
-                    sameSite: "none",
+                    sameSite: "None",
                     secure: true,
                     maxAge: 900000,
                 }
                 
                 try {
+                    res.set('Access-Control-Allow-Origin', 'https://popinjay-frontend.vercel.app');
                     res.cookie("token", accessToken, options);
                     res.json({ status: 200, message: "Cookie has been set" })
                 } catch (error) {
