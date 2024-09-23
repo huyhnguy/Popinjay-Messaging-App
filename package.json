@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "cd backend && node ./bin/www"
+    "frontend": "cd frontend && npm run dev",
+    "backend": "cd backend && npm run devstart",
+    "dev": "concurrently --kill-others-on-fail \"npm run backend\" \"npm run frontend\"",
+    "heroku-postbuild": "cd frontend && npm install && npm run build"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
@@ -28,6 +30,9 @@
     "mongoose": "^8.5.3",
     "morgan": "~1.9.1",
     "multer": "^1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
   },
   "keywords": [],
   "author": "",

@@ -17,7 +17,7 @@ export default function Settings() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch('https://popinjay-7457d2787149.herokuapp.com/api/users/settings', {
+        fetch('/api/users/settings', {
             method: 'GET',
             credentials: "include",
             headers: {
@@ -93,7 +93,7 @@ export default function Settings() {
             formData.append("profile_picture", null);
         }
 
-        fetch('https://popinjay-7457d2787149.herokuapp.com/api/users/settings', {
+        fetch('/api/users/settings', {
             method: 'PUT',
             credentials: "include",
             headers: {
@@ -125,7 +125,7 @@ export default function Settings() {
     const handleLogOut = (e) => {
         e.preventDefault();
 
-        fetch('https://popinjay-7457d2787149.herokuapp.com/api/logout', {
+        fetch('/api/logout', {
             method: 'POST',
             credentials: "include",
             headers: {

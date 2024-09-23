@@ -9,7 +9,7 @@ A messaging app created with Node.js, Express, MongoDB, React, Javascript, HTML,
     - [Group-Management](#group-management)
     - [Notifications](#notifications)
 - [Technologies](#technologies)
-- [How-to-use-the-Project](#how-to-use-the-project)
+- [How-to-Use-The-Project](#how-to-use-the-project)
 - [How-to-Run-Project-Locally](#how-to-run-project-locally)
 
 ## Description
@@ -94,7 +94,7 @@ Users will receive notifications whenever...
 9. run ```npm run devstart``` in your bash/command line
 10. In a different terminal window, cd back to the project root directory and into the 'frontend' directory
 11. run ```npm install``` in your bash/command line
-12. Within the 'src' directory, go through each react componenet and, for all fetching, replace the domain of every string with 'http://localhost:3000'. For example ```fetch('https://popinjay-7457d2787149.herokuapp.com/api/login'...``` would become ```fetch('http://localhost:3000/api/login'...```
+12. Within the 'src' directory, go through each react component and, for all fetching, replace the domain of every string with 'http://localhost:3000'. For example ```fetch('https://popinjay-7457d2787149.herokuapp.com/api/login'...``` would become ```fetch('http://localhost:3000/api/login'...```
 12. run ```npm run dev``` in your bash/command line
 13. Visit your localhost site 'http://localhost:5173'
 

@@ -11,7 +11,7 @@ export default function NotificationTab() {
     const navigation = useNavigate();
 
     useEffect(() => {
-        fetch('https://popinjay-7457d2787149.herokuapp.com/api/notifications', {
+        fetch('/api/notifications', {
             method: 'GET',
             credentials: "include",
             headers: {
@@ -57,7 +57,7 @@ export default function NotificationTab() {
     }
 
     const routeToResource = (notification) => {
-        fetch(`https://popinjay-7457d2787149.herokuapp.com/api/notifications/${notification._id}`, {
+        fetch(`/api/notifications/${notification._id}`, {
             method: 'PUT',
             credentials: "include",
             headers: {
@@ -99,7 +99,7 @@ export default function NotificationTab() {
     }
 
     const markAllAsRead = () => {
-        fetch('https://popinjay-7457d2787149.herokuapp.com/api/notifications', {
+        fetch('/api/notifications', {
             method: 'PUT',
             credentials: "include",
             headers: {

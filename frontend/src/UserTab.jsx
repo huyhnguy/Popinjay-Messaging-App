@@ -12,7 +12,7 @@ export default function UserTab() {
     const navigate = useNavigate();
     
     useEffect(() => {
-        fetch('https://popinjay-7457d2787149.herokuapp.com/api/users', {
+        fetch('/api/users', {
             method: 'GET',
             credentials: "include",
             headers: {

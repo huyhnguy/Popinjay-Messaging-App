@@ -58,7 +58,7 @@ exports.login_post = [
                     display_name: userInfo.display_name,
                     id: userInfo._id
                 };
-                const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+                const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "1hr" });
                 
                 let options = {
                     httpOnly: true,
@@ -68,7 +68,6 @@ exports.login_post = [
                 }
                 
                 try {
-                    res.set('Access-Control-Allow-Origin', 'https://popinjay-frontend.vercel.app');
                     res.cookie("token", accessToken, options);
                     res.json({ status: 200, message: "Cookie has been set" })
                 } catch (error) {

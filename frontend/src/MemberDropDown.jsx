@@ -8,7 +8,7 @@ export default function MemberDropDown({ user, profileFunction, kickFunction, ad
     const handleMessage = (e) => {
         e.preventDefault();
 
-        fetch('https://popinjay-7457d2787149.herokuapp.com/api/dms/create', {
+        fetch('/api/dms/create', {
             method: 'POST',
             credentials: "include",
             headers: {

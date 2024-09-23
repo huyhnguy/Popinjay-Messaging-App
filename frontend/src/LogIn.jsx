@@ -14,7 +14,7 @@ export default function LogIn() {
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
 
-        fetch('https://popinjay-7457d2787149.herokuapp.com/api/login', {
+        fetch('/api/login', {
             method: 'POST',
             credentials: "include",
             headers: {
@@ -48,7 +48,7 @@ export default function LogIn() {
         const username = "guest"
         const password = "guestnguyen1"
 
-        fetch('https://popinjay-7457d2787149.herokuapp.com/api/login', {
+        fetch('/api/login', {
             method: 'POST',
             credentials: "include",
             headers: {

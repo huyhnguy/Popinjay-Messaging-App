@@ -15,7 +15,7 @@ export default function GroupTab() {
     const navigate = useNavigate();
     
     useEffect(() => {
-        fetch('https://popinjay-7457d2787149.herokuapp.com/api/groups', {
+        fetch('/api/groups', {
             method: 'GET',
             credentials: "include",
             headers: {
@@ -51,7 +51,7 @@ export default function GroupTab() {
         const notification = checkArrayOfNotificationsForGroupId(notifications, group._id);
 
         if (notification) {
-            fetch(`https://popinjay-7457d2787149.herokuapp.com/api/notifications/${notification._id}`, {
+            fetch(`/api/notifications/${notification._id}`, {
                 method: 'PUT',
                 credentials: "include",
                 headers: {
@@ -122,7 +122,7 @@ export default function GroupTab() {
         if (action === "completed") {
             setAddGroup("closed");
 
-            fetch('https://popinjay-7457d2787149.herokuapp.com/api/groups', {
+            fetch('/api/groups', {
                 method: 'GET',
                 credentials: "include",
                 headers: {

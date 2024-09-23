@@ -12,7 +12,7 @@ export default function AddGroup({ closePopUp }) {
     const [errors, setErrors] = useState(null);
 
     const fetchAllUsers = () => {
-        fetch('https://popinjay-7457d2787149.herokuapp.com/api/users', {
+        fetch('/api/users', {
             method: 'GET',
             credentials: "include",
             headers: {
@@ -92,7 +92,7 @@ export default function AddGroup({ closePopUp }) {
     }
 
     const createNewGroup = (formData) => {
-        fetch('https://popinjay-7457d2787149.herokuapp.com/api/groups/create', {
+        fetch('/api/groups/create', {
             method: 'POST',
             credentials: "include",
             headers: {
