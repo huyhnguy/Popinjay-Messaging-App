@@ -67,6 +67,10 @@ body {
     align-items: center;
   }
 
+  .user-profile-info h1 {
+    text-align: center;
+  }
+
   .profile-pic-container {
     height: 4rem;
     width: 4rem;
@@ -553,7 +557,18 @@ nav {
   background-color: white;
   box-shadow: 0px 0px 10px 10px rgba(0, 0, 0, 0.125);
   animation: fade-in 0.5s;
-  max-width: 80%;
+  
+  /*max-width: 80%;*/
+}
+
+.user-profile-info > * {
+  margin: 0
+}
+
+.user-profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .about-me-input {
@@ -575,6 +590,7 @@ nav {
   display: flex;
   gap: 0.5rem;
   align-items: center;
+  justify-content: center;
 }
 
 .red {

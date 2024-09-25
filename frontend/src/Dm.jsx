@@ -59,7 +59,7 @@ export default function Dm() {
         const messageHistoryDiv = document.querySelector(".message-history");
         if (messageHistoryDiv.lastChild) {
             messageHistoryDiv.lastChild.scrollIntoView({
-                block: "end",
+                block: "nearest",
                 inline: "nearest",
                 behavior: "smooth",
                 alignToTop: false
