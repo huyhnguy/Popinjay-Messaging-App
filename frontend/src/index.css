@@ -7,6 +7,10 @@ body {
   margin: 0;
 }
 
+html {
+  height: -webkit-fill-available;
+}
+
 #root {
   height: 100vh;
 }
