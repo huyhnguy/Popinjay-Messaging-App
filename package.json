@@ -10,6 +10,7 @@
     "frontend": "cd frontend && npm run dev",
     "backend": "cd backend && npm run devstart",
     "dev": "concurrently --kill-others-on-fail \"npm run backend\" \"npm run frontend\"",
+    "start": "cd backend && npm run start",
     "heroku-postbuild": "cd frontend && npm install && npm run build"
   },
   "dependencies": {
