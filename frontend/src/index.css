@@ -837,10 +837,6 @@ textarea {
   }
 }
 
-body {
-  overflow: hidden;
-}
-
 .form-user-list {
   -moz-user-select: none;
 }
