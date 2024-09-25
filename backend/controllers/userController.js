@@ -7,7 +7,6 @@ const jwt = require('jsonwebtoken');
 require("dotenv").config();
 const cloudinary = require('cloudinary').v2;
 const Notification = require('../models/notification');
-const streamifier = require('streamifier');
 
 exports.login_post = [
     body("username")
@@ -278,7 +277,7 @@ exports.user_profile_put = [
                         }
                       );
 
-                    streamifier.createReadStream(req.file.buffer).pipe(image);
+                    //streamifier.createReadStream(req.file.buffer).pipe(image);
                 } else {
                     if (req.body.picture_status === "delete") {
                         user.profile_picture = null;
@@ -287,7 +286,7 @@ exports.user_profile_put = [
                 } 
 
                 await user.save();
-                
+
                 res.json({ user: user, message: "new user settings changed" });
               } catch (error) {
                 console.error(error);
