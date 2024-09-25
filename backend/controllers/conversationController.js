@@ -6,7 +6,6 @@ const User = require("../models/user")
 const mongoose = require("mongoose");
 const cloudinary = require('cloudinary').v2;
 const Notification = require("../models/notification");
-//const streamifier = require('streamifier');
 
 exports.dms_create_post = asyncHandler(async (req, res, next) => {
     // look for a possible pre-existing conversation between these two users in the database

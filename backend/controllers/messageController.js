@@ -3,7 +3,6 @@ const Message = require("../models/message");
 const Conversation = require("../models/conversation");
 const cloudinary = require('cloudinary').v2;
 const Notification = require("../models/notification");
-//const streamifier = require('streamifier');
 
 exports.message_create_post = asyncHandler(async (req, res, next) => {
     try {

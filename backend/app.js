@@ -10,7 +10,6 @@ const apiRouter = require('./routes/api');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const cloudinary = require('cloudinary').v2;
-const streamifier = require('streamifier');
 const compression = require('compression');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
