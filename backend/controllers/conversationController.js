@@ -6,7 +6,7 @@ const User = require("../models/user")
 const mongoose = require("mongoose");
 const cloudinary = require('cloudinary').v2;
 const Notification = require("../models/notification");
-const streamifier = require('streamifier');
+//const streamifier = require('streamifier');
 
 exports.dms_create_post = asyncHandler(async (req, res, next) => {
     // look for a possible pre-existing conversation between these two users in the database
@@ -211,7 +211,7 @@ exports.group_settings_put = [
                         }
                       );
 
-                    streamifier.createReadStream(req.file.buffer).pipe(image);
+                    //streamifier.createReadStream(req.file.buffer).pipe(image);
                 } else {
                     if (req.body.picture_status === "delete") {
                         conversation.profile_picture = null;
@@ -346,7 +346,7 @@ exports.groups_create_post = [
                     }
                   );
 
-                streamifier.createReadStream(req.file.buffer).pipe(image);
+                //streamifier.createReadStream(req.file.buffer).pipe(image);
             }
             
             await conversation.save();

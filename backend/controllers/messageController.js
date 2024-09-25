@@ -3,7 +3,7 @@ const Message = require("../models/message");
 const Conversation = require("../models/conversation");
 const cloudinary = require('cloudinary').v2;
 const Notification = require("../models/notification");
-const streamifier = require('streamifier');
+//const streamifier = require('streamifier');
 
 exports.message_create_post = asyncHandler(async (req, res, next) => {
     try {
@@ -37,7 +37,7 @@ exports.message_create_post = asyncHandler(async (req, res, next) => {
                 }
               );
 
-            streamifier.createReadStream(req.file.buffer).pipe(image);
+            //streamifier.createReadStream(req.file.buffer).pipe(image);
         }
 
         const [newMessageSave, newMessagePopulated, conversation] = await Promise.all([ 
@@ -134,7 +134,7 @@ exports.message_update = asyncHandler(async (req, res, next) => {
                 }
               );
 
-            streamifier.createReadStream(req.file.buffer).pipe(image);
+            //streamifier.createReadStream(req.file.buffer).pipe(image);
         } else if (!req.body.image_same) {
             message.image = null;
         }
