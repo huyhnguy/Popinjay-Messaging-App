@@ -37,7 +37,6 @@ export default function GroupDm() {
             setDm(res.group);
             setSender(res.sender);
             setLoading(false);
-            scrollToBottom();
           })
           .catch(err => {
             console.log(err);
@@ -48,20 +47,23 @@ export default function GroupDm() {
     }, [])
 
     useEffect(() => {
-        if (newMessage) {
+        if (newMessage || !loading) {
             scrollToBottom();
         }
-    }, [newMessage]);
+    }, [newMessage, loading]);
 
     function scrollToBottom () {
         const messageHistoryDiv = document.querySelector(".message-history");
-        messageHistoryDiv.lastChild.scrollIntoView({
-            block: "start",
-            inline: "nearest",
-            behavior: "smooth",
-            alignToTop: false
-        });
-        setNewMessage(false);
+        if (messageHistoryDiv.lastChild) {
+            messageHistoryDiv.lastChild.scrollIntoView({
+                block: "end",
+                inline: "nearest",
+                behavior: "smooth",
+                alignToTop: false
+            });
+            setNewMessage(false);
+        }
+
     }
 
     const convertToBase64 = (file) => {

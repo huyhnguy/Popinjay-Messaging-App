@@ -8,6 +8,7 @@ require("dotenv").config();
 const cloudinary = require('cloudinary').v2;
 const Notification = require('../models/notification');
 const streamifier = require('streamifier');
+const { uploadStream } = require('../middleware/uploadStream');
 
 exports.login_post = [
     body("username")
@@ -255,14 +256,12 @@ exports.user_profile_put = [
                 user.about_me = req.body.about_me;
 
                 if (req.file) {
-                    /*const options = {
-                        public_id: req.user.id,
-                        overwrite: true,
-                      };              
-                    const image = await cloudinary.uploader.upload(req.file.path , options);
-                    user.profile_picture = image.secure_url;*/
 
-                    const image = cloudinary.uploader.upload_stream(
+                    const uploadedImageUrl = await uploadStream(req.file.buffer, req.user.id);
+                    console.log(uploadedImageUrl);
+                    user.profile_picture = uploadedImageUrl;
+
+                    /*const image = cloudinary.uploader.upload_stream(
                         { 
                             folder: 'uploads',
                             public_id: req.user.id,
@@ -278,7 +277,7 @@ exports.user_profile_put = [
                         }
                       );
 
-                    streamifier.createReadStream(req.file.buffer).pipe(image);
+                    streamifier.createReadStream(req.file.buffer).pipe(image);*/
                 } else {
                     if (req.body.picture_status === "delete") {
                         user.profile_picture = null;

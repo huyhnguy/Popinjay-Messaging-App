@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const cloudinary = require('cloudinary').v2;
 const Notification = require("../models/notification");
 const streamifier = require('streamifier');
+const { uploadStream } = require('../middleware/uploadStream');
 
 exports.dms_create_post = asyncHandler(async (req, res, next) => {
     // look for a possible pre-existing conversation between these two users in the database
@@ -188,14 +189,11 @@ exports.group_settings_put = [
                 }
 
                 if (req.file) {
-                    /*const options = {
-                        public_id: req.params.groupId,
-                        overwrite: true,
-                      };              
-                    const image = await cloudinary.uploader.upload(req.file.path , options);
-                    conversation.profile_picture = image.secure_url;*/
+                    const uploadedImageUrl = await uploadStream(req.file.buffer, req.params.groupId);
+                    console.log(uploadedImageUrl);
+                    conversation.profile_picture = uploadedImageUrl;
 
-                    const image = cloudinary.uploader.upload_stream(
+                    /*const image = cloudinary.uploader.upload_stream(
                         { 
                             folder: 'uploads',
                             public_id: req.params.groupId,
@@ -211,7 +209,7 @@ exports.group_settings_put = [
                         }
                       );
 
-                    streamifier.createReadStream(req.file.buffer).pipe(image);
+                    streamifier.createReadStream(req.file.buffer).pipe(image);*/
                 } else {
                     if (req.body.picture_status === "delete") {
                         conversation.profile_picture = null;
@@ -323,14 +321,10 @@ exports.groups_create_post = [
             });
 
             if (req.file) {
-                /*const options = {
-                    public_id: conversation._id,
-                    overwrite: true,
-                    };              
-                try {
-                const image = await cloudinary.uploader.upload(req.file.path , options);
-                conversation.profile_picture = image.secure_url;*/
-                const image = cloudinary.uploader.upload_stream(
+                const uploadedImageUrl = await uploadStream(req.file.buffer, conversation._id);
+                console.log(uploadedImageUrl);
+                conversation.profile_picture = uploadedImageUrl;
+                /*const image = cloudinary.uploader.upload_stream(
                     { 
                         folder: 'uploads',
                         public_id: conversation._id,
@@ -346,7 +340,7 @@ exports.groups_create_post = [
                     }
                   );
 
-                streamifier.createReadStream(req.file.buffer).pipe(image);
+                streamifier.createReadStream(req.file.buffer).pipe(image);*/
             }
             
             await conversation.save();

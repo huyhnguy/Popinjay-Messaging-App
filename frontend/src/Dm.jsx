@@ -40,7 +40,6 @@ export default function Dm() {
             setDm(res.dm);
             setSender(res.sender);
             setLoading(false);
-            scrollToBottom();
           })
           .catch(err => {
             console.log(err);
@@ -51,20 +50,22 @@ export default function Dm() {
     }, [])
 
     useEffect(() => {
-        if (newMessage) {
+        if (newMessage || !loading) {
             scrollToBottom();
         }
-    }, [newMessage]);
+    }, [newMessage, loading]);
 
     function scrollToBottom () {
         const messageHistoryDiv = document.querySelector(".message-history");
-        messageHistoryDiv.lastChild.scrollIntoView({
-            block: "start",
-            inline: "nearest",
-            behavior: "smooth",
-            alignToTop: false
-        });
-        setNewMessage(false);
+        if (messageHistoryDiv.lastChild) {
+            messageHistoryDiv.lastChild.scrollIntoView({
+                block: "end",
+                inline: "nearest",
+                behavior: "smooth",
+                alignToTop: false
+            });
+            setNewMessage(false);
+        }
     }
 
     const convertToBase64 = (file) => {
@@ -144,6 +145,7 @@ export default function Dm() {
         .then(res => {
             const newDm = dm;
             newDm.history.push(res.new_message);
+            console.log(res.new_message);
             setDm(newDm);
 
             clearUserInputs();

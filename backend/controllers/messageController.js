@@ -4,6 +4,7 @@ const Conversation = require("../models/conversation");
 const cloudinary = require('cloudinary').v2;
 const Notification = require("../models/notification");
 const streamifier = require('streamifier');
+const { uploadStream } = require('../middleware/uploadStream');
 
 exports.message_create_post = asyncHandler(async (req, res, next) => {
     try {
@@ -13,32 +14,10 @@ exports.message_create_post = asyncHandler(async (req, res, next) => {
             content: req.body.new_message,
         })
 
-        console.log(req.file);
         if (req.file) {
-            /*const options = {
-                public_id: newMessage._id,
-                overwrite: true,
-              };              
-            const image = await cloudinary.uploader.upload(req.file.path , options);
-            newMessage.image = image.secure_url;*/
-
-            const image = cloudinary.uploader.upload_stream(
-                { 
-                    folder: 'uploads',
-                    public_id: newMessage._id,
-                    overwrite: true 
-                },
-                async (error, result) => {
-                  if (error) {
-                    return res.status(500).send(error);
-                  }
-                  console.log(result.secure_url);
-                  newMessage.image = result.secure_url;
-                  await newMessage.save();
-                }
-              );
-
-            streamifier.createReadStream(req.file.buffer).pipe(image);
+            const uploadedImageUrl = await uploadStream(req.file.buffer, newMessage._id);
+            console.log(uploadedImageUrl);
+            newMessage.image = uploadedImageUrl;
         }
 
         const [newMessageSave, newMessagePopulated, conversation] = await Promise.all([ 
@@ -46,6 +25,7 @@ exports.message_create_post = asyncHandler(async (req, res, next) => {
             newMessage.populate('user', 'id'), 
             Conversation.findById(req.body.conversation_id).exec()
         ])
+        
         conversation.history.push(newMessage._id);
         await conversation.save();
 
@@ -112,14 +92,10 @@ exports.message_update = asyncHandler(async (req, res, next) => {
         message.content = req.body.new_message;
 
         if (req.file) {
-            /*const options = {
-                public_id: message._id,
-                overwrite: true,
-              };              
-            const image = await cloudinary.uploader.upload(req.file.path , options);
-            message.image = image.secure_url;*/
-
-            const image = cloudinary.uploader.upload_stream(
+            const uploadedImageUrl = await uploadStream(req.file.buffer, message._id);
+            console.log(uploadedImageUrl);
+            message.image = uploadedImageUrl;
+            /*const image = cloudinary.uploader.upload_stream(
                 { 
                     folder: 'uploads',
                     public_id: message._id,
@@ -135,7 +111,7 @@ exports.message_update = asyncHandler(async (req, res, next) => {
                 }
               );
 
-            streamifier.createReadStream(req.file.buffer).pipe(image);
+            streamifier.createReadStream(req.file.buffer).pipe(image);*/
         } else if (!req.body.image_same) {
             message.image = null;
         }
