@@ -19,7 +19,7 @@ export default function Message({ info, person, deleteMessage, editMessage, dele
         return(
             <div style={{ alignSelf: "end", alignItems: "end" }} className="message-container">
                 { info.image &&
-                    <img src={info.image} alt="" style={{ maxWidth: "100%", borderRadius: "10px" }} loading="lazy"/>
+                    <img src={info.image} alt="" style={{ maxWidth: "100%", maxHeight: "200px", borderRadius: "10px" }} loading="lazy"/>
                 }
                 { info.content &&
                     <p className="message" style={{ backgroundColor: "#007BFF" }}>{info.content}</p>
@@ -42,7 +42,7 @@ export default function Message({ info, person, deleteMessage, editMessage, dele
         return(
             <div className="message-container">
                 { info.image &&
-                    <img src={info.image} alt="" style={{ height: "200px", borderRadius: "10px" }} loading="lazy"/>
+                    <img src={info.image} alt="" style={{ maxWidth: "100%", maxHeight: "200px", borderRadius: "10px" }} loading="lazy"/>
                 }
                 { info.content &&
                     <p  className="message" style={{ backgroundColor: "#6b6b6b"}}>{info.content}</p>
