@@ -165,7 +165,7 @@ export default function DmTab() {
                 <h1 style={{ margin: 0 }}>Messages</h1>
                 <input type="search" placeholder="Search name" className="user-list-search" onChange={(e) => handleSearch(e)}></input>
             </div>
-            <div style={{width: "100%", height: "100%", overflow: "scroll"}}>
+            <div className="flexible-section">
                 <div className="messages-container">
                         { dms &&
                             dms.map((dm) => {

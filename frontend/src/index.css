@@ -249,7 +249,7 @@ nav {
 
 .settings-container {
   overflow: scroll;
-  height: 100%;
+  flex-grow: 1;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -834,6 +834,12 @@ textarea {
 .user-about-me {
   overflow-wrap: break-word;
   max-width: 300px;
+}
+
+.flexible-section {
+  width: 100%;
+  overflow: scroll;
+  flex-grow: 1;
 }
 
 /* styling for firefox */

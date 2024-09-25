@@ -60,7 +60,7 @@ export default function UserTab() {
             <input type="search" placeholder="Search name" className="user-list-search" onChange={(e) => handleSearch(e)}></input>
           </div>
 
-            <div style={{width: "100%", height: "100%", overflow: "scroll"}}>
+            <div className="flexible-section">
                 <div className="users-container">
                 { users &&
                     users.map(user => 

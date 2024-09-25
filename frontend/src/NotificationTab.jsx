@@ -133,7 +133,7 @@ export default function NotificationTab() {
                     <FontAwesomeIcon icon={faEnvelopeCircleCheck} className="file-upload-icon" style={{ height: "3rem" }}/>
                 </button>
             </div>
-            <div style={{width: "100%", height: "100%", overflow: "scroll"}}>
+            <div className="flexible-section">
                 <div className="notifications-container">
                     { notifications &&
                         notifications.map((notification) => {

@@ -227,7 +227,7 @@ export default function GroupTab() {
                     <FontAwesomeIcon icon={faCirclePlus} className="file-upload-icon" style={{ height: "3rem" }}/>
                 </button>
             </div>
-            <div style={{width: "100%", height: "100%", overflow: "scroll"}}>
+            <div className="flexible-section">
                 <div className="messages-container">
                         { groups &&
                             groups.map((group) => {
