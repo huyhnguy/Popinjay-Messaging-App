@@ -31,11 +31,6 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const corsOptions = {
-  origin: "http://localhost:5173",
-  credentials: true
-}
-
 const RateLimit = require("express-rate-limit");
 const limiter = RateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute

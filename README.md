@@ -15,7 +15,7 @@ A messaging app created with Node.js, Express, MongoDB, React, Javascript, HTML,
 ## Description
 
 ### Features
-- Group management (master, admin, member)
+- Group management (owner, admin, member)
 - Notifications
 - Authentication with HTTP-only cookies and JWTs
 - Image sending in messages
@@ -30,7 +30,7 @@ Users can create group chats...
 ![Add Group Image](/images/new_group.png "New Group")
 
 and manage them as a master. Groups will have a master, admins, and regular members. Masters can change the display name, profile picture and admin permissions of the group. Masters can also delete messages, kick users, and invite users. Admin powers depend on the admin permissions granted by the master but at most they can kick users, invite users, and delete messages.
-![Master](/images//master.png "Master")
+![Master](/images//master.png "Owner")
 
 ### Notifications
 Notifications will be shown in the notifications tab and new notifications will be marked with a light blue background in notifications, in the group tab, and in the messages tab. Users will be notified of any new notifications by a counter that will pop up in the navigation bar on the bell icon.
@@ -42,7 +42,7 @@ Users will receive notifications whenever...
 - they get kicked from a group
 - they are given the admin role in a group
 - they have their admin role taken away in a group
-- they are given the master role in a group
+- they are given the owner role in a group
 
 ## Technologies
 - MongoDB
@@ -82,7 +82,7 @@ Users will receive notifications whenever...
     4. Create a database user and save the password
     5. Grab the database connection string and replace <db_password> with the password from step 5.
     6. Create a .env file and within, write ```MONGODB_URI=<db_connection_string>```. Make sure to replace <db_connection_string> with your real connection string
-6. Within your .env file, write ```ACCESS_TOKEN_SECRET=<random_string>```. Make sure to replace <random_string> with a random string.
+6. Within your .env file, write ```ACCESS_TOKEN_SECRET=<random_string>```. Make sure to replace <random_string> with a random string of your choosing.
 7. Connect to Cloudinary
     1. Sign up or log in to Cloudinary [https://cloudinary.com/](https://cloudinary.com/)
     2. Within the home console, click the 'Get Started' button.
@@ -90,13 +90,12 @@ Users will receive notifications whenever...
     4. Within your .env file, write ```CLOUDINARY_CLOUD_NAME=``` and add your cloud name
     5. Write ```CLOUDINARY_API_KEY=``` and add your api key
     6. Write ```CLOUDINARY_API_SECRET=``` and add your api secret
-8. Within your 'app.js' file, in the 'corsOptions' variable, change the origin to 'http://localhost:5173'
-9. run ```npm run devstart``` in your bash/command line
-10. In a different terminal window, cd back to the project root directory and into the 'frontend' directory
-11. run ```npm install``` in your bash/command line
-12. Within the 'src' directory, go through each react component and, for all fetching, replace the domain of every string with 'http://localhost:3000'. For example ```fetch('https://popinjay-7457d2787149.herokuapp.com/api/login'...``` would become ```fetch('http://localhost:3000/api/login'...```
+8. cd back to the project root directory and into the 'frontend' directory
+9. run ```npm install``` in your bash/command line
+10. cd back to the project root directory
+11. run ```npm run heroku-postbuild``` in your bash/command line
 12. run ```npm run dev``` in your bash/command line
-13. Visit your localhost site 'http://localhost:5173'
+13. Visit your app at 'http://localhost:3000'
 
 
 
