@@ -97,14 +97,6 @@ exports.group_get = asyncHandler(async (req, res, next) => {
 })
 
 exports.group_settings_get = asyncHandler(async (req, res, next) => {
-    /*const group = await Conversation.findById( req.params.groupId , { history: 0 }).lean().populate({
-        path: 'users',
-        select: 'display_name profile_picture'
-    }).populate({
-        path: 'admins',
-        select: 'display_name profile_picture'
-    }).exec();*/
-
     try {
         const pipeline = [
             { $match: { _id: new mongoose.Types.ObjectId(req.params.groupId) } },
@@ -132,7 +124,7 @@ exports.group_settings_get = asyncHandler(async (req, res, next) => {
                     },
                     display_name: 1,
                     admin_permissions: 1,
-                    master: 1,
+                    owner: 1,
                     profile_picture: 1,
                 }
             }
@@ -317,7 +309,7 @@ exports.groups_create_post = [
             const conversation = new Conversation({
                 display_name: req.body.display_name,
                 users: userArray,
-                master: req.user.id
+                owner: req.user.id
             });
 
             if (req.file) {
@@ -435,8 +427,8 @@ exports.group_user_put = asyncHandler(async (req, res, next) => {
             await notification.save();
     
             res.json({ message: "successfully added user to group" })
-        } else if (req.body.action === "Make master") {
-            const result = await Conversation.updateOne({ _id: req.params.groupId }, { master: req.params.userId });
+        } else if (req.body.action === "Make owner") {
+            const result = await Conversation.updateOne({ _id: req.params.groupId }, { owner: req.params.userId });
             console.log(`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`);
 
             const notification = new Notification({
@@ -444,12 +436,12 @@ exports.group_user_put = asyncHandler(async (req, res, next) => {
                 from: req.params.groupId,
                 from_type: 'Conversation',
                 conversation_id: req.params.groupId,
-                update: "You are the new master."
+                update: "You are the new owner."
             })
 
             await notification.save();
     
-            res.json({ message: "successfully made user master" })
+            res.json({ message: "successfully made user owner" })
         }
 
     } catch (err) {

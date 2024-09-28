@@ -84,7 +84,7 @@ export default function NotificationTab() {
         if (notification.from_type === "User") {
             navigation(`/dms/${notification.conversation_id}`)
         } else if (notification.from_type === "Conversation" && 
-            notification.update === "You are the new master." ||
+            notification.update === "You are the new owner." ||
             notification.update === "You are now an admin." ||
             notification.update === "You are no longer an admin."
         ) {

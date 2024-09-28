@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {faGear, faUsers, faEarthAmericas, faMessage, faBell, faCircle} from '@fortawesome/free-solid-svg-icons'
+import {faGear, faUsers, faUser, faEarthAmericas, faMessage, faBell, faCircle} from '@fortawesome/free-solid-svg-icons'
 import { useEffect, useState} from "react";
 
 export default function NavBar({ active, markUpdatedDms, markUpdatedGroups }) {
@@ -48,14 +48,17 @@ export default function NavBar({ active, markUpdatedDms, markUpdatedGroups }) {
 
     return(
         <nav>
-            <Link to="/groups" className="nav-link" style={{ color: active === 'Groups' && '#007BFF'}}>
-                <FontAwesomeIcon icon={faUsers} className="nav-icon"/>
+            <Link to="/users" className="nav-link" style={{ color: active === 'Users' && '#007BFF'}}>
+                <FontAwesomeIcon icon={faUser} className="nav-icon"/>
+                <p className="nav-name">Users</p>
             </Link>
             <Link to="/dms" className="nav-link" style={{ color: active === 'Messages' && '#007BFF'}}>
                 <FontAwesomeIcon icon={faMessage} className="nav-icon"/>
+                <p className="nav-name">Messages</p>
             </Link>
-            <Link to="/users" className="nav-link" style={{ color: active === 'Users' && '#007BFF'}}>
-                <FontAwesomeIcon icon={faEarthAmericas} className="nav-icon"/>
+            <Link to="/groups" className="nav-link" style={{ color: active === 'Groups' && '#007BFF'}}>
+                <FontAwesomeIcon icon={faUsers} className="nav-icon"/>
+                <p className="nav-name">Groups</p>
             </Link>
             <Link to="/notifications" className="nav-link" style={{ color: active === 'Notifications' && '#007BFF'}}>
                 <div style={{ position: "relative", maxWidth: "fit-content"}}>
@@ -67,9 +70,11 @@ export default function NavBar({ active, markUpdatedDms, markUpdatedGroups }) {
                         </div>
                     }
                 </div>
+                <p className="nav-name">Notifications</p>
             </Link>
             <Link to="/settings" className="nav-link" style={{ color: active === 'Settings' && '#007BFF'}}>
                 <FontAwesomeIcon icon={faGear} className="nav-icon"/>
+                <p className="nav-name">Settings</p>
             </Link>
         </nav>
     )

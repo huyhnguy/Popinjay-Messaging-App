@@ -17,7 +17,7 @@ export default function GroupSettings() {
     const [dropDown, setDropDown] = useState(null);
     const [userProfile, setUserProfile] = useState(null);
     const [adminIds, setAdminIds] = useState(null);
-    const [masterId, setMasterId] = useState(null);
+    const [ownerId, setOwnerId] = useState(null);
     const [sender, setSender] = useState(null); 
     const [addUserPopUp, setAddUserPopUp] = useState(false);
     const [scrollToBottomOfMemberList, setScrollToBottomOfMemberList] = useState(false);
@@ -46,8 +46,8 @@ export default function GroupSettings() {
             setDisplayName(res.group.display_name);
             setPic(res.group.profile_picture);
             setAdminIds(res.group.admins);
-            setMasterId(res.group.master);
-            const sortedMembersList = sortMembers(res.group.users, res.group.admins, res.group.master, res.sender)
+            setOwnerId(res.group.owner);
+            const sortedMembersList = sortMembers(res.group.users, res.group.admins, res.group.owner, res.sender)
             console.log(sortedMembersList);
             setUsers(sortedMembersList);
             setAdminPermissions(res.group.admin_permissions);
@@ -95,7 +95,6 @@ export default function GroupSettings() {
         const formData = new FormData();
         formData.append("display_name", newDisplayName);
 
-        //formData.append('admin_permissions', checkedBoxes);
         if (checkedBoxes.length > 0) {
             for (let i = 0; i < checkedBoxes.length; i++) {
                 formData.append(`admin_permissions[${i}]`, checkedBoxes[i]);
@@ -293,7 +292,7 @@ export default function GroupSettings() {
         }
     }
 
-    const masterUser = (e, userId) => {
+    const ownerUser = (e, userId) => {
         e.preventDefault();
 
         fetch(`/api/groups/${urlParams.groupId}/users/${userId}`, {
@@ -304,7 +303,7 @@ export default function GroupSettings() {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                action: "Make master"
+                action: "Make owner"
             })
           })
           .then(res => res.json())
@@ -313,7 +312,7 @@ export default function GroupSettings() {
                 console.log(res.errors);
             } else {
                 console.log(res);
-                setMasterId(userId);
+                setOwnerId(userId);
                 closeDropDown();
             }
           })
@@ -322,16 +321,16 @@ export default function GroupSettings() {
         })
     }
 
-    function sortMembers(usersArray, adminsArray, master, sender) {
+    function sortMembers(usersArray, adminsArray, owner, sender) {
         console.log(sender);
         usersArray.sort((a,b) => {
             if (a._id === sender) {
                 return -1
             } else if (b._id === sender) {
                 return 1
-            } else if (a._id === master) { 
+            } else if (a._id === owner) { 
                 return -1
-            } else if (b._id === master) {
+            } else if (b._id === owner) {
                 return 1
             } else if (adminsArray.includes(a._id) && !adminsArray.includes(b._id)) {
                 return -1
@@ -433,8 +432,8 @@ export default function GroupSettings() {
     const handleLeaveGroup = (e) => {
         e.preventDefault();
 
-        if (sender === masterId) {
-            alert("You must give the master role to someone else before leaving")
+        if (sender === ownerId) {
+            alert("You must give the owner role to someone else before leaving")
         } else {
             fetch(`/api/groups/${urlParams.groupId}/users/${sender}`, {
                 method: 'DELETE',
@@ -487,10 +486,10 @@ export default function GroupSettings() {
                             <div style={{position: "relative"}} className="pic-container-x">
                                 { pic ?
                                     <>
-                                        <label htmlFor="profile-picture" style={{ cursor: sender === masterId && "pointer" }}>
+                                        <label htmlFor="profile-picture" style={{ cursor: sender === ownerId && "pointer" }}>
                                             <ProfilePic imageSrc={pic} size="10rem" />
                                         </label>
-                                        { sender === masterId &&
+                                        { sender === ownerId &&
                                             <button className="x-button-pfp" onClick={(e) => {
                                                 e.preventDefault();
                                                 setPic(null);
@@ -500,28 +499,28 @@ export default function GroupSettings() {
                                         }
                                     </>
                                     :
-                                    <label htmlFor="profile-picture" style={{ cursor: sender === masterId && "pointer" }}>
+                                    <label htmlFor="profile-picture" style={{ cursor: sender === ownerId && "pointer" }}>
                                         <ProfilePic size="10rem" group={true}/>
                                     </label>
                                 }
                             </div>
                             <label htmlFor="profile-picture" style={{ alignSelf: "start" }}>
-                                {sender != masterId && 
+                                {sender != ownerId && 
                                     <FontAwesomeIcon icon={faLock} style={{ height: "1rem", marginRight: "0.5rem" }}/>
                                 }
                                 Profile Picture 
                             </label>
-                            <input style={{ cursor: sender === masterId && "pointer", color: "grey" }} className="input" type="file" id="profile-picture" name="profile-picture" accept="image/*" defaultValue={ pic && pic } onChange={(e) => {handleFileUpload(e)}} disabled={sender != masterId  ? true : false}/>
+                            <input style={{ cursor: sender === ownerId && "pointer", color: "grey" }} className="input" type="file" id="profile-picture" name="profile-picture" accept="image/*" defaultValue={ pic && pic } onChange={(e) => {handleFileUpload(e)}} disabled={sender != ownerId  ? true : false}/>
                         </div>
                         <div className="form-section" style={{ alignItems: "start" }}>
                             <label htmlFor="display-name">
-                                {sender != masterId && 
+                                {sender != ownerId && 
                                     <FontAwesomeIcon icon={faLock} style={{ height: "1rem", marginRight: "0.5rem" }}/>
                                 }
                                 Display Name
                             </label>
                             <div className="input-containers">
-                                <input className="input" id="display-name" type="text" defaultValue={displayName} style={{ cursor: sender === masterId && "pointer", borderColor: errors && errors.display_name && "red", color: sender != masterId && "grey"}} disabled={sender != masterId  ? true : false}/>
+                                <input className="input" id="display-name" type="text" defaultValue={displayName} style={{ cursor: sender === ownerId && "pointer", borderColor: errors && errors.display_name && "red", color: sender != ownerId && "grey"}} disabled={sender != ownerId  ? true : false}/>
                                 { errors && errors.display_name &&
                                     <p className="error-message">{errors.display_name.msg}</p>
                                 }
@@ -529,30 +528,30 @@ export default function GroupSettings() {
                         </div>
                         <div className="form-section" style={{ alignItems: "start" }}>
                             <p style={{ margin: 0 }}>
-                                {sender != masterId && 
+                                {sender != ownerId && 
                                     <FontAwesomeIcon icon={faLock} style={{ height: "1rem", marginRight: "0.5rem" }}/>
                                 }
                                 Admin Permissions
                             </p>
                             { adminPermissions &&
-                                <div className="form-section-container" style={{ backgroundColor: sender != masterId && "light-dark(rgba(239, 239, 239, 0.3), rgba(59, 59, 59, 0.3))", color: sender != masterId && "grey"}}>
+                                <div className="form-section-container" style={{ backgroundColor: sender != ownerId && "light-dark(rgba(239, 239, 239, 0.3), rgba(59, 59, 59, 0.3))", color: sender != ownerId && "grey"}}>
                                     <div className="checkbox-container">
                                         <label htmlFor="delete-messages">Can delete messages</label>
-                                        <input  id="delete-messages" name="admin-permissions" value="delete-messages" type="checkbox" defaultChecked= {adminPermissions.delete_messages ? true : false} disabled={sender != masterId  ? true : false} />
+                                        <input  id="delete-messages" name="admin-permissions" value="delete-messages" type="checkbox" defaultChecked= {adminPermissions.delete_messages ? true : false} disabled={sender != ownerId  ? true : false} />
                                     </div>
                                     <div className="checkbox-container">
                                         <label htmlFor="invite-users">Can invite users</label>
-                                        <input  id="invite-users" name="admin-permissions" value="invite-users" type="checkbox" defaultChecked= {adminPermissions.invite_users ? true : false} disabled={sender != masterId  ? true : false} />
+                                        <input  id="invite-users" name="admin-permissions" value="invite-users" type="checkbox" defaultChecked= {adminPermissions.invite_users ? true : false} disabled={sender != ownerId  ? true : false} />
                                     </div>
                                     <div className="checkbox-container">
                                         <label htmlFor="kick-users">Can kick users</label>
-                                        <input  id="kick-users" name="admin-permissions" value="kick-users" type="checkbox" defaultChecked= {adminPermissions.kick_users ? true : false} disabled={sender != masterId  ? true : false} />
+                                        <input  id="kick-users" name="admin-permissions" value="kick-users" type="checkbox" defaultChecked= {adminPermissions.kick_users ? true : false} disabled={sender != ownerId  ? true : false} />
                                     </div>
                                 </div>
                             }
 
                         </div>
-                        <button className="submit" onClick={handleSubmit} style={{ backgroundColor: sender != masterId && "grey", pointerEvents: sender != masterId && "none" }}>Save</button>
+                        <button className="submit" onClick={handleSubmit} style={{ backgroundColor: sender != ownerId && "grey", pointerEvents: sender != ownerId && "none" }}>Save</button>
                         <div className="form-section" style={{ alignItems: "start" , position: "relative"}}>
                             <div className="users-header" style={{ margin: 0, width: "100%" }}>
                                 <p style={{ margin: 0 }}>Members</p>
@@ -574,24 +573,24 @@ export default function GroupSettings() {
                                                                     <p style={{margin: 0}}>Admin</p>
                                                                 </div>
                                                             }
-                                                            { masterId === user._id &&
+                                                            { ownerId === user._id &&
                                                                 <div style={{ display: "flex", gap: "0.5rem", alignItems: "center"}}>
                                                                     <FontAwesomeIcon icon={faCrown} style={{color: "gold", height: "1.5rem"}}/>
-                                                                    <p style={{margin: 0}}>Master</p>
+                                                                    <p style={{margin: 0}}>Owner</p>
                                                                 </div>
                                                             }
                                                         </div>
                                                     </div>
                                                     <hr style={{ margin: 0 }}/>
                                                 </div>
-                                                { sender === masterId &&
+                                                { sender === ownerId &&
                                                     <MemberDropDown 
                                                         user={user} 
                                                         profileFunction={openUserProfile} 
                                                         kickFunction={kickUser} 
                                                         adminFunction={adminUser} 
                                                         admin={adminIds.includes(user._id) ? true : false}
-                                                        masterFunction={masterUser}
+                                                        ownerFunction={ownerUser}
                                                     />
                                                 }
                                                 { adminIds.includes(sender) && adminPermissions.kick_users &&
@@ -601,7 +600,7 @@ export default function GroupSettings() {
                                                         kickFunction={kickUser} 
                                                     />
                                                 }
-                                                { (sender != masterId && !adminIds.includes(sender) || 
+                                                { (sender != ownerId && !adminIds.includes(sender) || 
                                                 adminIds.includes(sender) && !adminPermissions.kick_users) &&
                                                     <MemberDropDown 
                                                         user={user} 
@@ -613,13 +612,13 @@ export default function GroupSettings() {
                                     })
                                 }
                             </div>
-                            { (sender === masterId || adminIds.includes(sender) && adminPermissions.invite_users) &&
+                            { (sender === ownerId || adminIds.includes(sender) && adminPermissions.invite_users) &&
                                 <button className="add-user-button" onClick={(e) => {handleAddUserPopUp(e)}}>
                                     <FontAwesomeIcon icon={faCirclePlus} className="file-upload-icon" style={{ height: "3rem" }}/>
                                 </button>
                             }
                         </div>
-                        { sender === masterId &&
+                        { sender === ownerId &&
                             <button className="submit" style={{backgroundColor: "red"}} onClick={(e) => {handleDeleteGroup(e)}} >Delete Group</button>
                         }
                         <button className="submit" style={{backgroundColor: "red"}}onClick={(e) => {handleLeaveGroup(e)}} >Leave Group</button>

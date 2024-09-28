@@ -13,7 +13,7 @@ const ConversationSchema = new Schema({
     invite_users: { type: Boolean, default: true },
     kick_users: { type: Boolean, default: false }
   },
-  master: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });
 
 module.exports = mongoose.model("Conversation", ConversationSchema);

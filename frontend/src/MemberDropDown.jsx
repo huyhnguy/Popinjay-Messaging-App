@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserGear, faMessage, faUserXmark, faEye, faCrown } from '@fortawesome/free-solid-svg-icons'
 
-export default function MemberDropDown({ user, profileFunction, kickFunction, adminFunction, admin, masterFunction}) {
+export default function MemberDropDown({ user, profileFunction, kickFunction, adminFunction, admin, ownerFunction}) {
     const navigate = useNavigate();
 
     const handleMessage = (e) => {
@@ -52,10 +52,10 @@ export default function MemberDropDown({ user, profileFunction, kickFunction, ad
                         <p style={{margin: 0}}>{ admin ? "Remove admin" : "Make admin"}</p>
                     </button>
                 }
-                { masterFunction &&
-                    <button onClick={(e) => {masterFunction(e, user._id)}} className="member-button-gold">
+                { ownerFunction &&
+                    <button onClick={(e) => {ownerFunction(e, user._id)}} className="member-button-gold">
                         <FontAwesomeIcon icon={faCrown}/>
-                        <p style={{margin: 0}}>Make master</p>
+                        <p style={{margin: 0}}>Make owner</p>
                     </button>
                 }
                 { kickFunction &&
