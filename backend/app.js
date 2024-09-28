@@ -4,8 +4,6 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 require("dotenv").config();
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
 const apiRouter = require('./routes/api');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -33,10 +31,6 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// view engine setup
-//app.set('views', path.join(__dirname, 'views'));
-//app.set('view engine', 'ejs');
-
 const corsOptions = {
   origin: "http://localhost:5173",
   credentials: true
@@ -63,13 +57,10 @@ app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-//app.use(express.static(path.join(__dirname, 'public')));
 
 // Serve static files from the React frontend app
 app.use(express.static(path.join(__dirname, '../frontend/dist')))
 
-//app.use('/', indexRouter);
-//app.use('/users', usersRouter);
 app.use('/api', apiRouter);
 
 app.get('*', (req, res) => {

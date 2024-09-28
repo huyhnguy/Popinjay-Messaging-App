@@ -7,7 +7,6 @@ const jwt = require('jsonwebtoken');
 require("dotenv").config();
 const cloudinary = require('cloudinary').v2;
 const Notification = require('../models/notification');
-const streamifier = require('streamifier');
 const { uploadStream } = require('../middleware/uploadStream');
 
 exports.login_post = [
@@ -162,16 +161,17 @@ exports.signup_post = [
                 })
             })
 
-            const result = await Conversation.updateOne({ _id: '66ef1677007b15bccb9a1cca' }, { 
+            const globalChatId = '66ef1677007b15bccb9a1cca'
+
+            await Conversation.updateOne({ _id: globalChatId }, { 
                 $push: { users: user._id }
             });
-            console.log(`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`);
 
             const notification = new Notification({
                 to: [user._id],
-                from: '66ef1677007b15bccb9a1cca',
+                from: globalChatId,
                 from_type: 'Conversation',
-                conversation_id: '66ef1677007b15bccb9a1cca',
+                conversation_id: globalChatId,
                 update: "You have been added to the group."
             })
 
@@ -195,7 +195,9 @@ exports.users_list = asyncHandler(async (req, res, next) => {
 exports.user_profile_get = asyncHandler(async (req, res, next) => {
     const user = await User.findById(req.user.id).lean().exec();
 
-    if (req.user.id === "66ef189e146ab1b35b827993") {
+    const guestId = '66ef189e146ab1b35b827993'
+
+    if (req.user.id === guestId) {
         res.json({
             display_name: user.display_name,
             profile_picture: user.profile_picture,
@@ -258,26 +260,7 @@ exports.user_profile_put = [
                 if (req.file) {
 
                     const uploadedImageUrl = await uploadStream(req.file.buffer, req.user.id);
-                    console.log(uploadedImageUrl);
                     user.profile_picture = uploadedImageUrl;
-
-                    /*const image = cloudinary.uploader.upload_stream(
-                        { 
-                            folder: 'uploads',
-                            public_id: req.user.id,
-                            overwrite: true 
-                        },
-                        async (error, result) => {
-                          if (error) {
-                            return res.status(500).send(error);
-                          }
-                          console.log(result.secure_url);
-                          user.profile_picture = result.secure_url;
-                          await user.save();
-                        }
-                      );
-
-                    streamifier.createReadStream(req.file.buffer).pipe(image);*/
                 } else {
                     if (req.body.picture_status === "delete") {
                         user.profile_picture = null;
@@ -307,20 +290,4 @@ exports.user_delete = asyncHandler(async (req, res, next) => {
 exports.user_get = asyncHandler(async (req, res, next) => {
     const user = await User.findById(req.params.userId).lean().select('display_name profile_picture about_me createdAt').exec();
     res.json(user);
-
-    /*if (req.user.id === "66d0f850353bc0d50dfd3f1c") {
-        res.json({
-            display_name: user.display_name,
-            profile_picture: user.profile_picture,
-            about_me: user.about_me,
-            guest: true
-        })
-    } else {
-        res.json({
-            display_name: user.display_name,
-            profile_picture: user.profile_picture,
-            about_me: user.about_me,
-            guest: false
-        })
-    }*/
 })

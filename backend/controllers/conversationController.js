@@ -2,11 +2,9 @@ const asyncHandler = require("express-async-handler");
 const Conversation = require("../models/conversation");
 const Message = require("../models/message")
 const { body, validationResult } = require("express-validator");
-const User = require("../models/user")
 const mongoose = require("mongoose");
 const cloudinary = require('cloudinary').v2;
 const Notification = require("../models/notification");
-const streamifier = require('streamifier');
 const { uploadStream } = require('../middleware/uploadStream');
 
 exports.dms_create_post = asyncHandler(async (req, res, next) => {
@@ -184,24 +182,6 @@ exports.group_settings_put = [
                     const uploadedImageUrl = await uploadStream(req.file.buffer, req.params.groupId);
                     console.log(uploadedImageUrl);
                     conversation.profile_picture = uploadedImageUrl;
-
-                    /*const image = cloudinary.uploader.upload_stream(
-                        { 
-                            folder: 'uploads',
-                            public_id: req.params.groupId,
-                            overwrite: true 
-                        },
-                        async (error, result) => {
-                          if (error) {
-                            return res.status(500).send(error);
-                          }
-                          console.log(result.secure_url);
-                          conversation.profile_picture = result.secure_url;
-                          await conversation.save();
-                        }
-                      );
-
-                    streamifier.createReadStream(req.file.buffer).pipe(image);*/
                 } else {
                     if (req.body.picture_status === "delete") {
                         conversation.profile_picture = null;
@@ -229,19 +209,12 @@ exports.group_settings_delete = asyncHandler(async (req, res, next) => {
             return;
         }
 
-            //await cloudinary.uploader.destroy(req.params.groupId, function(result) { console.log(result) });
             const [deletedImageUrl, deletedMessages, deletedGroup, deletedNotifications] = await Promise.all([
                 cloudinary.uploader.destroy(req.params.groupId, function(result) { console.log(result) }),
                 Message.deleteMany({_id: { $in: group.history }}), 
                 Conversation.deleteOne({ _id: req.params.groupId }),
                 Notification.deleteMany({ from: req.params.groupId})
             ]);
-       
-    
-        //const deletedMessages = await Message.deleteMany({_id: { $in: group.history }})
-        //const deletedGroup = await Conversation.deleteOne({ _id: req.params.groupId });
-
-       // const [deletedMessages, deletedGroup] = await Promise.all([Message.deleteMany({_id: { $in: group.history }}), Conversation.deleteOne({ _id: req.params.groupId }) ])
 
         console.log(`deleted ${deletedMessages.deletedCount} messages`);
         
@@ -316,23 +289,6 @@ exports.groups_create_post = [
                 const uploadedImageUrl = await uploadStream(req.file.buffer, conversation._id);
                 console.log(uploadedImageUrl);
                 conversation.profile_picture = uploadedImageUrl;
-                /*const image = cloudinary.uploader.upload_stream(
-                    { 
-                        folder: 'uploads',
-                        public_id: conversation._id,
-                        overwrite: true 
-                    },
-                    async (error, result) => {
-                      if (error) {
-                        return res.status(500).send(error);
-                      }
-                      console.log(result.secure_url);
-                      conversation.profile_picture = result.secure_url;
-                      await conversation.save();
-                    }
-                  );
-
-                streamifier.createReadStream(req.file.buffer).pipe(image);*/
             }
             
             await conversation.save();

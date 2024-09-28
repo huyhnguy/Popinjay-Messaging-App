@@ -12,6 +12,8 @@ export default function GroupTab() {
     const [addGroup, setAddGroup] = useState("closed");
     const [notifications, setNotifications] = useState(null);
 
+    const globalChatId = '66ef1677007b15bccb9a1cca';
+
     const navigate = useNavigate();
     
     useEffect(() => {
@@ -169,10 +171,11 @@ export default function GroupTab() {
     }
 
     function sortByMostRecent(dms) {
+        
         dms.sort((a,b) => {
-            if (a._id === '66ef1677007b15bccb9a1cca') {
+            if (a._id === globalChatId) {
                 return -1
-            } else if (b._id === '66ef1677007b15bccb9a1cca') {
+            } else if (b._id === globalChatId) {
                 return 1
             }else if (!a.history[a.history.length - 1] && !b.history[b.history.length - 1]) {
                 return 0
@@ -235,7 +238,7 @@ export default function GroupTab() {
                                 return (
                                     <div key={group._id} id={`${group._id}`} >
                                         <div className={`message-card ${(notifications && checkArrayOfNotificationsForGroupId(notifications, group._id)) && "new"}`}  onClick={() => {handleGroup(group)}}>
-                                            { group._id === '66ef1677007b15bccb9a1cca' ?               
+                                            { group._id === globalChatId ?               
                                                 <div style={{position: "relative"}}>
                                                     <ProfilePic imageSrc={group.profile_picture} size="5rem" group={true} />
                                                     <FontAwesomeIcon icon={faStar} style={{ height: "2rem", color: "gold", position: "absolute", top: "-5px", right: "-5px" }}/>

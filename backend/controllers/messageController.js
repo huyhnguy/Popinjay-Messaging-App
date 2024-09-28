@@ -3,7 +3,6 @@ const Message = require("../models/message");
 const Conversation = require("../models/conversation");
 const cloudinary = require('cloudinary').v2;
 const Notification = require("../models/notification");
-const streamifier = require('streamifier');
 const { uploadStream } = require('../middleware/uploadStream');
 
 exports.message_create_post = asyncHandler(async (req, res, next) => {
@@ -95,23 +94,6 @@ exports.message_update = asyncHandler(async (req, res, next) => {
             const uploadedImageUrl = await uploadStream(req.file.buffer, message._id);
             console.log(uploadedImageUrl);
             message.image = uploadedImageUrl;
-            /*const image = cloudinary.uploader.upload_stream(
-                { 
-                    folder: 'uploads',
-                    public_id: message._id,
-                    overwrite: true 
-                },
-                async (error, result) => {
-                  if (error) {
-                    return res.status(500).send(error);
-                  }
-                  console.log(result.secure_url);
-                  message.image = result.secure_url;
-                  await message.save();
-                }
-              );
-
-            streamifier.createReadStream(req.file.buffer).pipe(image);*/
         } else if (!req.body.image_same) {
             message.image = null;
         }
