@@ -1,6 +1,6 @@
-import NavBar from "./NavBar"
+import NavBar from "../components/NavBar"
 import { useState, useEffect } from "react"
-import ProfilePic from "./ProfilePic";
+import ProfilePic from "../components/ProfilePic";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faEnvelopeCircleCheck} from '@fortawesome/free-solid-svg-icons'

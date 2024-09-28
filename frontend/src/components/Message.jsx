@@ -1,6 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash, faPen } from '@fortawesome/free-solid-svg-icons'
-import { useEffect } from 'react'
 
 export default function Message({ info, person, deleteMessage, editMessage, deletePower }) {
 

@@ -1,7 +1,7 @@
-import NavBar from "./NavBar"
+import NavBar from "../components/NavBar"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
-import ProfilePic from "./ProfilePic";
+import ProfilePic from "../components/ProfilePic";
 
 export default function DmTab() {
     const [dms, setDms] = useState(null);

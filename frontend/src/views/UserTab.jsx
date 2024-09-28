@@ -1,9 +1,8 @@
-import Logo from "./Logo"
-import NavBar from "./NavBar"
+import NavBar from "../components/NavBar"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
-import ProfilePic from "./ProfilePic";
-import UserProfile from "./UserProfile";
+import ProfilePic from "../components/ProfilePic";
+import UserProfile from "../components/UserProfile";
 
 export default function UserTab() {
     const [users, setUsers] = useState(null);

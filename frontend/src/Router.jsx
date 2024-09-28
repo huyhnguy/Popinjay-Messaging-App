@@ -3,16 +3,16 @@ import {
     RouterProvider,
   } from "react-router-dom";
 
-import LogIn from "./LogIn";
-import SignUp from "./SignUp";
-import UserTab from "./UserTab";
-import Dm from "./Dm";
-import Settings from "./Settings";
-import DmTab from "./DmTab";
-import GroupTab from "./GroupTab";
-import GroupDm from "./GroupDm";
-import GroupSettings from "./GroupSettings";
-import NotificationTab from "./NotificationTab";
+import LogIn from "./views/LogIn";
+import SignUp from "./views/SignUp";
+import UserTab from "./views/UserTab";
+import Dm from "./views/Dm";
+import Settings from "./views/Settings";
+import DmTab from "./views/DmTab";
+import GroupTab from "./views/GroupTab";
+import GroupDm from "./views/GroupDm";
+import GroupSettings from "./views/GroupSettings";
+import NotificationTab from "./views/NotificationTab";
 
 const router = createBrowserRouter([
     {

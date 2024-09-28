@@ -1,9 +1,9 @@
-import NavBar from "./NavBar"
+import NavBar from "../components/NavBar"
 import { useState } from "react"
 import { useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleXmark, faLock } from '@fortawesome/free-solid-svg-icons'
-import ProfilePic from "./ProfilePic";
+import ProfilePic from "../components/ProfilePic";
 import { useNavigate } from "react-router-dom";
 
 export default function Settings() {

@@ -1,5 +1,4 @@
-import './index.css'
-import Logo from './Logo'
+import Logo from '../components/Logo'
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from 'react';
 

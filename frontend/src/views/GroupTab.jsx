@@ -1,10 +1,10 @@
-import NavBar from "./NavBar"
+import NavBar from "../components/NavBar";
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
-import ProfilePic from "./ProfilePic";
+import ProfilePic from "../components/ProfilePic";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faCirclePlus, faStar} from '@fortawesome/free-solid-svg-icons'
-import AddGroup from "./AddGroup";
+import AddGroup from "../components/AddGroup";
 
 export default function GroupTab() {
     const [groups, setGroups] = useState(null);

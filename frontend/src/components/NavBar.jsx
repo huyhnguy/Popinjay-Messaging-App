@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {faGear, faUsers, faUser, faEarthAmericas, faMessage, faBell, faCircle} from '@fortawesome/free-solid-svg-icons'
+import {faGear, faUsers, faUser, faMessage, faBell, faCircle} from '@fortawesome/free-solid-svg-icons'
 import { useEffect, useState} from "react";
 
 export default function NavBar({ active, markUpdatedDms, markUpdatedGroups }) {

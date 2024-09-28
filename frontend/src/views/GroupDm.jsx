@@ -1,27 +1,25 @@
 import { useParams, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react";
-import Message from "./Message";
-import ProfilePic from "./ProfilePic";
+import Message from "../components/Message";
+import ProfilePic from "../components/ProfilePic";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {faPaperPlane, faCircleChevronUp, faCircleXmark} from '@fortawesome/free-solid-svg-icons'
-import FileMessageInput from "./FileMessageInput";
-import UserProfile from "./UserProfile";
-import NavBar from "./NavBar";
+import {faPaperPlane, faCircleChevronUp, faGear, faCircleXmark} from '@fortawesome/free-solid-svg-icons'
+import FileMessageInput from "../components/FileMessageInput";
+import NavBar from "../components/NavBar";
 
-export default function Dm() {
+export default function GroupDm() {
     const [dm, setDm] = useState(null);
     const [base64Pic, setBase64Pic] = useState(null);
     const [sender, setSender] = useState(null);
     const [loading, setLoading] = useState(true);
     const [newMessage, setNewMessage] = useState(false);
     const [edit, setEdit] = useState(null);
-    const [profilePopUp, setProfilePopUp] = useState(false);
 
     const urlParams = useParams();
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch('/api/dms/' + urlParams.dmId , {
+        fetch('/api/groups/' + urlParams.groupId , {
             method: 'GET',
             credentials: "include",
             headers: {
@@ -36,8 +34,7 @@ export default function Dm() {
             throw error
           })
           .then(res => {
-            console.log(res);
-            setDm(res.dm);
+            setDm(res.group);
             setSender(res.sender);
             setLoading(false);
           })
@@ -59,13 +56,14 @@ export default function Dm() {
         const messageHistoryDiv = document.querySelector(".message-history");
         if (messageHistoryDiv.lastChild) {
             messageHistoryDiv.lastChild.scrollIntoView({
-                block: "nearest",
+                block: "end",
                 inline: "nearest",
                 behavior: "smooth",
                 alignToTop: false
             });
             setNewMessage(false);
         }
+
     }
 
     const convertToBase64 = (file) => {
@@ -87,13 +85,20 @@ export default function Dm() {
         setBase64Pic(base64);
     }
 
+    const clearUserInputs = () => {
+        document.getElementById("new-message").value = "";
+        document.getElementById("message-files").value = null;
+        setBase64Pic(null);
+    }
+
     const appendNewMessageToForm = () => {
         const image = document.getElementById("message-files").files[0];
         const newMessage = document.getElementById("new-message").value;
-        const conversationId = urlParams.dmId;
+        const conversationId = urlParams.groupId;
         const formData = new FormData();
 
         formData.append("conversation_id", conversationId);
+        formData.append("conversation_type", "Group");
 
         if (image) {
             formData.append("image", image)
@@ -108,20 +113,12 @@ export default function Dm() {
         return formData
     }
 
-    const clearUserInputs = () => {
-        document.getElementById("new-message").value = "";
-        document.getElementById("message-files").value = null;
-        setBase64Pic(null);
-    }
-
     const handleSubmit = (e) => {
         e.preventDefault();
 
         const formData = appendNewMessageToForm();
 
         if (edit) {
-            console.log(base64Pic);
-            console.log(document.getElementById("message-files").value);
             if (base64Pic && !document.getElementById("message-files").value) formData.append("image_same", true);
             submitEditMessage(edit, formData);
 
@@ -145,9 +142,7 @@ export default function Dm() {
         .then(res => {
             const newDm = dm;
             newDm.history.push(res.new_message);
-            console.log(res.new_message);
             setDm(newDm);
-
             clearUserInputs();
             setNewMessage(true);
         })
@@ -159,8 +154,23 @@ export default function Dm() {
         })
     }
 
-    const handleDeletePictureInput = () => {
+    const handleDelete = () => {
         setBase64Pic(null);
+    }
+
+    const displayUsersNamesInGroup = (users) => {
+        let names = "";
+
+        for (let i = 0; i < users.length ; i++) {
+            if (i === 6) { 
+                break 
+            }else if (i === 0) {
+                names = users[i].display_name;
+            } else {
+                names = names + ", " + users[i].display_name;
+            }
+        }
+        return names
     }
 
     const removeMessageOnClient = (message) => {
@@ -171,7 +181,6 @@ export default function Dm() {
     }
 
     const handleDeleteMessage = (message) => {
-
         fetch('/api/messages/' + message._id, {
             method: 'DELETE',
             credentials: "include",
@@ -180,11 +189,10 @@ export default function Dm() {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                conversation_id: urlParams.dmId
+                conversation_id: urlParams.groupId
             })
         })
             .then(res => {
-                console.log(res);
                 if (res.ok) { 
                     return res.json() 
                 }
@@ -195,7 +203,8 @@ export default function Dm() {
                 })
             .then(res => {
                 if (res.message === "message successfully deleted") {
-                    removeMessageOnClient(message)
+                    removeMessageOnClient(message);
+                    setDm(cloneDm);
                 } else {
                     console.log(res);
                 }
@@ -218,7 +227,6 @@ export default function Dm() {
 
     const updateEditedMessageOnClient = (oldMessage, updatedMessage) => {
         const indexOfOldMessage = dm.history.findIndex((element) => element === oldMessage);
-
         setDm(prevDm => {
             const cloneDm = structuredClone(prevDm);
             cloneDm.history.splice(indexOfOldMessage, 1, updatedMessage);
@@ -227,8 +235,6 @@ export default function Dm() {
     }
 
     const submitEditMessage = (oldMessage, newMessageInputs) => {
-        console.log(...newMessageInputs);
-
         fetch('/api/messages/' + oldMessage._id, {
             method: 'PUT',
             credentials: "include",
@@ -263,36 +269,34 @@ export default function Dm() {
             })
     }
 
+    const handleSettingsClick = () => {
+        navigate('settings')
+    }
+
     return(
         <>
-            { profilePopUp &&
-              <>
-                <UserProfile userId={profilePopUp} messageButton={false}/>
-                <div className="shadow" onClick={() => {setProfilePopUp(false)}}></div>
-              </>
-            }
-            { dm &&
+            { dm &&   
                 <div className="dm-page">
-                        <div className="receiver-container" style={{ cursor: "pointer" }}onClick={() => {setProfilePopUp(dm.users[0]._id)}}>
-                            <ProfilePic imageSrc={dm.users[0].profile_picture} size="2.5rem"/>
-                            <h1>{dm.users[0].display_name}</h1>
-                        </div>
-                    <main className="message-history">
-                        {   
+                    <div className="group-header">
+                            <ProfilePic imageSrc={dm.profile_picture} size="2.5rem"/>
+                            <h1>{dm.display_name != "" ? dm.display_name : displayUsersNamesInGroup(dm.users)}</h1>
+                            <button className="group-settings-button" onClick={handleSettingsClick}>
+                                <FontAwesomeIcon icon={faGear} style={{height: "2rem"}}/>
+                            </button>
+
+                    </div>
+
+                    <main className="message-history" >
+                        { 
                             dm.history.map(message => {
-                                if (message.user._id === dm.users[0]._id) {
-                                    return(
-                                        <Message key={message._id} info={message} person="receiver" />
-                                    )
-                                } else if (message.user._id === sender) {
+                                if (message.user._id === sender) {
                                     return(
                                         <Message key={message._id} info={message} person="sender" deleteMessage={() => {handleDeleteMessage(message)}} editMessage={() => {startEditMessage(message)}}/>
                                     )
-                                } else {
-                                    return(
-                                        <Message key={message._id} info={message}/>
-                                    )
                                 }
+                                return(
+                                    <Message key={message._id} info={message} person="group-receiver" deleteMessage={() => {handleDeleteMessage(message)}} deletePower={ sender === dm.owner || (dm.admins.includes(sender) && dm.admin_permissions.delete_messages) ? true : false } />
+                                )
                             })
                         }
                     </main>
@@ -307,14 +311,14 @@ export default function Dm() {
                             <p style={{ margin: 0 }}>Editing Message</p>
                         </div>
                     }
-                    <form method="POST" className="message-form" onSubmit={(e) => {handleSubmit(e)}}>
+                    <form method="POST" className="message-form">
                         <label htmlFor="message-files" >
                             <FontAwesomeIcon icon={faCircleChevronUp} className="file-upload-icon" style={{ }}/>
                         </label>
                         <input style={{ position: "absolute", visibility: "hidden", pointerEvents: "none", width: '0px', height: '0px'}} id="message-files" type="file" accept="image/*" onChange={(e) => {handleFileUpload(e)}}/>
                         <div style={{width: "100%"}}>
                         { base64Pic &&
-                            <FileMessageInput imgSrc={base64Pic} deleteFunction={handleDeletePictureInput} style={{top: "160px"}} />
+                            <FileMessageInput imgSrc={base64Pic} deleteFunction={handleDelete}/>
                         }
                             <input type="text" id="new-message" required className="input" placeholder="Message"/>
 
@@ -323,15 +327,12 @@ export default function Dm() {
                             <FontAwesomeIcon icon={faPaperPlane} />
                         </button>
                     </form>
-                    <NavBar active='Messages' />
+                    <NavBar active='Groups' />
                 </div>
             }
             { loading &&
                 <h1>Loading...</h1>
             }
-
-
         </>
-
     )
 }

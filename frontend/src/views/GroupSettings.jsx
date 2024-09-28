@@ -1,13 +1,13 @@
-import NavBar from "./NavBar"
+import NavBar from "../components/NavBar";
 import { useState } from "react"
 import { useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleXmark, faUserGear, faCrown, faCirclePlus, faLock } from '@fortawesome/free-solid-svg-icons'
-import ProfilePic from "./ProfilePic";
+import ProfilePic from "../components/ProfilePic";
 import { useNavigate, useParams } from "react-router-dom";
-import MemberDropDown from "./MemberDropDown";
-import UserProfile from "./UserProfile";
-import AddUserPopUp from "./AddUserPopUp";
+import MemberDropDown from "../components/MemberDropDown";
+import UserProfile from "../components/UserProfile";
+import AddUserPopUp from "../components/AddUserPopUp";
 
 export default function GroupSettings() {
     const [displayName, setDisplayName] = useState(undefined);
@@ -42,17 +42,14 @@ export default function GroupSettings() {
             throw error
           })
           .then(res => {
-            console.log(res);
             setDisplayName(res.group.display_name);
             setPic(res.group.profile_picture);
             setAdminIds(res.group.admins);
             setOwnerId(res.group.owner);
             const sortedMembersList = sortMembers(res.group.users, res.group.admins, res.group.owner, res.sender)
-            console.log(sortedMembersList);
             setUsers(sortedMembersList);
             setAdminPermissions(res.group.admin_permissions);
             setSender(res.sender);
-
           })
           .catch(err => {
             console.log(err);
@@ -86,10 +83,7 @@ export default function GroupSettings() {
 
         const checkedBoxesNodeList = document.querySelectorAll('input[name=admin-permissions]:checked');
         const checkedBoxesArray = Array.from(checkedBoxesNodeList);
-        const checkedBoxes = checkedBoxesArray.map((element) => element.value);
-
-        console.log(checkedBoxes);
-        
+        const checkedBoxes = checkedBoxesArray.map((element) => element.value);        
         const newDisplayName = document.getElementById("display-name").value;
 
         const formData = new FormData();
@@ -117,7 +111,6 @@ export default function GroupSettings() {
             formData.append("profile_picture", null);
         }
 
-        console.log([...formData])
         fetch(`/api/groups/${urlParams.groupId}/settings`, {
             method: 'PUT',
             credentials: "include",
@@ -134,7 +127,6 @@ export default function GroupSettings() {
                     display_name: displayNameErrors[0],
                 })
             } else {
-                console.log(res);
                 alert(res.message);
                 setErrors(null);
             }
