@@ -295,7 +295,7 @@ export default function GroupDm() {
                                     )
                                 }
                                 return(
-                                    <Message key={message._id} info={message} person="group-receiver" deleteMessage={() => {handleDeleteMessage(message)}} deletePower={ sender === dm.master || (dm.admins.includes(sender) && dm.admin_permissions.delete_messages) ? true : false } />
+                                    <Message key={message._id} info={message} person="group-receiver" deleteMessage={() => {handleDeleteMessage(message)}} deletePower={ sender === dm.owner || (dm.admins.includes(sender) && dm.admin_permissions.delete_messages) ? true : false } />
                                 )
                             })
                         }

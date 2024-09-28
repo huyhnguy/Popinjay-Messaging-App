@@ -66,7 +66,7 @@ export default function NavBar({ active, markUpdatedDms, markUpdatedGroups }) {
                     { (newNotifications && newNotifications.length != 0) && 
                         <div className="notification-counter-container">
                             <div className="notification-counter">{newNotifications.length}</div>
-                            <FontAwesomeIcon icon={faCircle} style={{ color: "red", position: "absolute", top: 0 }}className="nav-icon"/>
+                            <FontAwesomeIcon icon={faCircle} style={{ color: "red", position: "absolute", top: 0, height: "1.5rem"}}/>
                         </div>
                     }
                 </div>
