@@ -9,6 +9,8 @@ import MemberDropDown from "../components/MemberDropDown";
 import UserProfile from "../components/UserProfile";
 import AddUserPopUp from "../components/AddUserPopUp";
 
+type AdminAction = "Make admin" | "Remove admin";
+
 export default function GroupSettings() {
     const [displayName, setDisplayName] = useState(undefined);
     const [pic, setPic] = useState(null);
@@ -160,8 +162,7 @@ export default function GroupSettings() {
         setDropDown(null);
     }
 
-    const openUserProfile = (e, userId) => {
-        e.preventDefault();
+    const openUserProfile = (userId) => {
         setUserProfile(userId);
         closeDropDown();
     }
@@ -191,8 +192,7 @@ export default function GroupSettings() {
         })
     }
 
-    const kickUser = (e, userId) => {
-        e.preventDefault();
+    const kickUser = (userId: string) => {
         if (users.length > 3) {
             fetch(`/api/groups/${urlParams.groupId}/users/${userId}`, {
                 method: 'DELETE',
@@ -223,8 +223,8 @@ export default function GroupSettings() {
 
     }
 
-    const adminUser = (e, userId, action) => {
-        e.preventDefault();
+
+    const adminUser = (userId: string, action: AdminAction) => {
         if (action === "Make admin") {
             fetch(`/api/groups/${urlParams.groupId}/users/${userId}`, {
                 method: 'PUT',
@@ -284,9 +284,7 @@ export default function GroupSettings() {
         }
     }
 
-    const ownerUser = (e, userId) => {
-        e.preventDefault();
-
+    const ownerUser = (userId: string) => {
         fetch(`/api/groups/${urlParams.groupId}/users/${userId}`, {
             method: 'PUT',
             credentials: "include",
