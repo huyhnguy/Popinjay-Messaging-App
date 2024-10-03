@@ -87,7 +87,6 @@ export default function AddGroup({ closePopUp }: { closePopUp: (action: Action) 
             console.log(typeof base64);
             console.log(base64);
             setBase64Pic(base64);
-
     }
 
     const appendDataToForm = () => {
