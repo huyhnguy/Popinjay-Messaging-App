@@ -1,9 +1,22 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash, faPen } from '@fortawesome/free-solid-svg-icons'
 
-export default function Message({ info, person, deleteMessage, editMessage, deletePower }) {
+type Role = "sender" | "receiver" | "group-receiver"
 
-    let options = {
+export default function Message({ info, person, deleteMessage, editMessage, deletePower }: { 
+    info: { 
+        createdAt: Date, 
+        user: { display_name: string },
+        image?: string, 
+        content?: string
+    }, 
+    person: Role, 
+    deleteMessage: () => void, 
+    editMessage: () => void, 
+    deletePower: boolean 
+}) {
+
+    let options: object = {
         month: "short",
         day: "numeric",
         weekday: "short",
@@ -12,7 +25,7 @@ export default function Message({ info, person, deleteMessage, editMessage, dele
     }
     const readableDate = new Date(info.createdAt)
     const formatter = new Intl.DateTimeFormat("en-US", options)
-    const formattedDate = formatter.format(readableDate, options)
+    const formattedDate = formatter.format(readableDate)
 
     if (person === "sender") {
         return(
