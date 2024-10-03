@@ -52,14 +52,11 @@ export default function AddGroup({ closePopUp }: { closePopUp: (action: Action) 
 
     const scrollToNewChosenUser = () => {
         const chosenUsersContainer = document.querySelector(".chosen-users");
-
-        if (chosenUsersContainer && chosenUsersContainer.lastElementChild) {
-            chosenUsersContainer.lastElementChild.scrollIntoView({
-                block: "nearest",
-                inline: "nearest",
-                behavior: "smooth",
-              });
-        }
+        chosenUsersContainer?.lastElementChild?.scrollIntoView({
+            block: "nearest",
+            inline: "nearest",
+            behavior: "smooth",
+        });
     }
 
     useEffect(() => {

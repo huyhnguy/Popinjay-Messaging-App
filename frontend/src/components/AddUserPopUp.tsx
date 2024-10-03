@@ -2,12 +2,15 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom";
 import ProfilePic from "./ProfilePic";
 
-export default function AddUserPopUp({ groupMembersArray, addUserFunction }) {
-    const [users, setUsers] = useState(null);
+type UserArray = { _id: string, display_name: string }[] 
+
+export default function AddUserPopUp({ groupMembersArray, addUserFunction }: { groupMembersArray: UserArray, addUserFunction: (user: object) => void }) {
+    const [users, setUsers] = useState<UserArray>([]);
     
     const navigate = useNavigate();
 
-    const removeGroupMembersFromUsersArray = (usersArray) => {
+    const removeGroupMembersFromUsersArray = (usersArray: UserArray) => {
+        
         for (let i = 0; i < groupMembersArray.length; i++) {
             const index = usersArray.findIndex((user) => user._id === groupMembersArray[i]._id);
             usersArray.splice(index, 1);
@@ -25,9 +28,7 @@ export default function AddUserPopUp({ groupMembersArray, addUserFunction }) {
           })
           .then(res => {
             if (res.ok) { return res.json() }
-            const error = new Error(res.message);
-            error.code = res.status;
-            throw error
+            throw Error
           })
           .then(res => {
             const allUsersArray = res;
@@ -41,13 +42,13 @@ export default function AddUserPopUp({ groupMembersArray, addUserFunction }) {
             }
         })    }, [])
 
-    const handleSearch = (e) => {
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         let value = e.target.value.toLowerCase();
         
         users.forEach(user => {
           const isVisible = user.display_name.toLowerCase().includes(value);
           const userCard = document.getElementById(`invite-${user._id}`);
-          userCard.classList.toggle("hide", !isVisible);
+          userCard?.classList.toggle("hide", !isVisible);
         })
       }
 
