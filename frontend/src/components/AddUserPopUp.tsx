@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom";
 import ProfilePic from "./ProfilePic";
 
-type UserArray = { _id: string, display_name: string }[] 
+type UserArray = { _id: string, display_name: string, profile_picture?: string }[] 
 
 export default function AddUserPopUp({ groupMembersArray, addUserFunction }: { groupMembersArray: UserArray, addUserFunction: (user: object) => void }) {
     const [users, setUsers] = useState<UserArray>([]);
