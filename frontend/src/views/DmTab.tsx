@@ -2,11 +2,15 @@ import NavBar from "../components/NavBar"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
 import ProfilePic from "../components/ProfilePic";
+import { NotificationType, ConversationType, UserType } from "../types";
+
+type Dms = ConversationType[] | null
+type DmNotifications = NotificationType[] | null
 
 export default function DmTab() {
-    const [dms, setDms] = useState(null);
+    const [dms, setDms] = useState<Dms>(null);
     const [sender, setSender] = useState(null);
-    const [notifications, setNotifications] = useState(null);
+    const [notifications, setNotifications] = useState<DmNotifications>(null);
 
     const navigate = useNavigate();
     
@@ -21,9 +25,7 @@ export default function DmTab() {
           })
           .then(res => {
             if (res.ok) { return res.json() }
-            const error = new Error(res.message);
-            error.code = res.status;
-            throw error
+            throw Error
           })
           .then(res => {
             console.log(res.dms);
@@ -42,7 +44,7 @@ export default function DmTab() {
         })
     }, [])
 
-    const markNotificationAsRead = (notification) => {
+    const markNotificationAsRead = (notification: NotificationType ) => {
         fetch(`/api/notifications/${notification._id}`, {
             method: 'PUT',
             credentials: "include",
@@ -53,9 +55,7 @@ export default function DmTab() {
           })
           .then(res => {
             if (res.ok) { return res.json() }
-            const error = new Error(res.message);
-            error.code = res.status;
-            throw error
+            throw Error
           })
           .then(res => {
             console.log(res);
@@ -69,7 +69,7 @@ export default function DmTab() {
         })
     }
 
-    const handleClick = (dm) => {
+    const handleClick = (dm: ConversationType) => {
         const uniqueDirectMessage = `/dms/${dm._id}`;
         navigate(uniqueDirectMessage);
 
@@ -80,52 +80,52 @@ export default function DmTab() {
         }
     }
 
-    function isSameDay(d1, d2) {
+    function isSameDay(d1: Date, d2: Date) {
         return d1.getFullYear() === d2.getFullYear() &&
           d1.getMonth() === d2.getMonth() &&
           d1.getDate() === d2.getDate();
       }
 
-    function isYesterday(d1, d2) {
+    function isYesterday(d1: Date, d2: Date) {
         return d1.getFullYear() === d2.getFullYear() &&
           d1.getMonth() === d2.getMonth() &&
           d1.getDate() === d2.getDate() - 1;
     }
 
-    const convertDate = (date) => {
+    const convertDate = (date: Date) => {
         const readableDate = new Date(date);
         const currentDate = new Date();
 
         if (isSameDay(readableDate, currentDate) === true) {
-            let options = {
+            let options: object = {
                 hour: "numeric",
                 minute: "numeric",
             }
             const formatter = new Intl.DateTimeFormat("en-US", options);
-            const formattedDate = formatter.format(readableDate, options);
+            const formattedDate = formatter.format(readableDate);
 
             return formattedDate
         } else if (isYesterday(readableDate, currentDate) === true) {
             return "Yesterday"
         } else if (isSameDay(readableDate, currentDate) === false) {
-            let options = {
+            let options: object = {
                 month: "numeric",
                 day: "numeric",
                 year: "2-digit"
             }
             const formatter = new Intl.DateTimeFormat("en-US", options);
-            const formattedDate = formatter.format(readableDate, options);
+            const formattedDate = formatter.format(readableDate);
 
             return formattedDate
         }
     }
 
-    function sortByMostRecent(dms) {
+    function sortByMostRecent(dms: ConversationType[]) {
         dms.sort((a,b) => {
             const aLastMessageDate = a.history[a.history.length - 1].createdAt;
             const bLastMessageDate = b.history[b.history.length - 1].createdAt;
-            const convertedADate = new Date(aLastMessageDate);
-            const convertedBDate = new Date(bLastMessageDate);
+            const convertedADate: any = new Date(aLastMessageDate);
+            const convertedBDate: any = new Date(bLastMessageDate);
 
             return convertedBDate - convertedADate;
         })
@@ -133,28 +133,27 @@ export default function DmTab() {
         return dms
     }
 
-    const handleSearch = (e) => {
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         let value = e.target.value.toLowerCase();
 
-        dms.forEach(dm => {
-            const receiver = dm.users.find(user => user._id != sender);
-            const isVisible = receiver.display_name.toLowerCase().includes(value);
+        dms?.forEach(dm => {
+            const receiver: UserType | undefined = dm.users.find(user => user._id != sender);
+            const isVisible = receiver?.display_name.toLowerCase().includes(value);
             const messageCard = document.getElementById(`${dm._id}`);
-            messageCard.classList.toggle("hide", !isVisible);
+            messageCard?.classList.toggle("hide", !isVisible);
         })
     }
 
-    const markUpdatedDms = (dmNotifications) => {
+    const markUpdatedDms = (dmNotifications: DmNotifications) => {
         setNotifications(dmNotifications);
     }
 
-    const checkArrayOfNotificationsForDmId = (notifications, dmId) => {
+    const checkArrayOfNotificationsForDmId = (notifications: DmNotifications, dmId: string) => {
         if (notifications) {
             for (let i = 0; i < notifications.length; i++) {
                 if (notifications[i].conversation_id === dmId) return notifications[i]
             }
         }
-
 
         return false
     }
@@ -175,13 +174,13 @@ export default function DmTab() {
                                 return (
                                     <div id={`${dm._id}`} key={dm._id}>
                                         <div className={`message-card ${(notifications && checkArrayOfNotificationsForDmId(notifications, dm._id)) && "new"}`}  onClick={() => {handleClick(dm)}}>
-                                            <ProfilePic imageSrc={receiver.profile_picture} size="5rem"/>
+                                            <ProfilePic imageSrc={receiver?.profile_picture} size="5rem"/>
                                             <div className="name-message">
-                                                <h2>{receiver.display_name}</h2>
+                                                <h2>{receiver?.display_name}</h2>
                                                 { lastMessage.user === sender ?
                                                     <p style={{color: "grey",  wordBreak: "break-word" }}>You: {lastMessage.image ? <i>sent an image</i> : lastMessage.content}</p>
                                                     :
-                                                    <p style={{color: "grey", wordBreak: "break-word" }}>{receiver.display_name}: {lastMessage.image ? <i>sent an image</i> : lastMessage.content}</p>
+                                                    <p style={{color: "grey", wordBreak: "break-word" }}>{receiver?.display_name}: {lastMessage.image ? <i>sent an image</i> : lastMessage.content}</p>
                                                 }
                                             </div>
                                             <p style={{ color: "grey", margin: 0 }}>{convertDate(lastMessage.createdAt)}</p>

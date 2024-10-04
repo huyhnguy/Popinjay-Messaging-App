@@ -2,16 +2,17 @@ import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faGear, faUsers, faUser, faMessage, faBell, faCircle} from '@fortawesome/free-solid-svg-icons'
 import { useEffect, useState} from "react";
+import { NotificationType } from "../types";
 
 type Active = "Users" | "Messages" | "Groups" | "Notifications" | "Settings";
-type NotificationType = "User" | "Conversation";
+type NotificationFrom = "User" | "Conversation";
 type NewNotifications = {
-    from_type: NotificationType
+    from_type: NotificationFrom
 }[] | null
 
 export default function NavBar({ active, markUpdatedDms, markUpdatedGroups }: { 
     active: Active, 
-    markUpdatedDms?: (notifications: object) => void, 
+    markUpdatedDms?: (notifications: NotificationType[]) => void, 
     markUpdatedGroups?: (notifications: object) => void 
 }) {
     const [newNotifications, setNewNotifications] = useState<NewNotifications>(null);
@@ -36,12 +37,12 @@ export default function NavBar({ active, markUpdatedDms, markUpdatedGroups }: {
             setNewNotifications(res.new_notifications);
 
             if (active === 'Messages') {
-                const dmNotifications = res.new_notifications.filter((notification: {from_type: NotificationType}) => notification.from_type === "User");
+                const dmNotifications = res.new_notifications.filter((notification: {from_type: NotificationFrom}) => notification.from_type === "User");
                 if (markUpdatedDms) markUpdatedDms(dmNotifications);
             }
 
             if (active === 'Groups') {
-                const groupNotifications = res.new_notifications.filter((notification : {from_type: NotificationType}) => notification.from_type === "Conversation");
+                const groupNotifications = res.new_notifications.filter((notification : {from_type: NotificationFrom}) => notification.from_type === "Conversation");
                 if (markUpdatedGroups) markUpdatedGroups(groupNotifications);
             }
 
