@@ -5,8 +5,16 @@ import { faMessage } from '@fortawesome/free-solid-svg-icons'
 import ProfilePic from "./ProfilePic";
 import { useNavigate } from "react-router-dom";
 
-export default function UserProfile({ userId, messageButton = true }) {
-    const [user, setUser] = useState(null);
+type User = { 
+    _id: string, 
+    profile_picture?: string, 
+    display_name: string, 
+    about_me?: string, 
+    createdAt: Date
+} | null
+
+export default function UserProfile({ userId, messageButton = true }: { userId: string, messageButton: boolean }) {
+    const [user, setUser] = useState<User>(null);
 
     const navigate = useNavigate();
 
@@ -21,9 +29,7 @@ export default function UserProfile({ userId, messageButton = true }) {
           })
           .then(res => {
             if (res.ok) { return res.json() }
-            const error = new Error(res.message);
-            error.code = res.status;
-            throw error
+            throw Error
           })
           .then(res => {
             console.log(res);
@@ -37,25 +43,25 @@ export default function UserProfile({ userId, messageButton = true }) {
         })
     }, [])
 
-    const convertDate = (date) => {
+    const convertDate = (date: Date) => {
         if (!date) {
             return "N/A"
         }
 
         const readableDate = new Date(date);
-        let options = {
+        let options: object = {
             month: "short",
             day: "numeric",
             year: "numeric"
         }
         const formatter = new Intl.DateTimeFormat("en-US", options);
-        const formattedDate = formatter.format(readableDate, options);
+        const formattedDate = formatter.format(readableDate);
 
         return formattedDate
     
     }
 
-    const handleDM = (user) => {
+    const handleDM = (user: User) => {
 
         fetch('/api/dms/create', {
             method: 'POST',
@@ -65,7 +71,7 @@ export default function UserProfile({ userId, messageButton = true }) {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                other_user_id: user._id
+                other_user_id: user!._id
             })
           })
           .then(res => res.json())
@@ -83,10 +89,10 @@ export default function UserProfile({ userId, messageButton = true }) {
                 <div className="user-profile-container">
                     { user &&
                         <>
-                            <ProfilePic imageSrc={user.profile_picture} size="10rem" style={{ flexShrink: "0" }}/>
+                            <ProfilePic imageSrc={user.profile_picture} size="10rem" />
                             <div className="user-profile-info">
                                 <h1 style={{ margin: 0, overflowWrap: "break-word", maxWidth: "300px" }}>{user.display_name}</h1>
-                                <button className={'submit message-button'} onClick={() => {handleDM(user)}} style={{ backgroundColor: !messageButton && "grey", pointerEvents: !messageButton && "none" }}>
+                                <button className={'submit message-button'} onClick={() => {handleDM(user)}} style={{ backgroundColor: !messageButton ? "grey" : "#007bff", pointerEvents: !messageButton ? "none" : "auto" }}>
                                     <FontAwesomeIcon icon={faMessage} style={{ height: "1rem" }}/>
                                     <p style={{ margin: 0 }}>Message</p>
                                 </button>
