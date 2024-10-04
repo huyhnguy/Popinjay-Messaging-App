@@ -3,8 +3,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faGear, faUsers, faUser, faMessage, faBell, faCircle} from '@fortawesome/free-solid-svg-icons'
 import { useEffect, useState} from "react";
 
-export default function NavBar({ active, markUpdatedDms, markUpdatedGroups }) {
-    const [newNotifications, setNewNotifications] = useState(null);
+type Active = "Users" | "Messages" | "Groups" | "Notifications" | "Settings";
+type NotificationType = "User" | "Conversation";
+type NewNotifications = {
+    from_type: NotificationType
+}[] | null
+
+export default function NavBar({ active, markUpdatedDms, markUpdatedGroups }: { 
+    active: Active, 
+    markUpdatedDms: (notifications: object) => void, 
+    markUpdatedGroups: (notifications: object) => void 
+}) {
+    const [newNotifications, setNewNotifications] = useState<NewNotifications>(null);
 
     const navigate = useNavigate();
     
@@ -19,21 +29,19 @@ export default function NavBar({ active, markUpdatedDms, markUpdatedGroups }) {
           })
           .then(res => {
             if (res.ok) { return res.json() }
-            const error = new Error(res.message);
-            error.code = res.status;
-            throw error
+            throw Error
           })
           .then(res => {
             console.log(res.new_notifications);
             setNewNotifications(res.new_notifications);
 
             if (active === 'Messages') {
-                const dmNotifications = res.new_notifications.filter((notification) => notification.from_type === "User");
+                const dmNotifications = res.new_notifications.filter((notification: {from_type: NotificationType}) => notification.from_type === "User");
                 if (markUpdatedDms) markUpdatedDms(dmNotifications);
             }
 
             if (active === 'Groups') {
-                const groupNotifications = res.new_notifications.filter((notification) => notification.from_type === "Conversation");
+                const groupNotifications = res.new_notifications.filter((notification : {from_type: NotificationType}) => notification.from_type === "Conversation");
                 if (markUpdatedGroups) markUpdatedGroups(groupNotifications);
             }
 
@@ -48,19 +56,19 @@ export default function NavBar({ active, markUpdatedDms, markUpdatedGroups }) {
 
     return(
         <nav>
-            <Link to="/users" className="nav-link" style={{ color: active === 'Users' && '#007BFF'}}>
+            <Link to="/users" className="nav-link" style={{ color: active === 'Users' ? '#007BFF' : 'black' }}>
                 <FontAwesomeIcon icon={faUser} className="nav-icon"/>
                 <p className="nav-name">Users</p>
             </Link>
-            <Link to="/dms" className="nav-link" style={{ color: active === 'Messages' && '#007BFF'}}>
+            <Link to="/dms" className="nav-link" style={{ color: active === 'Messages' ? '#007BFF' : 'black' }}>
                 <FontAwesomeIcon icon={faMessage} className="nav-icon"/>
                 <p className="nav-name">Messages</p>
             </Link>
-            <Link to="/groups" className="nav-link" style={{ color: active === 'Groups' && '#007BFF'}}>
+            <Link to="/groups" className="nav-link" style={{ color: active === 'Groups' ? '#007BFF' : 'black' }}>
                 <FontAwesomeIcon icon={faUsers} className="nav-icon"/>
                 <p className="nav-name">Groups</p>
             </Link>
-            <Link to="/notifications" className="nav-link" style={{ color: active === 'Notifications' && '#007BFF'}}>
+            <Link to="/notifications" className="nav-link" style={{ color: active === 'Notifications' ? '#007BFF' : 'black' }}>
                 <div style={{ position: "relative", maxWidth: "fit-content"}}>
                     <FontAwesomeIcon icon={faBell} className="nav-icon"/>
                     { (newNotifications && newNotifications.length != 0) && 
@@ -72,7 +80,7 @@ export default function NavBar({ active, markUpdatedDms, markUpdatedGroups }) {
                 </div>
                 <p className="nav-name">Notifications</p>
             </Link>
-            <Link to="/settings" className="nav-link" style={{ color: active === 'Settings' && '#007BFF'}}>
+            <Link to="/settings" className="nav-link" style={{ color: active === 'Settings' ? '#007BFF' : 'black' }}>
                 <FontAwesomeIcon icon={faGear} className="nav-icon"/>
                 <p className="nav-name">Settings</p>
             </Link>

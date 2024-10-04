@@ -1,4 +1,4 @@
-import ProfilePic from "./ProfilePic"
+import ProfilePic from "./ProfilePic";
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleLeft, faCircleRight, faCircleXmark, faSquarePlus} from '@fortawesome/free-solid-svg-icons'
