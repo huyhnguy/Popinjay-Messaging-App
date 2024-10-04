@@ -4,17 +4,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMessage } from '@fortawesome/free-solid-svg-icons'
 import ProfilePic from "./ProfilePic";
 import { useNavigate } from "react-router-dom";
+import { UserType } from "../types";
 
-type User = { 
-    _id: string, 
-    profile_picture?: string, 
-    display_name: string, 
-    about_me?: string, 
-    createdAt: Date
-} | null
+type UserOrNull = UserType | null
 
 export default function UserProfile({ userId, messageButton = true }: { userId: string, messageButton: boolean }) {
-    const [user, setUser] = useState<User>(null);
+    const [user, setUser] = useState<UserOrNull>(null);
 
     const navigate = useNavigate();
 
@@ -61,7 +56,7 @@ export default function UserProfile({ userId, messageButton = true }: { userId: 
     
     }
 
-    const handleDM = (user: User) => {
+    const handleDM = (user: UserType) => {
 
         fetch('/api/dms/create', {
             method: 'POST',

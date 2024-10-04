@@ -1,19 +1,15 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash, faPen } from '@fortawesome/free-solid-svg-icons'
+import { MessageType } from '../types'
 
 type Role = "sender" | "receiver" | "group-receiver"
 
 export default function Message({ info, person, deleteMessage, editMessage, deletePower }: { 
-    info: { 
-        createdAt: Date, 
-        user: { display_name: string },
-        image?: string, 
-        content?: string
-    }, 
-    person: Role, 
-    deleteMessage: () => void, 
-    editMessage: () => void, 
-    deletePower: boolean 
+    info: MessageType, 
+    person?: Role, 
+    deleteMessage?: () => void, 
+    editMessage?: () => void, 
+    deletePower?: boolean 
 }) {
 
     let options: object = {

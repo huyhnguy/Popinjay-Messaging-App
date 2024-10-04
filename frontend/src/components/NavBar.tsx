@@ -11,8 +11,8 @@ type NewNotifications = {
 
 export default function NavBar({ active, markUpdatedDms, markUpdatedGroups }: { 
     active: Active, 
-    markUpdatedDms: (notifications: object) => void, 
-    markUpdatedGroups: (notifications: object) => void 
+    markUpdatedDms?: (notifications: object) => void, 
+    markUpdatedGroups?: (notifications: object) => void 
 }) {
     const [newNotifications, setNewNotifications] = useState<NewNotifications>(null);
 

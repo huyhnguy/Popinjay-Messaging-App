@@ -81,8 +81,6 @@ export default function AddGroup({ closePopUp }: { closePopUp: (action: Action) 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
             const file = e.target.files![0];
             const base64 = await convertToBase64(file);
-            console.log(typeof base64);
-            console.log(base64);
             setBase64Pic(base64);
     }
 
