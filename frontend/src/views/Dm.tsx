@@ -7,13 +7,10 @@ import {faPaperPlane, faCircleChevronUp, faCircleXmark} from '@fortawesome/free-
 import FileMessageInput from "../components/FileMessageInput";
 import UserProfile from "../components/UserProfile";
 import NavBar from "../components/NavBar";
-import { UserType, MessageType } from "../types";
+import { MessageType, ConversationType } from "../types";
 
 type Base64 = string | null;
-type Dm = {
-    history: MessageType[],
-    users: UserType[]
-} | null
+type Dm = ConversationType| null
 type Edit = MessageType | null
 type ProfilePopUp = string | false;
 
@@ -243,7 +240,6 @@ export default function Dm() {
                 if (res.ok) { 
                     return res.json() 
                 }
-
                 throw Error
                 })
             .then(res => {

@@ -6,14 +6,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faPaperPlane, faCircleChevronUp, faGear, faCircleXmark} from '@fortawesome/free-solid-svg-icons'
 import FileMessageInput from "../components/FileMessageInput";
 import NavBar from "../components/NavBar";
+import { ConversationType, MessageType, UserType } from "../types";
+
+type Base64 = string | null
+type Dm = ConversationType | null
+type Edit = MessageType | null
+type Sender = string | null
 
 export default function GroupDm() {
-    const [dm, setDm] = useState(null);
-    const [base64Pic, setBase64Pic] = useState(null);
-    const [sender, setSender] = useState(null);
+    const [dm, setDm] = useState<Dm>(null);
+    const [base64Pic, setBase64Pic] = useState<Base64>(null);
+    const [sender, setSender] = useState<Sender>(null);
     const [loading, setLoading] = useState(true);
     const [newMessage, setNewMessage] = useState(false);
-    const [edit, setEdit] = useState(null);
+    const [edit, setEdit] = useState<Edit>(null);
 
     const urlParams = useParams();
     const navigate = useNavigate();
@@ -29,9 +35,7 @@ export default function GroupDm() {
           })
           .then(res => {
             if (res.ok) { return res.json() }
-            const error = new Error(res.message);
-            error.code = res.status;
-            throw error
+            throw Error
           })
           .then(res => {
             setDm(res.group);
@@ -54,56 +58,60 @@ export default function GroupDm() {
 
     function scrollToBottom () {
         const messageHistoryDiv = document.querySelector(".message-history");
-        if (messageHistoryDiv.lastChild) {
-            messageHistoryDiv.lastChild.scrollIntoView({
+            messageHistoryDiv?.lastElementChild?.scrollIntoView({
                 block: "end",
                 inline: "nearest",
                 behavior: "smooth",
-                alignToTop: false
             });
             setNewMessage(false);
-        }
 
     }
 
-    const convertToBase64 = (file) => {
-        return new Promise((resolve, reject) => {
+    const convertToBase64 = (file: File) => {
+        const base64String = new Promise<string>((resolve, reject) => {
             const fileReader = new FileReader();
             fileReader.readAsDataURL(file); 
             fileReader.onload = () => {
-                resolve(fileReader.result)
+                if (typeof fileReader.result === 'string')
+                    resolve(fileReader.result)
             }
             fileReader.onerror = (error) => {
                 reject(error)
             }
         })
+        return base64String
     }
 
-    const handleFileUpload = async (e) => {
-        const file = e.target.files[0];
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files![0];
         const base64 = await convertToBase64(file);
         setBase64Pic(base64);
     }
 
     const clearUserInputs = () => {
-        document.getElementById("new-message").value = "";
-        document.getElementById("message-files").value = null;
+        (document.getElementById("new-message") as HTMLInputElement).value = "";
+        (document.getElementById("message-files") as HTMLInputElement).value = "";
         setBase64Pic(null);
     }
 
     const appendNewMessageToForm = () => {
-        const image = document.getElementById("message-files").files[0];
-        const newMessage = document.getElementById("new-message").value;
-        const conversationId = urlParams.groupId;
         const formData = new FormData();
 
-        formData.append("conversation_id", conversationId);
-        formData.append("conversation_type", "Group");
+        const imageArray = (document.getElementById("message-files") as HTMLInputElement).files
+        if (imageArray) {
+            const image = imageArray[0];
+            if (image) {
+                formData.append("image", image)
+            } else {
+                formData.append("image", null!)
+            }
+        }
 
-        if (image) {
-            formData.append("image", image)
-        } else {
-            formData.append("image", null)
+        const newMessage = (document.getElementById("new-message") as HTMLInputElement).value;
+        const conversationId = urlParams.dmId;
+
+        if (conversationId) {
+            formData.append("conversation_id", conversationId);
         }
 
         if (newMessage) {
@@ -113,15 +121,15 @@ export default function GroupDm() {
         return formData
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<HTMLDivElement>) => {
         e.preventDefault();
 
         const formData = appendNewMessageToForm();
 
         if (edit) {
-            if (base64Pic && !document.getElementById("message-files").value) formData.append("image_same", true);
-            submitEditMessage(edit, formData);
-
+            if (base64Pic && !(document.getElementById("message-files") as HTMLInputElement).files) 
+                formData.append("image_same", "true");
+                submitEditMessage(edit, formData);
             return
         }
         
@@ -135,13 +143,11 @@ export default function GroupDm() {
           })
         .then(res => {
             if (res.ok) { return res.json() }
-            const error = new Error(res.message);
-            error.code = res.status;
-            throw error
+            throw Error
           })
         .then(res => {
             const newDm = dm;
-            newDm.history.push(res.new_message);
+            newDm?.history.push(res.new_message);
             setDm(newDm);
             clearUserInputs();
             setNewMessage(true);
@@ -158,7 +164,7 @@ export default function GroupDm() {
         setBase64Pic(null);
     }
 
-    const displayUsersNamesInGroup = (users) => {
+    const displayUsersNamesInGroup = (users: UserType[]) => {
         let names = "";
 
         for (let i = 0; i < users.length ; i++) {
@@ -173,14 +179,14 @@ export default function GroupDm() {
         return names
     }
 
-    const removeMessageOnClient = (message) => {
-        const newDmHistory= dm.history.filter(element => element != message);
+    const removeMessageOnClient = (message: MessageType) => {
+        const newDmHistory: MessageType[] = dm!.history.filter(element => element != message);
         const cloneDm = structuredClone(dm)
-        cloneDm.history = newDmHistory
+        cloneDm!.history = newDmHistory
         setDm(cloneDm);
     }
 
-    const handleDeleteMessage = (message) => {
+    const handleDeleteMessage = (message: MessageType) => {
         fetch('/api/messages/' + message._id, {
             method: 'DELETE',
             credentials: "include",
@@ -197,14 +203,11 @@ export default function GroupDm() {
                     return res.json() 
                 }
 
-                const error = new Error(res.message);
-                error.code = res.status;
-                throw error
+                throw Error
                 })
             .then(res => {
                 if (res.message === "message successfully deleted") {
                     removeMessageOnClient(message);
-                    setDm(cloneDm);
                 } else {
                     console.log(res);
                 }
@@ -217,24 +220,25 @@ export default function GroupDm() {
             })
     }
 
-    const startEditMessage = (message) => {
+    const startEditMessage = (message: MessageType) => {
         setEdit(message);
-        const messageInput = document.getElementById("new-message");
-
+        const messageInput = document.getElementById("new-message") as HTMLInputElement;
         if (message.content) messageInput.value = message.content;
         if (message.image) setBase64Pic(message.image);
     }
 
-    const updateEditedMessageOnClient = (oldMessage, updatedMessage) => {
-        const indexOfOldMessage = dm.history.findIndex((element) => element === oldMessage);
-        setDm(prevDm => {
-            const cloneDm = structuredClone(prevDm);
-            cloneDm.history.splice(indexOfOldMessage, 1, updatedMessage);
-            return cloneDm;
-        });
+    const updateEditedMessageOnClient = (oldMessage: MessageType, updatedMessage: MessageType) => {
+        const indexOfOldMessage = dm?.history.findIndex((element) => element === oldMessage);
+        if (indexOfOldMessage) {
+            setDm(prevDm => {
+                const cloneDm = structuredClone(prevDm);
+                cloneDm?.history.splice(indexOfOldMessage, 1, updatedMessage);
+                return cloneDm;
+            });
+        }
     }
 
-    const submitEditMessage = (oldMessage, newMessageInputs) => {
+    const submitEditMessage = (oldMessage: MessageType, newMessageInputs: FormData) => {
         fetch('/api/messages/' + oldMessage._id, {
             method: 'PUT',
             credentials: "include",
@@ -247,10 +251,7 @@ export default function GroupDm() {
                 if (res.ok) { 
                     return res.json() 
                 }
-
-                const error = new Error(res.message);
-                error.code = res.status;
-                throw error
+                throw Error
                 })
             .then(res => {
                 if (res.message === "message successfully updated") {
@@ -269,6 +270,12 @@ export default function GroupDm() {
             })
     }
 
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement> ) => {
+        if (e.key === 'Enter') {
+          handleSubmit(e)
+        }
+      }
+
     const handleSettingsClick = () => {
         navigate('settings')
     }
@@ -276,7 +283,7 @@ export default function GroupDm() {
     return(
         <>
             { dm &&   
-                <div className="dm-page">
+                <div className="dm-page" onKeyDown={(e) => {handleKeyDown(e)}}>
                     <div className="group-header">
                             <ProfilePic imageSrc={dm.profile_picture} size="2.5rem"/>
                             <h1>{dm.display_name != "" ? dm.display_name : displayUsersNamesInGroup(dm.users)}</h1>
@@ -295,7 +302,7 @@ export default function GroupDm() {
                                     )
                                 }
                                 return(
-                                    <Message key={message._id} info={message} person="group-receiver" deleteMessage={() => {handleDeleteMessage(message)}} deletePower={ sender === dm.owner || (dm.admins.includes(sender) && dm.admin_permissions.delete_messages) ? true : false } />
+                                    <Message key={message._id} info={message} person="group-receiver" deleteMessage={() => {handleDeleteMessage(message)}} deletePower={ sender === dm.owner || (dm.admins.includes(sender!) && dm.admin_permissions.delete_messages) ? true : false } />
                                 )
                             })
                         }

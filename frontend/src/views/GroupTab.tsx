@@ -5,12 +5,19 @@ import ProfilePic from "../components/ProfilePic";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faCirclePlus, faStar} from '@fortawesome/free-solid-svg-icons'
 import AddGroup from "../components/AddGroup";
+import { ConversationType, NotificationType, UserType } from "../types";
+
+type Action = "completed" | "open" | "close"
+
+type Groups = ConversationType[] | null
+
+type Notifications = NotificationType[] | null
 
 export default function GroupTab() {
-    const [groups, setGroups] = useState(null);
+    const [groups, setGroups] = useState<Groups>(null);
     const [sender, setSender] = useState(null);
     const [addGroup, setAddGroup] = useState("closed");
-    const [notifications, setNotifications] = useState(null);
+    const [notifications, setNotifications] = useState<Notifications>(null);
 
     const globalChatId = '66ef1677007b15bccb9a1cca';
 
@@ -27,9 +34,7 @@ export default function GroupTab() {
           })
           .then(res => {
             if (res.ok) { return res.json() }
-            const error = new Error(res.message);
-            error.code = res.status;
-            throw error
+            throw Error
           })
           .then(res => {
             console.log(res);
@@ -46,11 +51,11 @@ export default function GroupTab() {
         })
     }, [])
 
-    const handleGroup = (group) => {
+    const handleGroup = (group: ConversationType) => {
         const route = `/groups/${group._id}`;
         navigate(route);
 
-        const notification = checkArrayOfNotificationsForGroupId(notifications, group._id);
+        const notification = checkArrayOfNotificationsForGroupId(notifications!, group._id);
 
         if (notification) {
             fetch(`/api/notifications/${notification._id}`, {
@@ -63,9 +68,7 @@ export default function GroupTab() {
               })
               .then(res => {
                 if (res.ok) { return res.json() }
-                const error = new Error(res.message);
-                error.code = res.status;
-                throw error
+                throw Error
               })
               .then(res => {
                 console.log(res);
@@ -79,20 +82,20 @@ export default function GroupTab() {
         }
     }
 
-    function sameDay(d1, d2) {
+    function sameDay(d1: Date, d2: Date) {
         return d1.getFullYear() === d2.getFullYear() &&
           d1.getMonth() === d2.getMonth() &&
           d1.getDate() === d2.getDate();
       }
 
-    function isYesterday(d1, d2) {
+    function isYesterday(d1: Date, d2: Date) {
         return d1.getFullYear() === d2.getFullYear() &&
           d1.getMonth() === d2.getMonth() &&
           d1.getDate() === d2.getDate() - 1;
     }
 
-    const convertDate = (date) => {
-        let options;
+    const convertDate = (date: Date) => {
+        let options: object = {}
         const readableDate = new Date(date);
         const currentDate = new Date();
 
@@ -102,25 +105,24 @@ export default function GroupTab() {
                 minute: "numeric",
             }
             const formatter = new Intl.DateTimeFormat("en-US", options);
-            const formattedDate = formatter.format(readableDate, options);
+            const formattedDate = formatter.format(readableDate);
 
             return formattedDate
         } else if (isYesterday(readableDate, currentDate) === true) {
             return "Yesterday"
         }else if (sameDay(readableDate, currentDate) === false) {
-            let options = {
+            options = {
                 month: "numeric",
                 day: "numeric",
                 year: "2-digit"
             }
             const formatter = new Intl.DateTimeFormat("en-US", options);
-            const formattedDate = formatter.format(readableDate, options);
+            const formattedDate = formatter.format(readableDate);
 
             return formattedDate
         }
     }
 
-    type Action = "completed" | "open" | "close"
 
     const handleAddGroup = (action: Action) => {
         if (action === "completed") {
@@ -159,7 +161,7 @@ export default function GroupTab() {
         }
     }
 
-    const displayUsersNamesInGroup = (users) => {
+    const displayUsersNamesInGroup = (users: UserType[]) => {
         let names = "";
         for (let i = 0; i < users.length; i++) {
             if (i === 0) {
@@ -171,7 +173,7 @@ export default function GroupTab() {
         return names
     }
 
-    function sortByMostRecent(dms) {
+    function sortByMostRecent(dms: ConversationType[]) {
         
         dms.sort((a,b) => {
             if (a._id === globalChatId) {
@@ -188,8 +190,8 @@ export default function GroupTab() {
 
             const aLastMessageDate = a.history[a.history.length - 1].createdAt;
             const bLastMessageDate = b.history[b.history.length - 1].createdAt;
-            const convertedADate = new Date(aLastMessageDate);
-            const convertedBDate = new Date(bLastMessageDate);
+            const convertedADate: any = new Date(aLastMessageDate);
+            const convertedBDate: any = new Date(bLastMessageDate);
 
             return convertedBDate - convertedADate;
         })
@@ -197,21 +199,21 @@ export default function GroupTab() {
         return dms
     }
 
-    const handleSearch = (e) => {
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         let value = e.target.value.toLowerCase();
 
-        groups.forEach(group => {
+        groups?.forEach(group => {
             const isVisible = group.display_name.toLowerCase().includes(value) || group.users.some((user) => user.display_name.toLowerCase().includes(value));
             const groupCard = document.getElementById(`${group._id}`);
-            groupCard.classList.toggle("hide", !isVisible);
+            groupCard?.classList.toggle("hide", !isVisible);
         })
     }
 
-    const markUpdatedGroups = (groupNotifications) => {
+    const markUpdatedGroups = (groupNotifications: NotificationType[]) => {
         setNotifications(groupNotifications);
     }
 
-    const checkArrayOfNotificationsForGroupId = (notifications, groupId) => {
+    const checkArrayOfNotificationsForGroupId = (notifications: NotificationType[], groupId: string) => {
         for (let i = 0; i < notifications.length; i++) {
             if (notifications[i].conversation_id === groupId) return notifications[i]
         }
