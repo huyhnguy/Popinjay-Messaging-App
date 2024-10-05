@@ -8,7 +8,7 @@ import { UserType } from "../types";
 
 type UserOrNull = UserType | null
 
-export default function UserProfile({ userId, messageButton = true }: { userId: string, messageButton: boolean }) {
+export default function UserProfile({ userId, messageButton = true }: { userId: string, messageButton?: boolean }) {
     const [user, setUser] = useState<UserOrNull>(null);
 
     const navigate = useNavigate();

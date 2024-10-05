@@ -3,10 +3,14 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
 import ProfilePic from "../components/ProfilePic";
 import UserProfile from "../components/UserProfile";
+import { UserType } from "../types";
+
+type ProfilePopUp = string | null
+type Users = UserType[] | null
 
 export default function UserTab() {
-    const [users, setUsers] = useState(null);
-    const [profilePopUp, setProfilePopUp] = useState(null);
+    const [users, setUsers] = useState<Users>(null);
+    const [profilePopUp, setProfilePopUp] = useState<ProfilePopUp>(null);
 
     const navigate = useNavigate();
     
@@ -21,9 +25,7 @@ export default function UserTab() {
           })
           .then(res => {
             if (res.ok) { return res.json() }
-            const error = new Error(res.message);
-            error.code = res.status;
-            throw error
+            throw Error
           })
           .then(res => {
             setUsers(res);
@@ -38,17 +40,17 @@ export default function UserTab() {
 
 
    
-    const handleUser = (user) => {
+    const handleUser = (user: UserType) => {
       setProfilePopUp(user._id);
     }
 
-    const handleSearch = (e) => {
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
       let value = e.target.value.toLowerCase();
       
-      users.forEach(user => {
+      users?.forEach(user => {
         const isVisible = user.display_name.toLowerCase().includes(value);
         const userCard = document.getElementById(`${user._id}`);
-        userCard.classList.toggle("hide", !isVisible);
+        userCard?.classList.toggle("hide", !isVisible);
       })
     }
 
@@ -74,7 +76,7 @@ export default function UserTab() {
             { profilePopUp &&
               <>
                 <UserProfile userId={profilePopUp} />
-                <div className="shadow" onClick={() => {setProfilePopUp(false)}}></div>
+                <div className="shadow" onClick={() => {setProfilePopUp(null)}}></div>
               </>
             }
             <NavBar active='Users'/>
