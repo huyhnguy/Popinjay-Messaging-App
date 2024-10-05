@@ -4,11 +4,14 @@ import ProfilePic from "../components/ProfilePic";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faEnvelopeCircleCheck} from '@fortawesome/free-solid-svg-icons'
+import { NotificationType } from "../types";
+
+type Notifications = NotificationType[] | null
 
 export default function NotificationTab() {
-    const [notifications, setNotifications] = useState(null);
+    const [notifications, setNotifications] = useState<Notifications>(null);
 
-    const navigation = useNavigate();
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetch('/api/notifications', {
@@ -21,9 +24,7 @@ export default function NotificationTab() {
           })
           .then(res => {
             if (res.ok) { return res.json() }
-            const error = new Error(res.message);
-            error.code = res.status;
-            throw error
+            throw Error
           })
           .then(res => {
             console.log(res);
@@ -38,9 +39,9 @@ export default function NotificationTab() {
 
     }, [])
 
-    const convertDate = (date) => {
-        const readableDate = new Date(date);
-        const currentDate = new Date();
+    const convertDate = (date: Date) => {
+        const readableDate: any = new Date(date);
+        const currentDate: any = new Date();
 
         const differenceInMs = Math.abs(currentDate - readableDate);
         const differenceInSeconds = differenceInMs / 1000 
@@ -56,7 +57,7 @@ export default function NotificationTab() {
         if (differenceInSeconds >= 1) return Math.floor(differenceInSeconds) + 's'
     }
 
-    const routeToResource = (notification) => {
+    const routeToResource = (notification: NotificationType) => {
         fetch(`/api/notifications/${notification._id}`, {
             method: 'PUT',
             credentials: "include",
@@ -67,9 +68,7 @@ export default function NotificationTab() {
           })
           .then(res => {
             if (res.ok) { return res.json() }
-            const error = new Error(res.message);
-            error.code = res.status;
-            throw error
+            throw Error
           })
           .then(res => {
             console.log(res);
@@ -82,19 +81,19 @@ export default function NotificationTab() {
         })
 
         if (notification.from_type === "User") {
-            navigation(`/dms/${notification.conversation_id}`)
+            navigate(`/dms/${notification.conversation_id}`)
         } else if (notification.from_type === "Conversation" && 
             notification.update === "You are the new owner." ||
             notification.update === "You are now an admin." ||
             notification.update === "You are no longer an admin."
         ) {
-            navigation(`/groups/${notification.conversation_id}/settings`)
+            navigate(`/groups/${notification.conversation_id}/settings`)
         } else if (notification.from_type === "Conversation" &&
             notification.update === "You have been kicked."
         ) {
-            navigation(`/groups`)
+            navigate(`/groups`)
         } else if (notification.from_type === "Conversation") {
-            navigation(`/groups/${notification.conversation_id}`)
+            navigate(`/groups/${notification.conversation_id}`)
         }
     }
 
@@ -109,9 +108,7 @@ export default function NotificationTab() {
         })
         .then(res => {
             if (res.ok) { return res.json() }
-            const error = new Error(res.message);
-            error.code = res.status;
-            throw error
+            throw Error
         })
         .then(res => {
             console.log(res);

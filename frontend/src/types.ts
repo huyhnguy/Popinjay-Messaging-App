@@ -17,10 +17,12 @@ export type MessageType = {
 export type NotificationType = {
     _id: string,
     to: string,
-    from: string,
+    from: UserType | ConversationType,
     from_type: 'User' | 'Conversation',
+    update: "You are the new owner." | "You are now an admin." | "You are no longer an admin." | "You have been kicked."
     conversation_id: string,
-    is_read: boolean
+    is_read: boolean,
+    createdAt: Date
 }
 
 export type ConversationType = {
