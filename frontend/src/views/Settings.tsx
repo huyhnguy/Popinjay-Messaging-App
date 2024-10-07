@@ -221,7 +221,7 @@ export default function Settings() {
                                 Display Name
                             </label>
                             <div className="input-containers">
-                                <input className="input" id="display-name" type="text" defaultValue={displayName} disabled={guest ? true : false} style={{ color: guest ? "grey" : "black", borderColor: errors && errors.display_name ? "red" : "black" }}/>
+                                <input className="input" id="display-name" type="text" defaultValue={displayName} disabled={guest ? true : false} style={{ color: guest ? "grey" : "black", borderColor: errors && errors.display_name ? "red" : "solid #00000033" }}/>
                                 { errors && errors.display_name &&
                                     <p className="error-message">{errors.display_name.msg}</p>
                                 }
@@ -236,7 +236,7 @@ export default function Settings() {
                                 About Me
                             </label>
                             <div style={{position: "relative", width: "100%"}}>
-                                <textarea className="about-me-input" name="about-me" id="about-me" rows={4} disabled={guest ? true : false} style={{ color: guest ? "grey" : "black", borderColor: errors && errors.about_me ? "red" : "black" }} onChange={(e) => {countRemainingCharacters(e)}} defaultValue={aboutMe}></textarea>
+                                <textarea className="about-me-input" name="about-me" id="about-me" rows={4} disabled={guest ? true : false} style={{ color: guest ? "grey" : "black", borderColor: errors && errors.about_me ? "red" : "solid #00000033" }} onChange={(e) => {countRemainingCharacters(e)}} defaultValue={aboutMe}></textarea>
                                 <p className='about-me-remaining-characters green'>{aboutMeRemainingCharacters}</p>
                             
                                 { errors && errors.about_me &&

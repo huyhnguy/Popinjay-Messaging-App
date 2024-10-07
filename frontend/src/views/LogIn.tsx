@@ -85,13 +85,13 @@ export default function LogIn() {
                     <h2>Welcome back!</h2>
                     <form action="" method="POST" >
                         <div className="input-containers">
-                            <input className="input" type="text" name="username" id="username" placeholder='Username' style={{ borderColor: errors && errors.username ? "red" : "black" }} />
+                            <input className="input" type="text" name="username" id="username" placeholder='Username' style={{ borderColor: errors && errors.username ? "red" : "solid #00000033" }} />
                             { errors && errors.username &&
                                 <p className="error-message">{errors.username.msg}</p>
                             }
                         </div>
                         <div className="input-containers">
-                            <input className="input" type="password" name="password" id="password" placeholder='Password' style={{ borderColor: errors && errors.password ? "red" : "black" }} />
+                            <input className="input" type="password" name="password" id="password" placeholder='Password' style={{ borderColor: errors && errors.password ? "red" : "solid #00000033" }} />
                             { errors && errors.password &&
                                 <p className="error-message">{errors.password.msg}</p>
                             }

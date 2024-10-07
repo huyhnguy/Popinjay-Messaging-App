@@ -8,22 +8,39 @@ import { useNavigate, useParams } from "react-router-dom";
 import MemberDropDown from "../components/MemberDropDown";
 import UserProfile from "../components/UserProfile";
 import AddUserPopUp from "../components/AddUserPopUp";
+import { UserType } from "../types";
 
 type AdminAction = "Make admin" | "Remove admin";
+type Errors = {
+    display_name?: {
+        msg: string
+    }
+} | null
+
+type StringOrNull = string | null
+type Users = UserType[] | null
+type AdminIds = string[] | null
+type AdminPermissions = {
+    delete_messages?: boolean,
+    invite_users?: boolean,
+    kick_users?: boolean,
+} | null
+
+
 
 export default function GroupSettings() {
     const [displayName, setDisplayName] = useState(undefined);
-    const [pic, setPic] = useState(null);
-    const [adminPermissions, setAdminPermissions] = useState(null);
-    const [users, setUsers] = useState(null);
-    const [dropDown, setDropDown] = useState(null);
-    const [userProfile, setUserProfile] = useState(null);
-    const [adminIds, setAdminIds] = useState(null);
-    const [ownerId, setOwnerId] = useState(null);
-    const [sender, setSender] = useState(null); 
+    const [pic, setPic] = useState<StringOrNull>(null);
+    const [adminPermissions, setAdminPermissions] = useState<AdminPermissions>(null);
+    const [users, setUsers] = useState<Users>(null);
+    const [dropDown, setDropDown] = useState<StringOrNull>(null);
+    const [userProfile, setUserProfile] = useState<StringOrNull>(null);
+    const [adminIds, setAdminIds] = useState<AdminIds>(null);
+    const [ownerId, setOwnerId] = useState<StringOrNull>(null);
+    const [sender, setSender] = useState<StringOrNull>(null); 
     const [addUserPopUp, setAddUserPopUp] = useState(false);
     const [scrollToBottomOfMemberList, setScrollToBottomOfMemberList] = useState(false);
-    const [errors, setErrors] = useState(null);
+    const [errors, setErrors] = useState<Errors>(null);
 
     const urlParams = useParams();
     const navigate = useNavigate();
@@ -39,9 +56,7 @@ export default function GroupSettings() {
           })
           .then(res => {
             if (res.ok) { return res.json() }
-            const error = new Error(res.message);
-            error.code = res.status;
-            throw error
+            throw Error
           })
           .then(res => {
             setDisplayName(res.group.display_name);
@@ -61,32 +76,35 @@ export default function GroupSettings() {
         })
     }, [])
 
-    const convertToBase64 = (file) => {
-        return new Promise((resolve, reject) => {
+    const convertToBase64 = (file: File) => {
+        const base64String = new Promise<string>((resolve, reject) => {
             const fileReader = new FileReader();
             fileReader.readAsDataURL(file); 
             fileReader.onload = () => {
-                resolve(fileReader.result)
+                if (typeof fileReader.result === 'string')
+                    resolve(fileReader.result)
             }
             fileReader.onerror = (error) => {
                 reject(error)
             }
         })
+        return base64String
     }
 
-    const handleFileUpload = async (e) => {
-        const file = e.target.files[0];
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files![0];
         const base64 = await convertToBase64(file);
         setPic(base64);
-    }
+}
 
-    const handleSubmit = (e) => {
+
+    const handleSubmit = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
 
-        const checkedBoxesNodeList = document.querySelectorAll('input[name=admin-permissions]:checked');
+        const checkedBoxesNodeList = document.querySelectorAll<HTMLInputElement>('input[name=admin-permissions]:checked');
         const checkedBoxesArray = Array.from(checkedBoxesNodeList);
         const checkedBoxes = checkedBoxesArray.map((element) => element.value);        
-        const newDisplayName = document.getElementById("display-name").value;
+        const newDisplayName = (document.getElementById("display-name") as HTMLInputElement).value;
 
         const formData = new FormData();
         formData.append("display_name", newDisplayName);
@@ -96,21 +114,23 @@ export default function GroupSettings() {
                 formData.append(`admin_permissions[${i}]`, checkedBoxes[i]);
               }
         } else {
-                formData.append(`admin_permissions`, checkedBoxes);
+                formData.append(`admin_permissions`, "");
         }
 
+        const profilePicArray = (document.getElementById("profile-picture") as HTMLInputElement).files
 
-        if (!pic && !document.getElementById("profile-picture").files[0]) {
+        const profilePic = profilePicArray![0]
+
+        if (!pic && !profilePic) {
             // no previous picture and no picturer uploaded
-            formData.append("profile_picture", null);
+            formData.append("profile_picture", null!);
             formData.append("picture_status", "delete")
-        } else if (pic && document.getElementById("profile-picture").files[0]) { 
+        } else if (pic && profilePic) { 
             //if the user doesn't have a picture yet and they upload a picture
-            const profilePic = document.getElementById("profile-picture").files[0];
             formData.append("profile_picture", profilePic);
-        } else if (pic && !document.getElementById("profile-picture").files[0]) {
+        } else if (pic && profilePic) {
             //if the user does have a picture and they dont upload any picture, dont do anything
-            formData.append("profile_picture", null);
+            formData.append("profile_picture", null!);
         }
 
         fetch(`/api/groups/${urlParams.groupId}/settings`, {
@@ -124,7 +144,7 @@ export default function GroupSettings() {
           .then(res => res.json())
           .then(res => {
             if (res.errors) {
-                const displayNameErrors = res.errors.filter(error => error.path === "display_name");
+                const displayNameErrors = res.errors.filter((error: { path: string}) => error.path === "display_name");
                 setErrors({
                     display_name: displayNameErrors[0],
                 })
@@ -139,35 +159,34 @@ export default function GroupSettings() {
 
     }
 
-    const handleDropdown = (userId) => {
+    const handleDropdown = (userId: string) => {
         const currentDropdown = document.getElementById(`${userId}-dropdown`);
         
-        if (currentDropdown.classList.contains('invisible')) {
+        if (currentDropdown?.classList.contains('invisible')) {
             currentDropdown.classList.remove('invisible');
             if (dropDown) {
                 const previousDropDown = document.getElementById(`${dropDown}-dropdown`);
-                previousDropDown.classList.add('invisible');
+                previousDropDown?.classList.add('invisible');
             }
             setDropDown(userId)
         } else {
-            currentDropdown.classList.add('invisible');
+            currentDropdown?.classList.add('invisible');
             setDropDown(null);
         }
     }
 
     const closeDropDown = () => {
         const previousDropDown = document.getElementById(`${dropDown}-dropdown`);
-        console.log(previousDropDown);
-        previousDropDown.classList.add('invisible');
+        previousDropDown?.classList.add('invisible');
         setDropDown(null);
     }
 
-    const openUserProfile = (userId) => {
+    const openUserProfile = (userId: string) => {
         setUserProfile(userId);
         closeDropDown();
     }
 
-    const handleDeleteGroup = (e) => {
+    const handleDeleteGroup = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
         fetch(`/api/groups/${urlParams.groupId}/settings`, {
@@ -193,7 +212,7 @@ export default function GroupSettings() {
     }
 
     const kickUser = (userId: string) => {
-        if (users.length > 3) {
+        if (users!.length > 3) {
             fetch(`/api/groups/${urlParams.groupId}/users/${userId}`, {
                 method: 'DELETE',
                 credentials: "include",
@@ -207,8 +226,7 @@ export default function GroupSettings() {
                 if (res.errors) {
                     console.log(res.errors);
                 } else {
-                    console.log(res);
-                    const newUsersArray = users.filter(user => user._id != userId);
+                    const newUsersArray = users!.filter(user => user._id != userId);
                     closeDropDown();
                     setUsers(newUsersArray);
                 }
@@ -244,7 +262,7 @@ export default function GroupSettings() {
                 } else {
                     console.log(res);
                     closeDropDown();
-                    setAdminIds([...adminIds, userId])
+                    setAdminIds([...(adminIds as []), userId])
                 }
               })
               .catch(err => {
@@ -267,12 +285,9 @@ export default function GroupSettings() {
                 if (res.errors) {
                     console.log(res.errors);
                 } else {
-                    console.log(res);
                     closeDropDown();
-                    const indexOfAdmin = adminIds.indexOf(userId);
-                    console.log(`index ${indexOfAdmin}`)
-                    const newAdminIds = adminIds.toSpliced(indexOfAdmin, 1);
-                    console.log(`newAdminIds ${newAdminIds}`)
+                    const indexOfAdmin = adminIds?.indexOf(userId);
+                    const newAdminIds = adminIds?.toSpliced(indexOfAdmin, 1);
                     setAdminIds(newAdminIds);
                 }
               })
@@ -311,8 +326,7 @@ export default function GroupSettings() {
         })
     }
 
-    function sortMembers(usersArray, adminsArray, owner, sender) {
-        console.log(sender);
+    function sortMembers(usersArray: UserType[], adminsArray: string[], owner: string, sender: string) {
         usersArray.sort((a,b) => {
             if (a._id === sender) {
                 return -1
@@ -334,7 +348,7 @@ export default function GroupSettings() {
         return usersArray
     }
 
-    function sortNewMember(membersArray, newMemberId) {
+    function sortNewMember(membersArray: UserType[], newMemberId: string) {
         membersArray.sort((a,b) => {
             if (a._id === newMemberId) {
                 return 1
@@ -348,17 +362,17 @@ export default function GroupSettings() {
         return membersArray
     }
 
-    const handleSearch = (e) => {
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         let value = e.target.value.toLowerCase();
         
-        users.forEach(user => {
+        users?.forEach(user => {
           const isVisible = user.display_name.toLowerCase().includes(value);
           const userCard = document.getElementById(`${user._id}`);
-          userCard.classList.toggle("hide", !isVisible);
+          userCard?.classList.toggle("hide", !isVisible);
         })
       }
 
-    const handleAddUserPopUp = (e) => {
+    const handleAddUserPopUp = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
         if (!addUserPopUp) {
@@ -368,7 +382,7 @@ export default function GroupSettings() {
         }
     }
 
-    const addUserToGroup = (user) => {
+    const addUserToGroup = (user: UserType) => {
         fetch(`/api/groups/${urlParams.groupId}/users/${user._id}`, {
             method: 'PUT',
             credentials: "include",
@@ -386,7 +400,7 @@ export default function GroupSettings() {
                 console.log(res.errors);
             } else {
                 console.log(res);
-                const newMembersList = [...users, user]
+                const newMembersList = [...(users as UserType[]), user]
                 const sortedNewMembersList = sortNewMember(newMembersList, user._id);
                 setUsers(sortedNewMembersList);
                 setAddUserPopUp(false);
@@ -409,17 +423,16 @@ export default function GroupSettings() {
         
         const membersDiv = document.querySelector(".members-container");
         if (users) {
-            membersDiv.lastChild.scrollIntoView({
+            membersDiv?.lastElementChild?.scrollIntoView({
                 block: "start",
                 inline: "nearest",
                 behavior: "smooth",
-                alignToTop: false
             });
         }
 
     }
 
-    const handleLeaveGroup = (e) => {
+    const handleLeaveGroup = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
         if (sender === ownerId) {
@@ -466,7 +479,7 @@ export default function GroupSettings() {
                 <UserProfile userId={userProfile} />
             }
             {addUserPopUp &&
-                <AddUserPopUp groupMembersArray={users} addUserFunction={addUserToGroup}/>
+                <AddUserPopUp groupMembersArray={users!} addUserFunction={addUserToGroup}/>
             }
             <div className="settings-container">
                 <div className="settings-card">
@@ -476,7 +489,7 @@ export default function GroupSettings() {
                             <div style={{position: "relative"}} className="pic-container-x">
                                 { pic ?
                                     <>
-                                        <label htmlFor="profile-picture" style={{ cursor: sender === ownerId && "pointer" }}>
+                                        <label htmlFor="profile-picture" style={{ cursor: sender === ownerId ? "pointer" : "default" }}>
                                             <ProfilePic imageSrc={pic} size="10rem" />
                                         </label>
                                         { sender === ownerId &&
@@ -489,7 +502,7 @@ export default function GroupSettings() {
                                         }
                                     </>
                                     :
-                                    <label htmlFor="profile-picture" style={{ cursor: sender === ownerId && "pointer" }}>
+                                    <label htmlFor="profile-picture" style={{ cursor: sender === ownerId ? "pointer" : "default" }}>
                                         <ProfilePic size="10rem" group={true}/>
                                     </label>
                                 }
@@ -500,7 +513,7 @@ export default function GroupSettings() {
                                 }
                                 Profile Picture 
                             </label>
-                            <input style={{ cursor: sender === ownerId && "pointer", color: "grey" }} className="input" type="file" id="profile-picture" name="profile-picture" accept="image/*" defaultValue={ pic && pic } onChange={(e) => {handleFileUpload(e)}} disabled={sender != ownerId  ? true : false}/>
+                            <input style={{ cursor: sender === ownerId ? "pointer" : "default" , color: "grey" }} className="input" type="file" id="profile-picture" name="profile-picture" accept="image/*" defaultValue={ pic ? pic : undefined } onChange={(e) => {handleFileUpload(e)}} disabled={sender != ownerId  ? true : false}/>
                         </div>
                         <div className="form-section" style={{ alignItems: "start" }}>
                             <label htmlFor="display-name">
@@ -510,7 +523,7 @@ export default function GroupSettings() {
                                 Display Name
                             </label>
                             <div className="input-containers">
-                                <input className="input" id="display-name" type="text" defaultValue={displayName} style={{ cursor: sender === ownerId && "pointer", borderColor: errors && errors.display_name && "red", color: sender != ownerId && "grey"}} disabled={sender != ownerId  ? true : false}/>
+                                <input className="input" id="display-name" type="text" defaultValue={displayName} style={{ cursor: sender === ownerId ? "pointer" : "default", borderColor: errors && errors.display_name ? "red" : "solid #00000033", color: sender != ownerId ? "grey" : "black"}} disabled={sender != ownerId  ? true : false}/>
                                 { errors && errors.display_name &&
                                     <p className="error-message">{errors.display_name.msg}</p>
                                 }
@@ -524,7 +537,7 @@ export default function GroupSettings() {
                                 Admin Permissions
                             </p>
                             { adminPermissions &&
-                                <div className="form-section-container" style={{ backgroundColor: sender != ownerId && "light-dark(rgba(239, 239, 239, 0.3), rgba(59, 59, 59, 0.3))", color: sender != ownerId && "grey"}}>
+                                <div className="form-section-container" style={{ backgroundColor: sender != ownerId ? "light-dark(rgba(239, 239, 239, 0.3), rgba(59, 59, 59, 0.3))" : "transparent", color: sender != ownerId ? "grey" : "black"}}>
                                     <div className="checkbox-container">
                                         <label htmlFor="delete-messages">Can delete messages</label>
                                         <input  id="delete-messages" name="admin-permissions" value="delete-messages" type="checkbox" defaultChecked= {adminPermissions.delete_messages ? true : false} disabled={sender != ownerId  ? true : false} />
@@ -541,7 +554,7 @@ export default function GroupSettings() {
                             }
 
                         </div>
-                        <button className="submit" onClick={handleSubmit} style={{ backgroundColor: sender != ownerId && "grey", pointerEvents: sender != ownerId && "none" }}>Save</button>
+                        <button className="submit" onClick={handleSubmit} style={{ backgroundColor: sender != ownerId ? "grey" : "#007BFF", pointerEvents: sender != ownerId ? "none" : "auto" }}>Save</button>
                         <div className="form-section" style={{ alignItems: "start" , position: "relative"}}>
                             <div className="users-header" style={{ margin: 0, width: "100%" }}>
                                 <p style={{ margin: 0 }}>Members</p>
@@ -551,13 +564,13 @@ export default function GroupSettings() {
                                 { users &&
                                     users.map((user) => {
                                         return (
-                                            <div id={`${user._id}`}key={user._id} style={{position: "relative", pointerEvents: sender === user._id && "none"}} onClick={() => {handleDropdown(user._id)}}>
+                                            <div id={`${user._id}`}key={user._id} style={{position: "relative", pointerEvents: sender === user._id ? "none" : "auto"}} onClick={() => {handleDropdown(user._id)}}>
                                                 <div>
                                                     <div className="member-card" >
                                                         <ProfilePic imageSrc={user.profile_picture} size="4rem"/>
                                                         <div className="name-role">
                                                             <h2>{sender === user._id ? "You" : user.display_name}</h2>
-                                                            { adminIds.includes(user._id) && 
+                                                            { adminIds?.includes(user._id) && 
                                                                 <div style={{ display: "flex", gap: "0.5rem", alignItems: "center"}}>
                                                                     <FontAwesomeIcon icon={faUserGear} style={{color: "#007BFF", height: "1.5rem"}}/>
                                                                     <p style={{margin: 0}}>Admin</p>
@@ -579,19 +592,19 @@ export default function GroupSettings() {
                                                         profileFunction={openUserProfile} 
                                                         kickFunction={kickUser} 
                                                         adminFunction={adminUser} 
-                                                        admin={adminIds.includes(user._id) ? true : false}
+                                                        admin={adminIds?.includes(user._id) ? true : false}
                                                         ownerFunction={ownerUser}
                                                     />
                                                 }
-                                                { adminIds.includes(sender) && adminPermissions.kick_users &&
+                                                { adminIds?.includes(sender!) && adminPermissions?.kick_users &&
                                                     <MemberDropDown 
                                                         user={user} 
                                                         profileFunction={openUserProfile} 
                                                         kickFunction={kickUser} 
                                                     />
                                                 }
-                                                { (sender != ownerId && !adminIds.includes(sender) || 
-                                                adminIds.includes(sender) && !adminPermissions.kick_users) &&
+                                                { (sender != ownerId && !adminIds!.includes(sender!) || 
+                                                adminIds?.includes(sender!) && !adminPermissions!.kick_users) &&
                                                     <MemberDropDown 
                                                         user={user} 
                                                         profileFunction={openUserProfile} 
@@ -602,7 +615,7 @@ export default function GroupSettings() {
                                     })
                                 }
                             </div>
-                            { (sender === ownerId || adminIds.includes(sender) && adminPermissions.invite_users) &&
+                            { (sender === ownerId || adminIds?.includes(sender!) && adminPermissions?.invite_users) &&
                                 <button className="add-user-button" onClick={(e) => {handleAddUserPopUp(e)}}>
                                     <FontAwesomeIcon icon={faCirclePlus} className="file-upload-icon" style={{ height: "3rem" }}/>
                                 </button>

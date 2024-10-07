@@ -73,28 +73,28 @@ export default function SignUp() {
                 <h2>Create An Account</h2>
                 <form action="" method="POST" >
                     <div className="input-containers">
-                        <input className="input" type="text" name="displayname" id="displayname" placeholder='Display Name' required style={{ borderColor: errors && errors.display_name ? "red" : "black" }}/>
+                        <input className="input" type="text" name="displayname" id="displayname" placeholder='Display Name' required style={{ borderColor: errors && errors.display_name ? "red" : "solid #00000033" }}/>
                         { errors && errors.display_name &&
                         <p className="error-message">{errors.display_name.msg}</p>
                         }
                     </div>
 
                     <div className="input-containers">
-                        <input className="input" type="text" name="username" id="username" placeholder='Username' required style={{ borderColor: errors && errors.username ? "red" : "black" }}/>
+                        <input className="input" type="text" name="username" id="username" placeholder='Username' required style={{ borderColor: errors && errors.username ? "red" : "solid #00000033" }}/>
                         { errors && errors.username &&
                         <p className="error-message">{errors.username.msg}</p>
                         }
                     </div>
 
                     <div className="input-containers">
-                    <input className="input" type="password" name="password" id="password" placeholder='Password' required style={{ borderColor: errors && errors.password ? "red" : "black"}}/>
+                    <input className="input" type="password" name="password" id="password" placeholder='Password' required style={{ borderColor: errors && errors.password ? "red" : "solid #00000033"}}/>
                     { errors && errors.password &&
                         <p className="error-message">{errors.password.msg}</p>
                     }
                     </div>
 
                     <div className="input-containers">
-                    <input className="input" type="password" name="confirmpassword" id="confirmpassword" placeholder='Confirm Password' required style={{ borderColor: errors && errors.confirm_password ? "red" : "black" }}/>
+                    <input className="input" type="password" name="confirmpassword" id="confirmpassword" placeholder='Confirm Password' required style={{ borderColor: errors && errors.confirm_password ? "red" : "solid #00000033" }}/>
                     { errors && errors.confirm_password &&
                         <p className="error-message">{errors.confirm_password.msg}</p>
                     }

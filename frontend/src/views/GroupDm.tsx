@@ -44,6 +44,7 @@ export default function GroupDm() {
           })
           .catch(err => {
             console.log(err);
+            console.log(err.code);
             if (err.code === 401) {
                 navigate('/');
             }
@@ -108,16 +109,14 @@ export default function GroupDm() {
         }
 
         const newMessage = (document.getElementById("new-message") as HTMLInputElement).value;
-        const conversationId = urlParams.dmId;
+        const conversationId = urlParams.groupId;
+        console.log(urlParams);
 
-        if (conversationId) {
-            formData.append("conversation_id", conversationId);
-        }
-
-        if (newMessage) {
-            formData.append("new_message", newMessage)
-        } 
-
+        formData.append("conversation_id", conversationId!);
+        
+        formData.append("new_message", newMessage)
+        
+        console.log(...formData)
         return formData
     }
 
