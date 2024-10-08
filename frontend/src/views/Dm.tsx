@@ -95,6 +95,13 @@ export default function Dm() {
         const formData = new FormData();
 
         const imageArray = (document.getElementById("message-files") as HTMLInputElement).files
+        const newMessage = (document.getElementById("new-message") as HTMLInputElement).value;
+        const conversationId = urlParams.dmId;
+        
+        if (!imageArray![0] && !newMessage) {
+            return formData
+        }
+        
         if (imageArray) {
             const image = imageArray[0];
             if (image) {
@@ -103,9 +110,6 @@ export default function Dm() {
                 formData.append("image", null!)
             }
         }
-
-        const newMessage = (document.getElementById("new-message") as HTMLInputElement).value;
-        const conversationId = urlParams.dmId;
 
         if (conversationId) {
             formData.append("conversation_id", conversationId);
@@ -131,36 +135,39 @@ export default function Dm() {
 
         if (edit) {
             if (base64Pic && !(document.getElementById("message-files") as HTMLInputElement).files) 
-                formData.append("image_same", "true");
-                submitEditMessage(edit, formData);
+                console.log('same image');
+                formData!.append("image_same", "true");
+                submitEditMessage(edit, formData!);
             return
         }
         
-        fetch('/api/messages/create', {
-            method: 'POST',
-            credentials: "include",
-            headers: {
-              'Accept': 'application/json',
-            },
-            body: formData
-          })
-        .then(res => {
-            if (res.ok) { return res.json() }
-            throw Error
-          })
-        .then(res => {
-            const newDm = dm;
-            newDm?.history.push(res.new_message);
-            setDm(newDm);
-            clearUserInputs();
-            setNewMessage(true);
-        })
-        .catch(err => {
-            console.log(err);
-            if (err.code === 401) {
-                navigate('/');
-            }
-        })
+        if (formData) {
+            fetch('/api/messages/create', {
+                method: 'POST',
+                credentials: "include",
+                headers: {
+                  'Accept': 'application/json',
+                },
+                body: formData
+              })
+            .then(res => {
+                if (res.ok) { return res.json() }
+                throw Error
+              })
+            .then(res => {
+                const newDm = dm;
+                newDm?.history.push(res.new_message);
+                setDm(newDm);
+                clearUserInputs();
+                setNewMessage(true);
+            })
+            .catch(err => {
+                console.log(err);
+                if (err.code === 401) {
+                    navigate('/');
+                }
+            })
+        }
     }
 
     const handleDeletePictureInput = () => {

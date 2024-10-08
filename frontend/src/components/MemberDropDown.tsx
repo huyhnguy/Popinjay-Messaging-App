@@ -1,17 +1,18 @@
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserGear, faMessage, faUserXmark, faEye, faCrown } from '@fortawesome/free-solid-svg-icons'
+import { UserType } from "../types";
 
 type UserFunction = (userId: string) => void
 type AdminAction = "Make admin" | "Remove admin";
 
 export default function MemberDropDown({ user, profileFunction, kickFunction, adminFunction, admin, ownerFunction}: { 
-    user: { _id: string}, 
+    user: UserType, 
     profileFunction: UserFunction, 
-    kickFunction: UserFunction, 
-    adminFunction: (userId: string, action: AdminAction) => {}, 
+    kickFunction?: UserFunction, 
+    adminFunction?: (userId: string, action: AdminAction) => void, 
     admin?: boolean, 
-    ownerFunction: UserFunction
+    ownerFunction?: UserFunction
 }) {
     const navigate = useNavigate();
 

@@ -1,5 +1,5 @@
 # Popinjay - Messaging App
-A messaging app created with Node.js, Express, MongoDB, React, Javascript, HTML, CSS.
+A messaging app created with Node.js, Express, MongoDB, React, Typescript, Javascript, HTML, CSS.
 
 [https://popinjay-7-fc93266380eb.herokuapp.com/](https://popinjay-7-fc93266380eb.herokuapp.com/)
 

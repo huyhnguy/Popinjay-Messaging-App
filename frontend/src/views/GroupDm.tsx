@@ -98,7 +98,14 @@ export default function GroupDm() {
     const appendNewMessageToForm = () => {
         const formData = new FormData();
 
-        const imageArray = (document.getElementById("message-files") as HTMLInputElement).files
+        const imageArray = (document.getElementById("message-files") as HTMLInputElement).files;
+        const newMessage = (document.getElementById("new-message") as HTMLInputElement).value;
+        const conversationId = urlParams.groupId;
+
+        if (!imageArray![0] && !newMessage) {
+            return undefined
+        }
+
         if (imageArray) {
             const image = imageArray[0];
             if (image) {
@@ -107,10 +114,6 @@ export default function GroupDm() {
                 formData.append("image", null!)
             }
         }
-
-        const newMessage = (document.getElementById("new-message") as HTMLInputElement).value;
-        const conversationId = urlParams.groupId;
-        console.log(urlParams);
 
         formData.append("conversation_id", conversationId!);
         
@@ -127,8 +130,8 @@ export default function GroupDm() {
 
         if (edit) {
             if (base64Pic && !(document.getElementById("message-files") as HTMLInputElement).files) 
-                formData.append("image_same", "true");
-                submitEditMessage(edit, formData);
+                formData!.append("image_same", "true");
+                submitEditMessage(edit, formData!);
             return
         }
         
