@@ -116,7 +116,7 @@ export default function GroupDm() {
         }
 
         formData.append("conversation_id", conversationId!);
-        
+        formData.append("conversation_type", "Group");
         formData.append("new_message", newMessage)
         
         console.log(...formData)

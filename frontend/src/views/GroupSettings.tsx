@@ -181,7 +181,9 @@ export default function GroupSettings() {
         setDropDown(null);
     }
 
-    const openUserProfile = (userId: string) => {
+    const openUserProfile = (e: React.MouseEvent<HTMLButtonElement>, userId: string) => {
+        e.preventDefault();
+        
         setUserProfile(userId);
         closeDropDown();
     }
@@ -211,7 +213,9 @@ export default function GroupSettings() {
         })
     }
 
-    const kickUser = (userId: string) => {
+    const kickUser = (e: React.MouseEvent<HTMLButtonElement>, userId: string) => {
+        e.preventDefault();
+
         if (users!.length > 3) {
             fetch(`/api/groups/${urlParams.groupId}/users/${userId}`, {
                 method: 'DELETE',
@@ -242,7 +246,9 @@ export default function GroupSettings() {
     }
 
 
-    const adminUser = (userId: string, action: AdminAction) => {
+    const adminUser = (e: React.MouseEvent<HTMLButtonElement>, userId: string, action: AdminAction) => {
+        e.preventDefault();
+
         if (action === "Make admin") {
             fetch(`/api/groups/${urlParams.groupId}/users/${userId}`, {
                 method: 'PUT',
@@ -299,7 +305,9 @@ export default function GroupSettings() {
         }
     }
 
-    const ownerUser = (userId: string) => {
+    const ownerUser = (e: React.MouseEvent<HTMLButtonElement>, userId: string) => {
+        e.preventDefault();
+        
         fetch(`/api/groups/${urlParams.groupId}/users/${userId}`, {
             method: 'PUT',
             credentials: "include",

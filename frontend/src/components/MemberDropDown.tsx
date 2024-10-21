@@ -3,20 +3,22 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserGear, faMessage, faUserXmark, faEye, faCrown } from '@fortawesome/free-solid-svg-icons'
 import { UserType } from "../types";
 
-type UserFunction = (userId: string) => void
+type UserFunction = (e: React.MouseEvent<HTMLButtonElement>, userId: string) => void
 type AdminAction = "Make admin" | "Remove admin";
 
 export default function MemberDropDown({ user, profileFunction, kickFunction, adminFunction, admin, ownerFunction}: { 
     user: UserType, 
     profileFunction: UserFunction, 
     kickFunction?: UserFunction, 
-    adminFunction?: (userId: string, action: AdminAction) => void, 
+    adminFunction?: (e: React.MouseEvent<HTMLButtonElement>, userId: string, action: AdminAction) => void, 
     admin?: boolean, 
     ownerFunction?: UserFunction
 }) {
     const navigate = useNavigate();
 
-    const handleMessage = () => {
+    const handleMessage = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+
         fetch('/api/dms/create', {
             method: 'POST',
             credentials: "include",
@@ -30,6 +32,7 @@ export default function MemberDropDown({ user, profileFunction, kickFunction, ad
           })
           .then(res => res.json())
           .then(res => {
+            console.log('route to message');
             const route = `/dms/${res.dm._id}`;
             navigate(route);
           })
@@ -41,20 +44,20 @@ export default function MemberDropDown({ user, profileFunction, kickFunction, ad
     return (
         <>
             <div id={`${user._id}-dropdown`} className="member-button-container invisible">
-                <button onClick={() => {handleMessage()}} className="member-button">
+                <button onClick={(e) => {handleMessage(e)}} className="member-button">
                     <FontAwesomeIcon icon={faMessage}/>
                     <p style={{margin: 0}}>Message</p>
                 </button>
-                <button onClick={() => {profileFunction(user._id)}} className="member-button">
+                <button onClick={(e) => {profileFunction(e, user._id)}} className="member-button">
                     <FontAwesomeIcon icon={faEye}/>
                     <p style={{margin: 0}}>View profile</p>
                 </button>
                 { adminFunction &&
-                    <button onClick={() => {
+                    <button onClick={(e) => {
                         if (admin) {
-                            adminFunction(user._id, "Remove admin");
+                            adminFunction(e, user._id, "Remove admin");
                         } else {
-                            adminFunction(user._id, "Make admin");
+                            adminFunction(e, user._id, "Make admin");
                         }
                     }} className="member-button">
                         <FontAwesomeIcon icon={faUserGear}/>
@@ -62,13 +65,13 @@ export default function MemberDropDown({ user, profileFunction, kickFunction, ad
                     </button>
                 }
                 { ownerFunction &&
-                    <button onClick={() => {ownerFunction(user._id)}} className="member-button-gold">
+                    <button onClick={(e) => {ownerFunction(e, user._id)}} className="member-button-gold">
                         <FontAwesomeIcon icon={faCrown}/>
                         <p style={{margin: 0}}>Make owner</p>
                     </button>
                 }
                 { kickFunction &&
-                    <button onClick={() => {kickFunction(user._id)}} className="member-button-red">
+                    <button onClick={(e) => {kickFunction(e, user._id)}} className="member-button-red">
                         <FontAwesomeIcon icon={faUserXmark}/>
                         <p style={{margin: 0}}>Kick user</p>
                     </button>

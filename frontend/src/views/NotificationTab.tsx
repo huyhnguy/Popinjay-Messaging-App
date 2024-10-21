@@ -79,6 +79,7 @@ export default function NotificationTab() {
                 navigate('/');
             }
         })
+        console.log(notification);
 
         if (notification.from_type === "User") {
             navigate(`/dms/${notification.conversation_id}`)
